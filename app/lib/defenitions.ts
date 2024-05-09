@@ -1,12 +1,12 @@
-export interface FormInputProps{
-    name:string,
-    type:string,
-    placeholder:string,
-    required:boolean,
-    errors:string[]
+export interface InputProps{
+    name:string;
+    errors?:string[];
 };
 
-export interface FormButtonProps{
-    text : string
+export interface ButtonProps{
+    text : string;
 };
 
+export interface SmsTokenProps{
+    token: boolean;
+}
