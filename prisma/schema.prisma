@@ -14,8 +14,8 @@ model user {
   password      String          @db.VarChar(16)
   user_name     String          @db.VarChar(32)
   phone         String?         @db.VarChar(11)
-  created_at    DateTime
-  updated_at    DateTime
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
   user_category user_category[]
   userLedger    user_ledger[]
 }
@@ -25,8 +25,8 @@ model ledger {
   ledger_name     String            @db.VarChar(32)
   detail          String            @db.VarChar(100)
   note            String?           @db.VarChar(4000)
-  created_at      DateTime
-  updated_at      DateTime
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
   category_ledger category_ledger[]
   userLedger      user_ledger[]
 }
@@ -35,8 +35,8 @@ model category {
   id              Int               @id @default(autoincrement())
   category_name   String            @db.VarChar(32)
   category_code   Int
-  created_at      DateTime
-  updated_at      DateTime
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
   user_category   user_category[]
   category_ledger category_ledger[]
 }
@@ -46,8 +46,8 @@ model user_category {
   user_id         Int
   category_name   String            @db.VarChar(32)
   category_code   Int
-  created_at      DateTime
-  updated_at      DateTime
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
   user            user              @relation(fields: [user_id], references: [id])
   category        category[]
   category_ledger category_ledger[]
@@ -56,8 +56,8 @@ model user_category {
 model user_ledger {
   user_id    Int
   ledger_id  Int
-  created_at DateTime
-  updated_at DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   user       user     @relation(fields: [user_id], references: [id])
   ledger     ledger   @relation(fields: [ledger_id], references: [id])
 
@@ -68,8 +68,8 @@ model category_ledger {
   ledger_id        Int
   category_id      Int?
   user_category_id Int?
-  created_at       DateTime?
-  updated_at       DateTime?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
   ledger           ledger         @relation(fields: [ledger_id], references: [id])
   category         category?      @relation(fields: [category_id], references: [id])
   user_category    user_category? @relation(fields: [user_category_id], references: [id])
