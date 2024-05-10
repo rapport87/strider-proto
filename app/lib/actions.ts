@@ -4,9 +4,21 @@ import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_ERR_MSG } from "@/a
 import validator from "validator";
 import { SmsTokenProps } from "@/app/lib/defenitions";
 import { redirect } from "next/navigation";
+import bcrypt from "bcrypt"
+import db from "@/app/lib/db";
+import getSession from "./session";
 
 export async function signUp(prevState: any, formData : FormData){
-  const checkPassword = ({
+  const checkUniqueEmail = async ( email:string ) => {
+    const user = await db.user.findUnique({
+      select : { id:true },
+      where : { email }
+    });    
+
+    return !Boolean(user)
+  }
+
+  const checkPasswordMatch = ({
     password,
     confirm_password
   } : {
@@ -17,21 +29,22 @@ export async function signUp(prevState: any, formData : FormData){
   const formSchema = z.object({
     email: z.string()
     .email()
-    .toLowerCase(),
+    .toLowerCase()
+    .refine(checkUniqueEmail, "이미 사용 중인 메일 주소입니다."),
 
     username : z.string({
       invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
       required_error:"사용자명은 필수입니다."})
       .min(1)
       .trim(),
-
+    
     password: z.string()
     .min(PASSWORD_MIN_LENGTH,"암호는 8자 이상이어야 합니다.")
     .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERR_MSG),
 
     confirm_password: z.string()
     .min(PASSWORD_MIN_LENGTH,"암호는 8자 이상이어야 합니다."),
-  }).refine(checkPassword, {
+  }).refine(checkPasswordMatch, {
     message : "암호가 동일하지 않습니다",
     path : ["confirm_password"],
   })
@@ -42,8 +55,23 @@ export async function signUp(prevState: any, formData : FormData){
     password : formData.get("password"),
     confirm_password : formData.get("confirm_password"),
   }
-  const result = formSchema.safeParse(data);
-  return result.error?.flatten();
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    const hashedPassword = await bcrypt.hash(result.data.password, 8);
+    const user = await db.user.create({
+      data: {
+        email : result.data.email,
+        user_name : result.data.username,
+        password : hashedPassword,
+      }
+    });
+    const session = await getSession();
+    session.id = user.id;
+    await session.save();
+    redirect("/profile");
+  }
 }  
 
 export async function login(prevState: any, formData : FormData){
@@ -51,18 +79,63 @@ export async function login(prevState: any, formData : FormData){
     email : z.string().email().toLowerCase(),
     password : z
     .string({required_error : "암호는 필수 항목 입니다"})
+  }).superRefine(async ({ email }, ctx) => {
+    const user = await db.user.findUnique({
+      select: {
+        id: true,
+      },      
+      where: {
+        email,
+      },
+    });
+    if (!user){
+      ctx.addIssue({
+        code: "custom",
+        message: "이메일 혹은 패스워드가 올바르지 않습니다.",
+        path: ["password"],
+        fatal: true,
+      });
+      return z.NEVER;
+    }
+  }).superRefine(async ({ email, password }, ctx) => {
+    const user = await db.user.findUnique({
+      select: {
+        id: true,
+        password: true,
+      },      
+      where: {
+        email,
+      },
+    });
+    const ok = await bcrypt.compare(
+      password,
+      user!.password
+    );    
+    if (ok){
+      const session = await getSession();
+      session.id = user!.id;
+      session.save();
+      redirect("/profile");
+    } else {
+      ctx.addIssue({
+        code: "custom",
+        message: "이메일 혹은 패스워드가 올바르지 않습니다.",
+        path: ["password"],
+        fatal: true,
+      });
+      return z.NEVER;
+    }
   })
+  ;
 
   const data = {
     email : formData.get("email"),
     password : formData.get("password"),
-  }
+  };
 
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.safeParseAsync(data);
   if(!result.success){
     return result.error.flatten();
-  }else{
-    console.log(data);
   }
 }
 
@@ -103,6 +176,3 @@ export async function smsLogin(prevState : SmsTokenProps, formData : FormData){
     }
   }
 }
-
-
-

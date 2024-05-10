@@ -1,3 +1,7 @@
+export interface SessionContent{
+    id:number;
+}
+
 export interface InputProps{
     name:string;
     errors?:string[];
