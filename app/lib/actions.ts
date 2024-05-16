@@ -6,7 +6,8 @@ import { SmsTokenProps } from "@/app/lib/defenitions";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt"
 import db from "@/app/lib/db";
-import getSession from "./session";
+import getSession from "@/app/lib/session";
+import { notFound } from "next/navigation";
 
 export async function signUp(prevState: any, formData : FormData){
   const checkUniqueEmail = async ( email:string ) => {
@@ -175,4 +176,19 @@ export async function smsLogin(prevState : SmsTokenProps, formData : FormData){
       redirect("/");
     }
   }
+}
+
+export async function getUser() {
+  const session = await getSession();
+  if (session.id) {
+    const user = await db.user.findUnique({
+      where: {
+        id: session.id,
+      },
+    });
+    if (user) {
+      return user;
+    }
+  }
+  notFound();
 }
