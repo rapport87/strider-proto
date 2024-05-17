@@ -1,10 +1,23 @@
 import Link from "next/link";
+import { ListLedgerDetailProps } from "@/app/lib/defenitions"
 
-interface ListLedgerDetailProps{
-    id : number;
-    title : string;
-    price : number;
-    evented_at : Date;
+function formatDateTime(date: Date) {
+    const optionsDate: Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit'
+    };
+    
+    const optionsTime: Intl.DateTimeFormatOptions = { 
+        hour: 'numeric', 
+        minute: 'numeric', 
+        hour12: true 
+    };
+
+    const formattedDate = new Intl.DateTimeFormat('ko-KR', optionsDate).format(date);
+    const formattedTime = new Intl.DateTimeFormat('ko-KR', optionsTime).format(date);
+
+    return `${formattedDate.replace(/\s/g, '')} ${formattedTime}`;
 }
 
 export default function ListLedgerDetail({
@@ -15,7 +28,7 @@ export default function ListLedgerDetail({
             <div>
                 <span>{title}</span>
                 <span>{price}</span>
-                <span>{evented_at.toString()}</span>
+                <span>{formatDateTime(new Date(evented_at))}</span>
             </div>
         </div>
     )

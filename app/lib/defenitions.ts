@@ -14,3 +14,10 @@ export interface ButtonProps{
 export interface SmsTokenProps{
     token: boolean;
 }
+
+export interface ListLedgerDetailProps{
+    id : number;
+    title : string;
+    price : number;
+    evented_at : Date;
+}

@@ -68,6 +68,7 @@ export async function signUp(prevState: any, formData : FormData){
         password : hashedPassword,
       }
     });
+    setDefaultLedger(user.id);
     const session = await getSession();
     session.id = user.id;
     await session.save();
@@ -191,4 +192,85 @@ export async function getUser() {
     }
   }
   notFound();
+}
+
+export async function setDefaultLedger(id : number){
+  const ledger = await db.ledger.create({
+    data: {
+      ledger_name : "기본 가계부"
+    }
+  });
+
+  await db.user_ledger.create({
+    data: { 
+      user_id : id,
+      ledger_id : ledger.id
+    }
+  })
+}
+
+export async function setLedgerDeatil(prevState: any, formData : FormData){
+  const formSchema = z.object({
+    title: z.string()
+    .trim()
+    .min(1, "제목은 1자 이상이어야 합니다."),
+
+    detail: z.string()
+    .trim()
+    .min(1),
+
+    price: z.coerce.number(),
+
+    evented_at: z.date()
+  })
+
+  const data = {
+    title : formData.get("title"),
+    detail : formData.get("detail"),
+    price : formData.get("price"),
+    evented_at : new Date(Date.now()),
+  }
+
+  const result = await formSchema.safeParseAsync(data);
+  if(!result.success){
+    return result.error.flatten();
+  } else {
+    const session = await getSession();
+
+    const getUserLedger = await db.ledger.findFirst({
+      select : {
+        id : true
+      },      
+      where : {
+        id:session.id
+      },
+    });
+
+    console.log(session.id);
+
+    if(!getUserLedger){
+      return;
+    }
+    const ledgerId = getUserLedger.id
+
+    const ledgerDetailData = {
+      ledger_id : ledgerId,
+      title : result.data.title,
+      detail : result.data.detail,
+      price : result.data.price,
+      evented_at: new Date(Date.now())
+    }
+
+    console.log(ledgerDetailData);
+
+    await db.ledger_detail.create({
+      data : {
+        ledger_id : ledgerId,
+        title : result.data.title,
+        detail : result.data.detail,
+        price : result.data.price,
+        evented_at: new Date(Date.now())
+      }
+    });
+  }
 }

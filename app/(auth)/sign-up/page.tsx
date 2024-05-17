@@ -30,7 +30,6 @@ export default function SignUp() {
             minLength={1}
             maxLength={12}                        
             errors={state?.fieldErrors.username}
-
         />
         <Input 
             name="password"
