@@ -16,7 +16,10 @@ export interface SmsTokenProps{
 }
 
 export interface ListLedgerDetailProps{
-    id : number;
+    id : number | undefined;
+    asset_category_id : number | undefined;
+    transaction_category_id : number;
+    category_code : number;
     title : string;
     price : number;
     evented_at : Date;

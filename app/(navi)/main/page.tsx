@@ -23,21 +23,11 @@ async function getLedgerDetails(){
               },
             },
           },
-        select : {
-            id : true,
-            title : true,
-            price : true,
-            evented_at : true
-        }
     })
     return ledgerDetails
 }
 
-export default async function main({params} : {params : {id:string}}){
-    // const id = Number(params.id);
-    // if (isNaN(id)){
-    //     return notFound();
-    // }
+export default async function main(){
     
     const ledgerDetails = await getLedgerDetails();
 

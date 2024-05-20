@@ -27,8 +27,8 @@ export default function Navigation() {
         )}
         <span>홈</span>
       </Link>
-      <Link href="/write" className="flex flex-col items-center gap-px">
-        {pathname === "/write" ? (
+      <Link href="/write/income" className="flex flex-col items-center gap-px">
+        {pathname.startsWith("/write") ? (
           <SolidPencilIcon className="w-7 h-7" />
         ) : (
           <OutlinePencilIcon className="w-7 h-7" />

@@ -1,4 +1,4 @@
-import Navigation from "../ui/components/navigation";
+import Navigation from "@/app/ui/components/navigation";
 
 export default function NaviLayout({
   children,

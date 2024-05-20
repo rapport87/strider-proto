@@ -69,6 +69,7 @@ export async function signUp(prevState: any, formData : FormData){
       }
     });
     setDefaultLedger(user.id);
+    copyCategory(user.id);
     const session = await getSession();
     session.id = user.id;
     await session.save();
@@ -210,7 +211,11 @@ export async function setDefaultLedger(id : number){
 }
 
 export async function setLedgerDeatil(prevState: any, formData : FormData){
+  console.log("입력시작");
   const formSchema = z.object({
+    asset_category_id : z.coerce.number(),
+    transaction_category_id : z.coerce.number(),
+    category_code : z.coerce.number(),
     title: z.string()
     .trim()
     .min(1, "제목은 1자 이상이어야 합니다."),
@@ -223,8 +228,11 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
 
     evented_at: z.date()
   })
-
+  
   const data = {
+    asset_category_id: formData.get("asset_category_id"),
+    transaction_category_id: formData.get("transaction_category_id"),
+    category_code: formData.get("category_code"),
     title : formData.get("title"),
     detail : formData.get("detail"),
     price : formData.get("price"),
@@ -233,6 +241,7 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
 
   const result = await formSchema.safeParseAsync(data);
   if(!result.success){
+    console.log(result.error.flatten());
     return result.error.flatten();
   } else {
     const session = await getSession();
@@ -255,6 +264,9 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
 
     const ledgerDetailData = {
       ledger_id : ledgerId,
+      asset_category_id : result.data.asset_category_id,
+      transaction_category_id : result.data.transaction_category_id,
+      category_code : result.data.category_code,
       title : result.data.title,
       detail : result.data.detail,
       price : result.data.price,
@@ -264,13 +276,113 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
     console.log(ledgerDetailData);
 
     await db.ledger_detail.create({
-      data : {
-        ledger_id : ledgerId,
-        title : result.data.title,
-        detail : result.data.detail,
-        price : result.data.price,
-        evented_at: new Date(Date.now())
-      }
+      data : ledgerDetailData
     });
   }
 }
+
+  // 기본 상위 카테고리 데이터 조회
+export async function copyCategory(userId : number) {
+
+  // 기본 상위 카테고리 데이터 조회
+  const parentCategories = await db.category.findMany({
+    where: { parent_id: null },
+  });
+
+  // 상위 카테고리를 복사하고, 새로 생성된 상위 카테고리 ID를 추적
+  const newParentCategories = await Promise.all(
+    parentCategories.map(async (category) => {
+      const newCategory = await db.user_category.create({
+        data: {
+          user_id: userId,
+          parent_id: null,
+          category_name: category.category_name,
+          category_code: category.category_code,
+        },
+      });
+      return { oldId: category.id, newId: newCategory.id };
+    })
+  );
+
+  // 모든 하위 카테고리 데이터 조회
+  const childCategories = await db.category.findMany({
+    where: { parent_id: { not: null } },
+  });
+
+  // 하위 카테고리를 복사하고, 상위 카테고리와 연결
+  await Promise.all(
+    childCategories.map(async (category) => {
+      const parentIdMapping = newParentCategories.find(
+        (mapping) => mapping.oldId === category.parent_id
+      );
+      if (parentIdMapping) {
+        await db.user_category.create({
+          data: {
+            user_id: userId,
+            parent_id: parentIdMapping.newId,
+            category_name: category.category_name,
+            category_code: category.category_code,
+          },
+        });
+      }
+    })
+  );
+
+}
+
+export async function getUserCategory(categoryCode? : number){
+  const session = await getSession();
+  if (session.id) {
+    const whereClause = {
+      user_id: session.id,
+      category_code: categoryCode !== undefined ? { in: [0, categoryCode] } : 0,
+    };
+
+    const category = await db.user_category.findMany({
+      select: {
+        id: true,
+        parent_id: true,
+        category_code: true,
+        category_name: true,
+        is_active: true
+      },
+      where: whereClause,
+    });
+
+    if (category) {
+      return category;
+    }    
+  }
+  notFound();
+}
+
+// export async function getUserCategory(selectedCategoryId? : number) {
+//   const session = await getSession();
+//   if (session.id) {
+
+//     const whereClause: {
+//       user_id: number;
+//       parent_id?: number | null;
+//     } = {
+//       user_id: session.id,
+//     };
+
+//     if (selectedCategoryId !== undefined) {
+//       whereClause.parent_id = selectedCategoryId;
+//     }
+
+//     const category = await db.user_category.findMany({
+//       select : {
+//         id : true,
+//         parent_id : true,
+//         category_code : true,
+//         category_name : true,
+//       },
+//       where: whereClause
+//     });
+//     if (category) {
+//       return category;
+//     }
+//   }
+//   notFound();
+// }

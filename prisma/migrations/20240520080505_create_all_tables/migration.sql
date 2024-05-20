@@ -36,8 +36,14 @@ CREATE TABLE `ledger` (
 CREATE TABLE `ledger_detail` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ledger_id` INTEGER NOT NULL,
-    `detail` VARCHAR(100) NOT NULL,
-    `note` VARCHAR(4000) NULL,
+    `asset_category_id` INTEGER NOT NULL,
+    `transaction_category_id` INTEGER NOT NULL,
+    `category_code` INTEGER NOT NULL,
+    `title` VARCHAR(100) NOT NULL,
+    `detail` VARCHAR(4000) NULL,
+    `price` INTEGER NOT NULL,
+    `photo` VARCHAR(200) NULL,
+    `evented_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -47,6 +53,7 @@ CREATE TABLE `ledger_detail` (
 -- CreateTable
 CREATE TABLE `category` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `parent_id` INTEGER NULL,
     `category_name` VARCHAR(32) NOT NULL,
     `category_code` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -58,11 +65,13 @@ CREATE TABLE `category` (
 -- CreateTable
 CREATE TABLE `user_category` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `parent_id` INTEGER NULL,
     `user_id` INTEGER NOT NULL,
     `category_name` VARCHAR(32) NOT NULL,
     `category_code` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
+    `is_active` BOOLEAN NOT NULL DEFAULT true,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -70,21 +79,12 @@ CREATE TABLE `user_category` (
 -- CreateTable
 CREATE TABLE `ledger_category` (
     `ledger_id` INTEGER NOT NULL,
-    `category_id` INTEGER NULL,
-    `user_category_id` INTEGER NULL,
+    `user_category_id` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
+    `categoryId` INTEGER NULL,
 
     PRIMARY KEY (`ledger_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `_categoryTouser_category` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_categoryTouser_category_AB_unique`(`A`, `B`),
-    INDEX `_categoryTouser_category_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -97,19 +97,22 @@ ALTER TABLE `user_ledger` ADD CONSTRAINT `user_ledger_ledger_id_fkey` FOREIGN KE
 ALTER TABLE `ledger_detail` ADD CONSTRAINT `ledger_detail_ledger_id_fkey` FOREIGN KEY (`ledger_id`) REFERENCES `ledger`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `ledger_detail` ADD CONSTRAINT `ledger_detail_asset_category_id_fkey` FOREIGN KEY (`asset_category_id`) REFERENCES `user_category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ledger_detail` ADD CONSTRAINT `ledger_detail_transaction_category_id_fkey` FOREIGN KEY (`transaction_category_id`) REFERENCES `user_category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `category` ADD CONSTRAINT `category_parent_id_fkey` FOREIGN KEY (`parent_id`) REFERENCES `category`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `user_category` ADD CONSTRAINT `user_category_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_category` ADD CONSTRAINT `user_category_parent_id_fkey` FOREIGN KEY (`parent_id`) REFERENCES `user_category`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ledger_category` ADD CONSTRAINT `ledger_category_ledger_id_fkey` FOREIGN KEY (`ledger_id`) REFERENCES `ledger`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ledger_category` ADD CONSTRAINT `ledger_category_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `category`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `ledger_category` ADD CONSTRAINT `ledger_category_user_category_id_fkey` FOREIGN KEY (`user_category_id`) REFERENCES `user_category`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_categoryTouser_category` ADD CONSTRAINT `_categoryTouser_category_A_fkey` FOREIGN KEY (`A`) REFERENCES `category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_categoryTouser_category` ADD CONSTRAINT `_categoryTouser_category_B_fkey` FOREIGN KEY (`B`) REFERENCES `user_category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `ledger_category` ADD CONSTRAINT `ledger_category_user_category_id_fkey` FOREIGN KEY (`user_category_id`) REFERENCES `user_category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
