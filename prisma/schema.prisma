@@ -25,6 +25,7 @@ model user_ledger {
   ledger_id  Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  is_default Boolean  @default(false)
   user       user     @relation(fields: [user_id], references: [id])
   ledger     ledger   @relation(fields: [ledger_id], references: [id])
 

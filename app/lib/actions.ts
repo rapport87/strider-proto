@@ -8,6 +8,7 @@ import bcrypt from "bcrypt"
 import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { notFound } from "next/navigation";
+import { useRouter } from "next/router";
 
 export async function signUp(prevState: any, formData : FormData){
   const checkUniqueEmail = async ( email:string ) => {
@@ -76,6 +77,57 @@ export async function signUp(prevState: any, formData : FormData){
     redirect("/profile");
   }
 }  
+
+export async function craeteLedger(prevState: any, formData : FormData){
+  const session = await getSession();
+  const formSchema = z.object({
+    ledger_name : z.string({
+      invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
+      required_error:"가계부 이름은 필수입니다."})
+      .min(1)
+      .trim(),
+  });
+
+  const data = {
+    ledger_name : formData.get("ledger_name"),
+  };  
+
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    const ledger = await db.ledger.create({
+      data: {
+        ledger_name : result.data.ledger_name,
+      }
+    });
+    setUserLedger(session.id, ledger.id, false);
+    redirect("/ledger");
+    
+  }
+}
+
+async function setUserLedger(user_id : number, ledger_id : number, is_default : boolean){
+  await db.user_ledger.create({
+    data: { 
+      user_id : user_id,
+      ledger_id : ledger_id,
+      is_default : is_default
+    }
+  })
+}
+
+async function changeDefaultLedger(user_id : number){
+  await db.user_ledger.updateMany({
+    where : {
+      user_id : user_id,
+      is_default : true,
+    },
+    data : {
+      is_default : false,
+    }
+  });
+}
 
 export async function login(prevState: any, formData : FormData){
   const formSchema = z.object({
@@ -205,13 +257,13 @@ export async function setDefaultLedger(id : number){
   await db.user_ledger.create({
     data: { 
       user_id : id,
-      ledger_id : ledger.id
+      ledger_id : ledger.id,
+      is_default : true
     }
   })
 }
 
 export async function setLedgerDeatil(prevState: any, formData : FormData){
-  console.log("입력시작");
   const formSchema = z.object({
     asset_category_id : z.coerce.number(),
     transaction_category_id : z.coerce.number(),
@@ -278,6 +330,8 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
     await db.ledger_detail.create({
       data : ledgerDetailData
     });
+
+    redirect("/main");
   }
 }
 
@@ -327,7 +381,6 @@ export async function copyCategory(userId : number) {
       }
     })
   );
-
 }
 
 export async function getUserCategory(categoryCode? : number){
@@ -354,6 +407,70 @@ export async function getUserCategory(categoryCode? : number){
     }    
   }
   notFound();
+}
+
+export async function getLedger(){
+  const user = await getSession();
+  const ledger = await db.user_ledger.findMany({
+    where: {
+      user_id : user.id
+    },
+    include: {
+      ledger: {
+        select: {
+          ledger_name: true,
+        },
+      },    
+    }
+  })
+  return ledger.map((userLedger) => ({
+    user_id: userLedger.user_id,
+    ledger_id : userLedger.ledger_id,
+    ledger_name : userLedger.ledger.ledger_name,
+    is_default : userLedger.is_default
+  }));  
+}
+
+export async function getLedgerDetails(){
+  const user = await getSession();
+  const ledgerDetails = await db.ledger_detail.findMany({
+    where: {
+        ledger: {
+          userLedger: {
+            every: {
+              user_id: user.id,
+            },
+          },
+        },
+      },
+      orderBy: {
+        evented_at: 'desc',
+      },        
+      include: {
+        asset_category: {
+          select: {
+            category_name: true,
+          },
+        },
+        transaction_category: {
+          select: {
+            category_name: true,
+          },
+        },
+      },        
+  });
+
+  return ledgerDetails.map((detail) => ({
+    id: detail.id,
+    asset_category_id: detail.asset_category_id,
+    transaction_category_id: detail.transaction_category_id,
+    category_code: detail.category_code,
+    title: detail.title,
+    price: detail.price,
+    evented_at: detail.evented_at,
+    asset_category_name: detail.asset_category.category_name,
+    transaction_category_name: detail.transaction_category.category_name,
+  }));
 }
 
 // export async function getUserCategory(selectedCategoryId? : number) {

@@ -21,11 +21,14 @@ function formatDateTime(date: Date) {
 }
 
 export default function ListLedgerDetail({
-    id, title, price, evented_at
+    id, title, price, evented_at, asset_category_name ,transaction_category_name, category_code
 } : ListLedgerDetailProps){
     return (
-        <div className="border border-black p-2">
-            <div>
+        <div className="border border-black p-2 mt-2">
+            <div className="grid grid-cols-6 items-center text-center">
+                <span>{category_code === 1 ? "수입" : "지출"}</span>
+                <span>{transaction_category_name}</span>
+                <span>{asset_category_name}</span>
                 <span>{title}</span>
                 <span>{price}</span>
                 <span>{formatDateTime(new Date(evented_at))}</span>

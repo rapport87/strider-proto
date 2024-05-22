@@ -1,4 +1,4 @@
-import db from "@/app/lib/db"
+import { getLedgerDetails } from "@/app/lib/actions";
 import getSession from "@/app/lib/session";
 import ListLedgerDetail from "@/app/ui/components/ledger_detail_list";
 import { notFound } from "next/navigation";
@@ -9,22 +9,6 @@ async function getIsOwner(userId:number){
         return session.id = userId
     }
     return false;
-}
-
-async function getLedgerDetails(){
-    const user = await getSession();
-    const ledgerDetails = db.ledger_detail.findMany({
-        where: {
-            ledger: {
-              userLedger: {
-                every: {
-                  user_id: user.id,
-                },
-              },
-            },
-          },
-    })
-    return ledgerDetails
 }
 
 export default async function main(){
