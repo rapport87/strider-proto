@@ -82,7 +82,7 @@ export default function WriteUI({ category, category_code }: WriteProps) {
         name="category_code"
         value={category_code}
         type="hidden"
-      />      
+      />
       <Button text="확인" />
     </form>
   );

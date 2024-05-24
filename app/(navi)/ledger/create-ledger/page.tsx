@@ -15,7 +15,7 @@ export default function CreateLedger() {
       <form action={dispatch} className="flex flex-col gap-3">
         <Input 
             name="ledger_name"
-            type="ledger_name" 
+            type="text"
             placeholder="가계부 이름"
             required={true}
             errors={state?.fieldErrors.ledger_name}

@@ -12,7 +12,7 @@ export default async function ledger(){
             ))}
             <div className="text-right">
                 <Link className="text-black" href={`/ledger/create-ledger`}>가계부 생성</Link>
-            </div>
+            </div>            
         </div>
     )
 }

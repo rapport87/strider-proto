@@ -10,15 +10,23 @@ import getSession from "@/app/lib/session";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 
+
 export async function signUp(prevState: any, formData : FormData){
   const checkUniqueEmail = async ( email:string ) => {
     const user = await db.user.findUnique({
       select : { id:true },
       where : { email }
     });    
-
     return !Boolean(user)
   }
+
+  const checkUniqueUsername = async ( user_name:string ) => {
+    const user = await db.user.findUnique({
+      select : { id:true },
+      where : { user_name }
+    });    
+    return !Boolean(user)
+  }  
 
   const checkPasswordMatch = ({
     password,
@@ -38,7 +46,8 @@ export async function signUp(prevState: any, formData : FormData){
       invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
       required_error:"사용자명은 필수입니다."})
       .min(1)
-      .trim(),
+      .trim()
+      .refine(checkUniqueUsername, "이미 사용 중인 사용자명 입니다."),
     
     password: z.string()
     .min(PASSWORD_MIN_LENGTH,"암호는 8자 이상이어야 합니다.")
@@ -78,6 +87,58 @@ export async function signUp(prevState: any, formData : FormData){
   }
 }  
 
+export async function inviteUser(prevState: any, formData : FormData){
+  const checkExistsUsername = async ( user_name:string | undefined) => {
+    const user = await db.user.findUnique({
+      select : { id:true },
+      where : { user_name }
+    });    
+    return user?.id
+  }
+
+  const formSchema = z.object({
+    user_name : z.string({
+      invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
+      required_error:"사용자명은 필수입니다"})
+      .min(1)
+      .trim()
+      .refine(checkExistsUsername, "존재하지 않는 사용자명 입니다."),
+
+    ledger_id : z.coerce.number(),
+  });  
+ 
+  const data = {
+    user_name : formData.get("user_name"),
+    ledger_id : formData.get("ledger_id"),
+  }
+  const result = await formSchema.safeParseAsync(data);
+
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    const user_id = await checkExistsUsername(result.data.user_name) as number;
+
+/***
+ * toDo 
+ * 1.자기자신은 초대할 수 없어야함
+ * 2.이미 초대된 상대인지 검토해야함
+ * 3.이미 승인된 상태인지 검토해야함
+ *  */ 
+
+    const inviteData = {
+      user_id : user_id,
+      ledger_id : result.data.ledger_id,
+      invite_prg_code : 3
+    }
+  
+    await db.user_ledger_invite.create({
+      data: inviteData
+    });
+  
+    redirect("/main");
+  }
+}
+
 export async function craeteLedger(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
@@ -90,7 +151,7 @@ export async function craeteLedger(prevState: any, formData : FormData){
 
   const data = {
     ledger_name : formData.get("ledger_name"),
-  };  
+  };
 
   const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
@@ -116,6 +177,7 @@ async function setUserLedger(user_id : number, ledger_id : number, is_default : 
     }
   })
 }
+
 
 async function changeDefaultLedger(user_id : number){
   await db.user_ledger.updateMany({
@@ -431,10 +493,11 @@ export async function getLedger(){
   }));  
 }
 
-export async function getLedgerDetails(){
+export async function getLedgerDetails(ledger_id : number){
   const user = await getSession();
   const ledgerDetails = await db.ledger_detail.findMany({
     where: {
+      ledger_id : Number(ledger_id),
         ledger: {
           userLedger: {
             every: {

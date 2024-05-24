@@ -1,4 +1,4 @@
-import { getLedgerDetails } from "@/app/lib/actions";
+import { getLedger, getLedgerDetails } from "@/app/lib/actions";
 import getSession from "@/app/lib/session";
 import ListLedgerDetail from "@/app/ui/components/ledger_detail_list";
 import { notFound } from "next/navigation";
@@ -12,8 +12,9 @@ async function getIsOwner(userId:number){
 }
 
 export default async function main(){
-    
-    const ledgerDetails = await getLedgerDetails();
+    const ledgers = await getLedger();
+    const defaultLedger = ledgers.filter(ledger => ledger.is_default === true);
+    const ledgerDetails = await getLedgerDetails(defaultLedger[0].ledger_id);
 
     return (
         <div>

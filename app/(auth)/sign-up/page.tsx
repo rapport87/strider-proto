@@ -25,7 +25,7 @@ export default function SignUp() {
         <Input 
             name="username"
             type="text" 
-            placeholder="Username" 
+            placeholder="Nickname" 
             required={true}
             minLength={1}
             maxLength={12}                        

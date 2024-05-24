@@ -16,6 +16,8 @@ CREATE TABLE `user` (
 CREATE TABLE `user_ledger` (
     `user_id` INTEGER NOT NULL,
     `ledger_id` INTEGER NOT NULL,
+    `invite_prg_code` INTEGER NULL,
+    `is_default` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
