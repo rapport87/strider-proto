@@ -8,7 +8,6 @@ import bcrypt from "bcrypt"
 import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { notFound } from "next/navigation";
-import { useRouter } from "next/router";
 
 
 export async function signUp(prevState: any, formData : FormData){
@@ -88,7 +87,21 @@ export async function signUp(prevState: any, formData : FormData){
 }  
 
 export async function inviteUser(prevState: any, formData : FormData){
-  const checkExistsUsername = async ( user_name:string | undefined) => {
+  const CheckIsOwner = async() => {
+    const user = await getUser();
+    const ledger_id = formData.get("ledger_id");
+
+    if (!ledger_id || isNaN(Number(ledger_id))) {
+      alert("잘못된 요청입니다");
+      redirect("/ledger");
+    }
+
+
+  }
+  
+  CheckIsOwner();
+
+  const checkInvitedUser = async ( user_name:string | undefined) => {
     const user = await db.user.findUnique({
       select : { id:true },
       where : { user_name }
@@ -96,16 +109,104 @@ export async function inviteUser(prevState: any, formData : FormData){
     return user?.id
   }
 
+  const checkInvitingUser = async ( user_id:number, ledger_id : number, prg_code : number ) => {
+    const user = await db.user_ledger_invite.findFirst({
+      select : { user_id : true },
+      where : {
+        user_id: user_id,
+        ledger_id: ledger_id,
+        invite_prg_code : {
+          in : [2, 3]
+        }
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+    return Boolean(user);
+  }
+
   const formSchema = z.object({
     user_name : z.string({
       invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
       required_error:"사용자명은 필수입니다"})
       .min(1)
-      .trim()
-      .refine(checkExistsUsername, "존재하지 않는 사용자명 입니다."),
-
+      .trim(),
     ledger_id : z.coerce.number(),
-  });  
+  })
+  // 가계부 주인 여부 조회
+  .superRefine(async ({ledger_id}, ctx) => {
+    const user = await getSession();
+    const isOwner = await db.user_ledger.findUnique({
+      select : {
+        user_id : true
+      },      
+      where : {
+        user_id_ledger_id : {
+          user_id : user.id,
+          ledger_id : Number(ledger_id),
+        },
+        is_owner : true
+      }
+    })
+    if (!isOwner) {
+      ctx.addIssue({
+        code: "custom",
+        message: "가계부의 주인만 초대 권한이 있습니다",
+        path: ["user_name"],
+        fatal: true,            
+      })
+    }
+    return z.NEVER;    
+  })
+  // 초대 대상자 존재 여부 조회
+  .superRefine(async ({user_name}, ctx) => {
+    const exists_invited_user = await checkInvitedUser(user_name);
+    if(!exists_invited_user){
+      ctx.addIssue({
+        code: "custom",
+        message: "존재하지 않는 사용자 입니다",
+        path: ["user_name"],
+        fatal: true,        
+      });
+    }
+    return z.NEVER;
+  })
+  // 초대 대상자가 자기 자신인지, 이미 초대중인지, 이미 초대가 완료됐는지 조회
+  .superRefine(async ({user_name, ledger_id}, ctx) => {
+    const user = await getUser();
+    const invited_user_id = await checkInvitedUser(user_name);
+
+    if(user.id === invited_user_id){
+      ctx.addIssue({
+        code: "custom",
+        message: "자기 자신을 초대할 수 없습니다",
+        path: ["user_name"],
+        fatal: true,        
+      });
+    } 
+
+    const inviting_user = await checkInvitingUser(invited_user_id as number, ledger_id, 0)
+    if(inviting_user){
+      ctx.addIssue({
+        code: "custom",
+        message: "이미 초대중인 사용자 입니다",
+        path: ["user_name"],
+        fatal: true,        
+      });        
+    }
+
+    const invite_complete_user = await checkInvitingUser(invited_user_id as number, ledger_id, 1)
+    if(invite_complete_user){
+      ctx.addIssue({
+        code: "custom",
+        message: "이미 초대가 완료된 사용자 입니다",
+        path: ["user_name"],
+        fatal: true,        
+      });        
+    }
+    return z.NEVER;    
+  })
  
   const data = {
     user_name : formData.get("user_name"),
@@ -116,19 +217,12 @@ export async function inviteUser(prevState: any, formData : FormData){
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const user_id = await checkExistsUsername(result.data.user_name) as number;
-
-/***
- * toDo 
- * 1.자기자신은 초대할 수 없어야함
- * 2.이미 초대된 상대인지 검토해야함
- * 3.이미 승인된 상태인지 검토해야함
- *  */ 
+    const user_id = await checkInvitedUser(result.data.user_name) as number;
 
     const inviteData = {
       user_id : user_id,
       ledger_id : result.data.ledger_id,
-      invite_prg_code : 3
+      invite_prg_code : 0
     }
   
     await db.user_ledger_invite.create({
@@ -320,7 +414,8 @@ export async function setDefaultLedger(id : number){
     data: { 
       user_id : id,
       ledger_id : ledger.id,
-      is_default : true
+      is_default : true,
+      is_owner : true,
     }
   })
 }
@@ -471,6 +566,37 @@ export async function getUserCategory(categoryCode? : number){
   notFound();
 }
 
+export async function existsInvite(){
+
+//   SELECT t1.user_id, t1.ledger_id, t1.invite_prg_code, t1.created_at, t1.updated_at
+//     FROM user_ledger_invite t1
+//    INNER JOIN (
+//                SELECT user_id, ledger_id, MAX(created_at) AS max_created_at
+//                  FROM user_ledger_invite
+//                 GROUP BY user_id, ledger_id
+//               ) t2
+//            ON t1.ledger_id = t2.ledger_id
+//           AND t1.user_id = t2.user_id
+//           AND t1.created_at = t2.max_created_at;  
+  
+  const user = await getSession();
+  const invites = await db.user_ledger_invite.groupBy({
+    by: ['user_id', 'ledger_id'],
+    where: {
+      invite_prg_code: 0,
+    },
+    _max: {
+      created_at: true,
+    },
+  });
+
+  // toDo : t1테이블 생성해서 t2(invites)와 연동해야함 
+
+  return invites;
+}
+
+
+
 export async function getLedger(){
   const user = await getSession();
   const ledger = await db.user_ledger.findMany({
@@ -489,7 +615,8 @@ export async function getLedger(){
     user_id: userLedger.user_id,
     ledger_id : userLedger.ledger_id,
     ledger_name : userLedger.ledger.ledger_name,
-    is_default : userLedger.is_default
+    is_default : userLedger.is_default,
+    is_owner : userLedger.is_owner
   }));  
 }
 

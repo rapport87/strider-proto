@@ -9,22 +9,22 @@ datasource db {
 }
 
 model user {
-  id                 Int                  @id @default(autoincrement())
-  email              String?              @unique @db.VarChar(100)
-  password           String               @db.VarChar(100)
-  user_name          String               @unique @db.VarChar(32)
-  phone              String?              @db.VarChar(11)
-  created_at         DateTime             @default(now())
-  updated_at         DateTime             @updatedAt
-  user_category      user_category[]
-  user_ledger        user_ledger[]
-  user_ledger_invite user_ledger_invite[]
+  id            Int             @id @default(autoincrement())
+  email         String?         @unique @db.VarChar(100)
+  password      String          @db.VarChar(100)
+  user_name     String          @unique @db.VarChar(32)
+  phone         String?         @db.VarChar(11)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  user_category user_category[]
+  user_ledger   user_ledger[]
 }
 
 model user_ledger {
   user_id    Int
   ledger_id  Int
   is_default Boolean  @default(false)
+  is_owner   Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user       user     @relation(fields: [user_id], references: [id])
@@ -34,26 +34,22 @@ model user_ledger {
 }
 
 model user_ledger_invite {
+  id              Int      @id @default(autoincrement())
   user_id         Int
   ledger_id       Int
   invite_prg_code Int
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
-  user            user     @relation(fields: [user_id], references: [id])
-  ledger          ledger   @relation(fields: [ledger_id], references: [id])
-
-  @@id([user_id, ledger_id])
 }
 
 model ledger {
-  id                 Int                  @id @default(autoincrement())
-  ledger_name        String               @db.VarChar(32)
-  created_at         DateTime             @default(now())
-  updated_at         DateTime             @updatedAt
-  ledger_category    ledger_category[]
-  userLedger         user_ledger[]
-  ledger_detail      ledger_detail[]
-  user_ledger_invite user_ledger_invite[]
+  id              Int               @id @default(autoincrement())
+  ledger_name     String            @db.VarChar(32)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  ledger_category ledger_category[]
+  userLedger      user_ledger[]
+  ledger_detail   ledger_detail[]
 }
 
 model ledger_detail {

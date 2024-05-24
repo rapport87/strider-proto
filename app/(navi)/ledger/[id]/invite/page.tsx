@@ -13,7 +13,7 @@ export default function Invite({params} : {params: {id:number}}) {
         <h1 className="text-2xl">가계부 초대하기</h1>
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
-        <Input 
+        <Input
             name="user_name"
             type="text" 
             placeholder="사용자명"
@@ -26,7 +26,7 @@ export default function Invite({params} : {params: {id:number}}) {
             type="hidden"
         />        
         <Button
-            text="가계부 생성하기"
+            text="가계부 초대하기"
         />
       </form>
     </div>

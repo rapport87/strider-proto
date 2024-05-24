@@ -26,6 +26,15 @@ export interface ListLedgerProps{
     ledger_id : number;
     ledger_name : string;
     is_default : boolean;
+    is_owner : boolean;
+}
+
+export interface ListInvitedLedgerProps{
+    user_id : number;
+    ledger_id : number;
+    ledger_name : string;
+    is_default : boolean;
+    is_owner : boolean;
 }
 
 export interface ListLedgerDetailProps{

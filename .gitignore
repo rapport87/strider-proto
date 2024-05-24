@@ -36,3 +36,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 app/ui/write/WriteUI copy.tsx
+prisma/migrations
