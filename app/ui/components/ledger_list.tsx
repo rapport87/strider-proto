@@ -11,7 +11,7 @@ export default function ListLedger({
                     <span>{ledger_name}</span>
                     <span><Link className="text-black" href={`/ledger/${ledger_id}`}>보기</Link></span>
                     <span><Link className="text-black" href={`/ledger/${ledger_id}/edit`}>편집</Link></span>
-                    <span><Link className="text-black" href={`/ledger/${ledger_id}/invite`}>초대</Link></span>
+                    <span>{is_owner === true ? <Link className="text-black" href={`/ledger/${ledger_id}/invite`}>초대</Link> : ""}</span>
                     <span>{is_default === true ? "기본" : ""}</span>
                     <span>{is_owner === true ? "" : "🤝"}</span>
                 </div>

@@ -1,19 +1,18 @@
 import Link from "next/link";
-import { ListLedgerProps } from "@/app/lib/defenitions"
+import { ListInvitedLedgerProps } from "@/app/lib/defenitions"
+import { AgreeInviteButton, IgnoreInviteButton, RefuseInviteButton } from "../ledger/invite/buttons";
 
-export default function ListLedger({
-    ledger_id, ledger_name, is_default, is_owner
-} : ListLedgerProps){
+export default function InviteListLedger({
+    id, user_id, ledger_id, ledger_name
+} : ListInvitedLedgerProps){
     return (
         <div>
             <div className="border border-black p-2 mt-2">
                 <div className="grid grid-cols-6 items-center text-center">
                     <span>{ledger_name}</span>
-                    <span><Link className="text-black" href={`/ledger/${ledger_id}`}>승인</Link></span>
-                    <span><Link className="text-black" href={`/ledger/${ledger_id}/edit`}>거절</Link></span>
-                    <span><Link className="text-black" href={`/ledger/${ledger_id}/invite`}>무시</Link></span>
-                    <span>{is_default === true ? "기본" : ""}</span>
-                    <span>{is_owner === true ? "" : "🤝"}</span>
+                    <span><AgreeInviteButton ledger_id={ledger_id}/></span>
+                    <span><RefuseInviteButton ledger_id={ledger_id}/></span>
+                    <span><IgnoreInviteButton ledger_id={ledger_id}/></span>
                 </div>
             </div>                
         </div>

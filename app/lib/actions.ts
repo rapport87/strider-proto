@@ -87,19 +87,16 @@ export async function signUp(prevState: any, formData : FormData){
 }  
 
 export async function inviteUser(prevState: any, formData : FormData){
-  const CheckIsOwner = async() => {
-    const user = await getUser();
+  const CheckIsExistsLedger = async() => {
     const ledger_id = formData.get("ledger_id");
 
     if (!ledger_id || isNaN(Number(ledger_id))) {
       alert("잘못된 요청입니다");
       redirect("/ledger");
     }
-
-
   }
   
-  CheckIsOwner();
+  CheckIsExistsLedger();
 
   const checkInvitedUser = async ( user_name:string | undefined) => {
     const user = await db.user.findUnique({
@@ -109,21 +106,18 @@ export async function inviteUser(prevState: any, formData : FormData){
     return user?.id
   }
 
-  const checkInvitingUser = async ( user_id:number, ledger_id : number, prg_code : number ) => {
+  const checkInvitingUser = async ( user_id:number, ledger_id : number ) => {
     const user = await db.user_ledger_invite.findFirst({
-      select : { user_id : true },
+      select : { user_id : true, ledger_id : true, invite_prg_code: true },
       where : {
         user_id: user_id,
-        ledger_id: ledger_id,
-        invite_prg_code : {
-          in : [2, 3]
-        }
+        ledger_id: ledger_id
       },
       orderBy: {
         created_at: 'desc',
       },
     });
-    return Boolean(user);
+    return user?.invite_prg_code;
   }
 
   const formSchema = z.object({
@@ -186,24 +180,21 @@ export async function inviteUser(prevState: any, formData : FormData){
       });
     } 
 
-    const inviting_user = await checkInvitingUser(invited_user_id as number, ledger_id, 0)
-    if(inviting_user){
+    const inviting_user = await checkInvitingUser(invited_user_id as number, ledger_id)
+    if(inviting_user === 0 || inviting_user === 3){
       ctx.addIssue({
         code: "custom",
         message: "이미 초대중인 사용자 입니다",
         path: ["user_name"],
         fatal: true,        
       });        
-    }
-
-    const invite_complete_user = await checkInvitingUser(invited_user_id as number, ledger_id, 1)
-    if(invite_complete_user){
+    } else if (inviting_user === 1){
       ctx.addIssue({
         code: "custom",
         message: "이미 초대가 완료된 사용자 입니다",
         path: ["user_name"],
         fatal: true,        
-      });        
+      });
     }
     return z.NEVER;    
   })
@@ -256,18 +247,19 @@ export async function craeteLedger(prevState: any, formData : FormData){
         ledger_name : result.data.ledger_name,
       }
     });
-    setUserLedger(session.id, ledger.id, false);
+    createUserLedger(session.id, ledger.id, false, true);
     redirect("/ledger");
     
   }
 }
 
-async function setUserLedger(user_id : number, ledger_id : number, is_default : boolean){
+async function createUserLedger(user_id : number, ledger_id : number, is_default : boolean, is_owner : boolean){
   await db.user_ledger.create({
     data: { 
       user_id : user_id,
       ledger_id : ledger_id,
-      is_default : is_default
+      is_default : is_default,
+      is_owner : is_owner
     }
   })
 }
@@ -464,8 +456,6 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
       },
     });
 
-    console.log(session.id);
-
     if(!getUserLedger){
       return;
     }
@@ -481,8 +471,6 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
       price : result.data.price,
       evented_at: new Date(Date.now())
     }
-
-    console.log(ledgerDetailData);
 
     await db.ledger_detail.create({
       data : ledgerDetailData
@@ -567,7 +555,6 @@ export async function getUserCategory(categoryCode? : number){
 }
 
 export async function existsInvite(){
-
 //   SELECT t1.user_id, t1.ledger_id, t1.invite_prg_code, t1.created_at, t1.updated_at
 //     FROM user_ledger_invite t1
 //    INNER JOIN (
@@ -580,19 +567,63 @@ export async function existsInvite(){
 //           AND t1.created_at = t2.max_created_at;  
   
   const user = await getSession();
-  const invites = await db.user_ledger_invite.groupBy({
+  const subquery = await db.user_ledger_invite.groupBy({
     by: ['user_id', 'ledger_id'],
-    where: {
-      invite_prg_code: 0,
-    },
     _max: {
       created_at: true,
     },
+    where: {
+      user_id: user.id,
+    },    
   });
 
-  // toDo : t1테이블 생성해서 t2(invites)와 연동해야함 
+  const result = await db.user_ledger_invite.findMany({
+    where: {
+      OR: subquery.map((row) => ({
+        user_id: row.user_id,
+        ledger_id: row.ledger_id,
+        created_at: row._max.created_at as Date,
+      })),
+      invite_prg_code : 0
+    },
+    include: {
+      ledger: {
+        select: {
+          ledger_name: true,
+        },
+      },
+    },    
+  });
 
-  return invites;
+  return result.map(invite => ({
+    id : invite.id,
+    user_id: invite.user_id,
+    ledger_id: invite.ledger_id,
+    invite_prg_code: invite.invite_prg_code,
+    created_at: invite.created_at,
+    updated_at: invite.updated_at,
+    ledger_name: invite.ledger.ledger_name,
+  }));
+}
+
+export async function inviteRequest(ledger_id : number, prg_code : number){
+  const user = await getSession();
+  await db.user_ledger_invite.create({
+    data : {
+      user_id : user.id,
+      ledger_id : ledger_id,
+      invite_prg_code : prg_code,
+    }
+  });
+
+  if(prg_code === 1){
+    await db.user_ledger.create({
+      data : {
+        user_id : user.id,
+        ledger_id : ledger_id,
+      }
+    });    
+  }
 }
 
 
