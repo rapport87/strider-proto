@@ -412,7 +412,7 @@ export async function setDefaultLedger(id : number){
   })
 }
 
-export async function setLedgerDeatil(prevState: any, formData : FormData){
+export async function writeLedgerDeatil(prevState: any, formData : FormData){
   const formSchema = z.object({
     asset_category_id : z.coerce.number(),
     transaction_category_id : z.coerce.number(),
@@ -447,19 +447,20 @@ export async function setLedgerDeatil(prevState: any, formData : FormData){
   } else {
     const session = await getSession();
 
-    const getUserLedger = await db.ledger.findFirst({
+    const getUserLedger = await db.user_ledger.findFirst({
       select : {
-        id : true
+        ledger_id : true
       },      
       where : {
-        id:session.id
+        user_id:session.id,
+        is_default : true
       },
     });
-
+    
     if(!getUserLedger){
       return;
     }
-    const ledgerId = getUserLedger.id
+    const ledgerId = getUserLedger.ledger_id
 
     const ledgerDetailData = {
       ledger_id : ledgerId,
@@ -652,35 +653,44 @@ export async function getLedger(){
 }
 
 export async function getLedgerDetails(ledger_id : number){
+//   SELECT ld.*
+//   FROM ledger_detail ld
+//  INNER JOIN ledger l ON l.id = ld.ledger_id
+//  INNER JOIN user_ledger ul ON ul.ledger_id = l.id
+//         AND ul.user_id = 1
+//   LEFT JOIN user_category uc ON ld.asset_category_id = uc.category_code
+//   LEFT JOIN user_category ac ON ld.transaction_category_id = uc.category_code
+//  ORDER BY ld.evented_at DESC;  
+
   const user = await getSession();
   const ledgerDetails = await db.ledger_detail.findMany({
     where: {
       ledger_id : Number(ledger_id),
-        ledger: {
-          userLedger: {
-            every: {
-              user_id: user.id,
-            },
+      ledger: {
+        userLedger: {
+          some: {
+            user_id: user.id,
           },
         },
       },
-      orderBy: {
-        evented_at: 'desc',
-      },        
-      include: {
-        asset_category: {
-          select: {
-            category_name: true,
-          },
+    },
+    orderBy: {
+      evented_at: 'desc',
+    },        
+    include: {
+      asset_category: {
+        select: {
+          category_name: true,
         },
-        transaction_category: {
-          select: {
-            category_name: true,
-          },
+      },
+      transaction_category: {
+        select: {
+          category_name: true,
         },
-      },        
+      },
+    },        
   });
-
+  
   return ledgerDetails.map((detail) => ({
     id: detail.id,
     asset_category_id: detail.asset_category_id,

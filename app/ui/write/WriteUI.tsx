@@ -1,6 +1,6 @@
 "use client";
 
-import { setLedgerDeatil } from "@/app/lib/actions";
+import { writeLedgerDeatil } from "@/app/lib/actions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useFormState } from "react-dom";
@@ -19,7 +19,7 @@ interface WriteProps {
 }
 
 export default function WriteUI({ category, category_code }: WriteProps) {
-  const [state, dispatch] = useFormState(setLedgerDeatil, null);
+  const [state, dispatch] = useFormState(writeLedgerDeatil, null);
   const asset_category = category.filter(cat => cat.category_code === 0 && cat.parent_id !== null && cat.is_active === true);
   const transaction_category = category.filter(cat => cat.category_code === category_code && cat.is_active === true);
   return (
