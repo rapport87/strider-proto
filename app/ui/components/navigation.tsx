@@ -1,5 +1,3 @@
-"use client";
-
 import {
   HomeIcon as SolidHomeIcon,
   PencilIcon as SolidPencilIcon,
@@ -14,43 +12,12 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import NavigationUI from "./NavigationUI";
+import { getLedger } from "@/app/lib/actions";
 
-export default function Navigation() {
-  const pathname = usePathname();
-  return (
-    <div className="fixed bottom-0 w-full mx-auto max-w-screen-sm grid grid-cols-4 border-neutral-600 border-t px-5 py-3 *:text-white bg-green-600/90">
-      <Link href="/main" className="flex flex-col items-center gap-px">
-        {pathname === "/main" ? (
-          <SolidHomeIcon className="w-7 h-7" />
-        ) : (
-          <OutlineHomeIcon className="w-7 h-7" />
-        )}
-        <span>홈</span>
-      </Link>
-      <Link href="/write/income" className="flex flex-col items-center gap-px">
-        {pathname.startsWith("/write") ? (
-          <SolidPencilIcon className="w-7 h-7" />
-        ) : (
-          <OutlinePencilIcon className="w-7 h-7" />
-        )}
-        <span>작성</span>
-      </Link>
-      <Link href="/ledger" className="flex flex-col items-center gap-px">
-        {pathname === "/ledger" ? (
-          <SolidWalletIconIcon className="w-7 h-7" />
-        ) : (
-          <OutlineWalletIcon className="w-7 h-7" />
-        )}
-        <span>가계부</span>
-      </Link>
-      <Link href="/profile" className="flex flex-col items-center gap-px">
-        {pathname === "/profile" ? (
-          <SolidUserIcon className="w-7 h-7" />
-        ) : (
-          <OutlineUserIcon className="w-7 h-7" />
-        )}
-        <span>사용자</span>
-      </Link>
-    </div>
-  );
+export default async function Navigation() {
+  const ledgers = await getLedger();
+  const defaultLedger = ledgers.filter(ledger => ledger.is_default);
+  
+  return <NavigationUI default_ledger_id={defaultLedger[0].ledger_id} />;
 }

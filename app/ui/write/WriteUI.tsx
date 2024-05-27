@@ -3,6 +3,7 @@
 import { writeLedgerDeatil } from "@/app/lib/actions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
+import { useParams } from "next/navigation";
 import { useFormState } from "react-dom";
 
 interface Category {
@@ -22,6 +23,7 @@ export default function WriteUI({ category, category_code }: WriteProps) {
   const [state, dispatch] = useFormState(writeLedgerDeatil, null);
   const asset_category = category.filter(cat => cat.category_code === 0 && cat.parent_id !== null && cat.is_active === true);
   const transaction_category = category.filter(cat => cat.category_code === category_code && cat.is_active === true);
+  const params = useParams();
   return (
     <form action={dispatch}>
       <div>
@@ -83,6 +85,11 @@ export default function WriteUI({ category, category_code }: WriteProps) {
         value={category_code}
         type="hidden"
       />
+      <input
+        name="ledger_id"
+        value={params.id}
+        type="hidden"
+      />      
       <Button text="확인" />
     </form>
   );

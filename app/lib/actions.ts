@@ -414,6 +414,7 @@ export async function setDefaultLedger(id : number){
 
 export async function writeLedgerDeatil(prevState: any, formData : FormData){
   const formSchema = z.object({
+    ledger_id : z.coerce.number(),
     asset_category_id : z.coerce.number(),
     transaction_category_id : z.coerce.number(),
     category_code : z.coerce.number(),
@@ -431,6 +432,7 @@ export async function writeLedgerDeatil(prevState: any, formData : FormData){
   })
   
   const data = {
+    ledger_id: formData.get("ledger_id"),
     asset_category_id: formData.get("asset_category_id"),
     transaction_category_id: formData.get("transaction_category_id"),
     category_code: formData.get("category_code"),
@@ -445,25 +447,8 @@ export async function writeLedgerDeatil(prevState: any, formData : FormData){
     console.log(result.error.flatten());
     return result.error.flatten();
   } else {
-    const session = await getSession();
-
-    const getUserLedger = await db.user_ledger.findFirst({
-      select : {
-        ledger_id : true
-      },      
-      where : {
-        user_id:session.id,
-        is_default : true
-      },
-    });
-    
-    if(!getUserLedger){
-      return;
-    }
-    const ledgerId = getUserLedger.ledger_id
-
     const ledgerDetailData = {
-      ledger_id : ledgerId,
+      ledger_id : result.data.ledger_id,
       asset_category_id : result.data.asset_category_id,
       transaction_category_id : result.data.transaction_category_id,
       category_code : result.data.category_code,
@@ -477,7 +462,7 @@ export async function writeLedgerDeatil(prevState: any, formData : FormData){
       data : ledgerDetailData
     });
 
-    redirect("/main");
+    redirect(`/ledger/${data.ledger_id}`);
   }
 }
 
@@ -690,7 +675,7 @@ export async function getLedgerDetails(ledger_id : number){
       },
     },        
   });
-  
+
   return ledgerDetails.map((detail) => ({
     id: detail.id,
     asset_category_id: detail.asset_category_id,

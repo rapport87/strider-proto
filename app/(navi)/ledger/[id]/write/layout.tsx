@@ -4,9 +4,7 @@ export default function WriteNaviLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>
-) {
-  
+}>) {
   return (
     <div>
         <WriteNavigation/>
