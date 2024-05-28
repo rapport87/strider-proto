@@ -3,7 +3,7 @@ import {z} from "zod";
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_ERR_MSG } from "@/app/lib/constants";
 import validator from "validator";
 import { SmsTokenProps } from "@/app/lib/defenitions";
-import { redirect } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import bcrypt from "bcrypt"
 import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
@@ -612,9 +612,25 @@ export async function inviteRequest(ledger_id : number, prg_code : number){
   }
 }
 
+export async function getLedger(ledger_id : number){
+  const ledger = await db.ledger.findUnique({
+    where: {
+      id : Number(ledger_id)
+    },
+    select: {
+      id : true,
+      ledger_name : true,
+      userLedger : {
+        select : {
+          user_id : true
+        },
+      }
+    }
+  })
+  return ledger;
+}
 
-
-export async function getLedger(){
+export async function getLedgers(){
   const user = await getSession();
   const ledger = await db.user_ledger.findMany({
     where: {
@@ -689,33 +705,36 @@ export async function getLedgerDetails(ledger_id : number){
   }));
 }
 
-// export async function getUserCategory(selectedCategoryId? : number) {
-//   const session = await getSession();
-//   if (session.id) {
+export async function updateLedger(prevState: any, formData : FormData){
+  const session = await getSession();
+  const formSchema = z.object({
+    ledger_name : z.string({
+      invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
+      required_error:"가계부 이름은 필수입니다."})
+      .min(1)
+      .trim(),
 
-//     const whereClause: {
-//       user_id: number;
-//       parent_id?: number | null;
-//     } = {
-//       user_id: session.id,
-//     };
+    ledger_id : z.coerce.number(),
+  });
 
-//     if (selectedCategoryId !== undefined) {
-//       whereClause.parent_id = selectedCategoryId;
-//     }
+  const data = {
+    ledger_name : formData.get("ledger_name"),
+    ledger_id : formData.get("ledger_id")
+  };
 
-//     const category = await db.user_category.findMany({
-//       select : {
-//         id : true,
-//         parent_id : true,
-//         category_code : true,
-//         category_name : true,
-//       },
-//       where: whereClause
-//     });
-//     if (category) {
-//       return category;
-//     }
-//   }
-//   notFound();
-// }
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    const ledger = await db.ledger.update({
+        where : {
+          id : result.data.ledger_id
+        },
+        data : {
+          ledger_name : result.data.ledger_name,
+        }
+    });
+    redirect("/ledger");
+    
+  }
+}
