@@ -771,3 +771,21 @@ export async function setDefaultLedger(ledger_id : number){
     
     redirect("/ledger"); 
 }
+
+export async function deleteLedger(ledger_id : number){
+  const user = await getSession();
+    try{
+      await db.user_ledger.delete({
+        where : {
+          user_id_ledger_id : {
+            user_id : user.id,
+            ledger_id : ledger_id,
+          },          
+        }
+      });
+    }catch(error){
+      return { message : '가계부 삭제에 실패했습니다'}
+    }
+    
+    redirect("/ledger"); 
+}

@@ -4,8 +4,9 @@ import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { updateLedger } from "@/app/lib/actions";
-import { SetDefaultLedger } from "../invite/default/SetDefaultLedger";
+import { SetDefaultLedger } from "./SetDefaultLedger";
 import getSession from "@/app/lib/session";
+import { DeleteLedger } from "./DeleteLedger";
 
 interface User {
   user_id : number;
@@ -43,7 +44,16 @@ export default function EditLedger({user_id, ledger} : {user_id : number, ledger
             text="가계부 수정하기"
         />
       </form>
-      {isDefaultLedger && <SetDefaultLedger ledger_id={ledger.id}/>}
+      {isDefaultLedger &&
+      <div className="flex mt-1">
+        <div className="mr-auto">
+          <SetDefaultLedger ledger_id={ledger.id}/>
+        </div>
+        <div>
+          <DeleteLedger ledger_id={ledger.id}/>
+        </div>
+      </div>
+      }
     </div>
   );
 }
