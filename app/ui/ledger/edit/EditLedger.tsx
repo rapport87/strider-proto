@@ -4,9 +4,13 @@ import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { updateLedger } from "@/app/lib/actions";
+import { SetDefaultLedger } from "../invite/default/SetDefaultLedger";
+import getSession from "@/app/lib/session";
 
 interface User {
   user_id : number;
+  is_owner : boolean;
+  is_default : boolean;
 }
 
 interface ledgerEditForm {
@@ -15,10 +19,12 @@ interface ledgerEditForm {
   userLedger : User[]
 }
 
-export default function EditLedger({ledger} : {ledger : ledgerEditForm}) {
+export default function EditLedger({user_id, ledger} : {user_id : number, ledger : ledgerEditForm}) {
   const [state, dispatch] = useFormState(updateLedger, null)
-  
+  const isDefaultLedger = ledger.userLedger.some(user => user.user_id === user_id && !user.is_default);
+
   return (
+    <div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input 
             name="ledger_name"
@@ -37,5 +43,7 @@ export default function EditLedger({ledger} : {ledger : ledgerEditForm}) {
             text="가계부 수정하기"
         />
       </form>
+      {isDefaultLedger && <SetDefaultLedger ledger_id={ledger.id}/>}
+    </div>
   );
 }

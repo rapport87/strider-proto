@@ -8,6 +8,7 @@ import bcrypt from "bcrypt"
 import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 
 export async function signUp(prevState: any, formData : FormData){
@@ -77,7 +78,7 @@ export async function signUp(prevState: any, formData : FormData){
         password : hashedPassword,
       }
     });
-    setDefaultLedger(user.id);
+    createDefaultLedger(user.id);
     copyCategory(user.id);
     const session = await getSession();
     session.id = user.id;
@@ -395,7 +396,7 @@ export async function getUser() {
   notFound();
 }
 
-export async function setDefaultLedger(id : number){
+export async function createDefaultLedger(id : number){
   const ledger = await db.ledger.create({
     data: {
       ledger_name : "기본 가계부"
@@ -622,7 +623,9 @@ export async function getLedger(ledger_id : number){
       ledger_name : true,
       userLedger : {
         select : {
-          user_id : true
+          user_id : true,
+          is_owner : true,
+          is_default : true,
         },
       }
     }
@@ -734,7 +737,37 @@ export async function updateLedger(prevState: any, formData : FormData){
           ledger_name : result.data.ledger_name,
         }
     });
-    redirect("/ledger");
-    
+    redirect("/ledger"); 
   }
+}
+
+export async function setDefaultLedger(ledger_id : number){
+  const user = await getSession();
+    try{
+      await db.user_ledger.updateMany({
+        where : {
+          user_id : user.id,
+        },
+        data : {
+          is_default : false
+        }
+      });
+    }catch(error){
+      return { message : '기본 가계부 설정에 실패했습니다'}
+    }
+
+    try{
+      await db.user_ledger.updateMany({
+        where : {
+          ledger_id : ledger_id
+        },
+        data : {
+          is_default : true
+        }
+      });
+    }catch(error){
+      return { message : '기본 가계부 설정에 실패했습니다'}
+    }
+    
+    redirect("/ledger"); 
 }
