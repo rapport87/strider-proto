@@ -838,3 +838,36 @@ export async function revokeInviter(ledger_id : number, user_id : number){
     
     redirect("/ledger"); 
 }
+
+export async function transferLedger(ledger_id : number, user_id : number){
+  try{
+    await db.user_ledger.updateMany({
+      where : {
+        ledger_id : ledger_id
+      },
+      data : {
+        is_owner : false
+      }
+    });
+  }catch(error){
+    return { message : '가계부 권한 양도에 실패하였습니다'}
+  }
+  
+  try{
+    await db.user_ledger.update({
+      where : {
+        user_id_ledger_id : {
+          user_id : user_id,
+          ledger_id : ledger_id
+        }
+      },
+      data : {
+        is_owner : true
+      }
+    });
+  }catch(error){
+    return { message : '가계부 권한 양도에 실패하였습니다'}
+  }
+  
+  redirect("/ledger"); 
+}
