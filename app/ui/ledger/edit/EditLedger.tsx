@@ -7,9 +7,11 @@ import { updateLedger } from "@/app/lib/actions";
 import { SetDefaultLedger } from "./SetDefaultLedger";
 import getSession from "@/app/lib/session";
 import { DeleteLedger } from "./DeleteLedger";
+import LedgerUsers from "./LedgerUsers";
 
 interface User {
   user_id : number;
+  user_name : string;
   is_owner : boolean;
   is_default : boolean;
 }
@@ -54,6 +56,9 @@ export default function EditLedger({user_id, ledger} : {user_id : number, ledger
         </div>
       </div>
       }
+      <div>
+        <LedgerUsers user_id={user_id} ledger_id={ledger.id} userLedger={ledger.userLedger}/>
+      </div>
     </div>
   );
 }

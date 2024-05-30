@@ -613,24 +613,45 @@ export async function inviteRequest(ledger_id : number, prg_code : number){
   }
 }
 
-export async function getLedger(ledger_id : number){
+export async function getLedger(ledger_id: number) {
   const ledger = await db.ledger.findUnique({
     where: {
-      id : Number(ledger_id)
+      id: Number(ledger_id),
     },
     select: {
-      id : true,
-      ledger_name : true,
-      userLedger : {
-        select : {
-          user_id : true,
-          is_owner : true,
-          is_default : true,
+      id: true,
+      ledger_name: true,
+      userLedger: {
+        select: {
+          user_id: true,
+          is_owner: true,
+          is_default: true,
+          user: {
+            select: {
+              user_name: true,
+            },
+          },
         },
-      }
-    }
-  })
-  return ledger;
+      },
+    },
+  });
+
+  if (!ledger) {
+    return null;
+  }
+
+  const ledgerUsers = {
+    id: ledger.id,
+    ledger_name: ledger.ledger_name,
+    userLedger: ledger.userLedger.map((userLedger) => ({
+      user_id: userLedger.user_id,
+      is_owner: userLedger.is_owner,
+      is_default: userLedger.is_default,
+      user_name: userLedger.user.user_name,
+    })),
+  };
+
+  return ledgerUsers;
 }
 
 export async function getLedgers(){
@@ -785,6 +806,34 @@ export async function deleteLedger(ledger_id : number){
       });
     }catch(error){
       return { message : '가계부 삭제에 실패했습니다'}
+    }
+    
+    redirect("/ledger"); 
+}
+
+export async function revokeInviter(ledger_id : number, user_id : number){
+    try{
+      await db.user_ledger.delete({
+        where : {
+          user_id_ledger_id : {
+            user_id : user_id,
+            ledger_id : ledger_id,
+          },
+        }
+      });
+    }catch(error){
+      return { message : '사용자 추방에 실패했습니다'}
+    }
+
+    try{
+      await db.user_ledger_invite.create({
+        data: {
+          user_id : user_id,
+          ledger_id : ledger_id,
+        }
+      })
+    }catch(error){
+      return { message : '사용자 추방에 실패했습니다'}
     }
     
     redirect("/ledger"); 
