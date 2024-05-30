@@ -1,7 +1,7 @@
-import WriteUI from '@/app/ui/ledger/write/WriteUI';
+import CreateLedgerDetailForm from '@/app/ui/ledger/write/create-form';
 import { getUserCategory } from '@/app/lib/actions';
 
 export default async function Write() {
     const userCategory = await getUserCategory()
-    return <WriteUI category={userCategory} category_code={0} />;
+    return <CreateLedgerDetailForm category={userCategory} />;
 }

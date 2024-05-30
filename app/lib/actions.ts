@@ -515,29 +515,26 @@ export async function copyCategory(userId : number) {
   );
 }
 
-export async function getUserCategory(categoryCode? : number){
-  const session = await getSession();
-  if (session.id) {
-    const whereClause = {
-      user_id: session.id,
-      category_code: categoryCode !== undefined ? { in: [0, categoryCode] } : 0,
-    };
+export async function getUserCategory(){
+  const user = await getSession();
 
-    const category = await db.user_category.findMany({
-      select: {
-        id: true,
-        parent_id: true,
-        category_code: true,
-        category_name: true,
-        is_active: true
-      },
-      where: whereClause,
-    });
+  const category = await db.user_category.findMany({
+    select: {
+      id: true,
+      parent_id: true,
+      category_code: true,
+      category_name: true,
+      is_active: true
+    },
+    where: {
+      user_id : user.id
+    }
+  });
 
-    if (category) {
-      return category;
-    }    
-  }
+  if (category) {
+    return category;
+  }    
+  
   notFound();
 }
 

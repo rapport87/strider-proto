@@ -33,7 +33,7 @@ export default function NavigationUI({default_ledger_id} : NavigationUIProps) {
         )}
         <span>홈</span>
       </Link>
-      <Link href={`/ledger/${default_ledger_id}/write/income`} className="flex flex-col items-center gap-px">
+      <Link href={`/ledger/${default_ledger_id}/write`} className="flex flex-col items-center gap-px">
         {pathname.startsWith(`/ledger/${default_ledger_id}/write`) ? (
           <SolidPencilIcon className="w-7 h-7" />
         ) : (
