@@ -413,7 +413,7 @@ export async function createDefaultLedger(id : number){
   })
 }
 
-export async function writeLedgerDeatil(prevState: any, formData : FormData){
+export async function createLedgerDetail(prevState: any, formData : FormData){
   const formSchema = z.object({
     ledger_id : z.coerce.number(),
     asset_category_id : z.coerce.number(),
@@ -867,4 +867,92 @@ export async function transferLedger(ledger_id : number, user_id : number){
   }
   
   redirect("/ledger"); 
+}
+
+export async function getLedgerDetail(ledgerDetailId : number){
+  try{
+    const ledgerDetail = await db.ledger_detail.findUnique({
+      select : {
+        id : true,
+        ledger_id : true,
+        asset_category_id : true,
+        transaction_category_id : true,
+        category_code : true,
+        title : true,
+        detail : true,
+        price : true,
+        photo : true,
+        evented_at : true,
+      },
+      where : {
+        id : ledgerDetailId
+      }
+    })
+    return ledgerDetail
+  }catch(error){
+    throw new Error("가계부 내역 불러오기에 실패했습니다");
+  }
+} 
+
+export async function editLedgerDetail(prevState: any, formData : FormData){
+  const formSchema = z.object({
+    id : z.coerce.number(),
+    ledger_id : z.coerce.number(),
+    asset_category_id : z.coerce.number(),
+    transaction_category_id : z.coerce.number(),
+    category_code : z.coerce.number(),
+    title: z.string()
+    .trim()
+    .min(1, "제목은 1자 이상이어야 합니다."),
+
+    detail: z.string()
+    .trim()
+    .min(1),
+
+    price: z.coerce.number(),
+
+    evented_at: z.preprocess(
+      (val) => (typeof val === 'string' ? new Date(val) : val),
+      z.date()
+    ),
+  })
+  
+  const data = {
+    id : formData.get("id"),
+    ledger_id: formData.get("ledger_id"),
+    asset_category_id: formData.get("asset_category_id"),
+    transaction_category_id: formData.get("transaction_category_id"),
+    category_code: formData.get("category_code"),
+    title : formData.get("title"),
+    detail : formData.get("detail"),
+    price : formData.get("price"),
+    evented_at : formData.get("evented_at"),
+  }
+
+  const result = await formSchema.safeParseAsync(data);
+  if(!result.success){
+    console.log(result.error.flatten());
+    return result.error.flatten();
+  } else {
+    const ledgerDetailData = {
+      ledger_id : result.data.ledger_id,
+      asset_category_id : result.data.asset_category_id,
+      transaction_category_id : result.data.transaction_category_id,
+      category_code : result.data.category_code,
+      title : result.data.title,
+      detail : result.data.detail,
+      price : result.data.price,
+      evented_at: result.data.evented_at
+    }
+    console.log(`id : ${result.data.id}`);
+    console.log(`data : ${data.price}`);
+    await db.ledger_detail.update({
+    where : {
+      id : result.data.id
+    },
+    data : ledgerDetailData
+  });
+
+    redirect(`/ledger/${data.ledger_id}`);
+  }
 }

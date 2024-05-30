@@ -16,13 +16,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavigationUIProps {
-    default_ledger_id: number;
-  }
-  
+  default_ledger_id: number;
+}
 
-export default function NavigationUI({default_ledger_id} : NavigationUIProps) {
+export default function NavigationUI({ default_ledger_id }: NavigationUIProps) {
   const pathname = usePathname();
-  
+
   return (
     <div className="fixed bottom-0 w-full mx-auto max-w-screen-sm grid grid-cols-4 border-neutral-600 border-t px-5 py-3 *:text-white bg-green-600/90">
       <Link href="/main" className="flex flex-col items-center gap-px">
@@ -33,8 +32,13 @@ export default function NavigationUI({default_ledger_id} : NavigationUIProps) {
         )}
         <span>홈</span>
       </Link>
-      <Link href={`/ledger/${default_ledger_id}/write`} className="flex flex-col items-center gap-px">
-        {pathname.startsWith(`/ledger/${default_ledger_id}/write`) ? (
+      <Link
+        href={`/ledger/${default_ledger_id}/ledgerDetail/write`}
+        className="flex flex-col items-center gap-px"
+      >
+        {pathname.startsWith(
+          `/ledger/${default_ledger_id}/ledgerDetail/write`
+        ) ? (
           <SolidPencilIcon className="w-7 h-7" />
         ) : (
           <OutlinePencilIcon className="w-7 h-7" />

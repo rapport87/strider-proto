@@ -1,6 +1,6 @@
 "use client";
 
-import { writeLedgerDeatil } from "@/app/lib/actions";
+import { createLedgerDetail } from "@/app/lib/actions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useParams } from "next/navigation";
@@ -20,31 +20,56 @@ interface WriteProps {
 }
 
 export default function CreateLedgerDetailForm({ category }: WriteProps) {
-  const [state, dispatch] = useFormState(writeLedgerDeatil, null);
+  const [state, dispatch] = useFormState(createLedgerDetail, null);
   const params = useParams();
 
   const [selectedCategoryClass, setSelectedCategoryClass] = useState<number>(1);
   const [assetCategory, setAssetCategory] = useState<Category[]>([]);
-  const [transactionCategory, setTransactionCategory] = useState<Category[]>([]);
+  const [transactionCategory, setTransactionCategory] = useState<Category[]>(
+    []
+  );
 
   useEffect(() => {
     if (selectedCategoryClass !== null) {
-      const assetCategory = category.filter(cat => cat.category_code === 0 && cat.parent_id !== null && cat.is_active === true);
-      const transactionCategory = category.filter(cat => cat.category_code === selectedCategoryClass && cat.is_active === true);
+      const assetCategory = category.filter(
+        (cat) =>
+          cat.category_code === 0 &&
+          cat.parent_id !== null &&
+          cat.is_active === true
+      );
+      const transactionCategory = category.filter(
+        (cat) =>
+          cat.category_code === selectedCategoryClass && cat.is_active === true
+      );
       setAssetCategory(assetCategory);
       setTransactionCategory(transactionCategory);
     }
   }, [selectedCategoryClass, category]);
 
-  const handleCategoryClassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCategoryClassChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSelectedCategoryClass(Number(e.target.value));
   };
 
   return (
     <form action={dispatch}>
       <div>
-        <input type="radio" name="category_class" value="1" onChange={handleCategoryClassChange} defaultChecked /> 수입
-        <input type="radio" name="category_class" value="2" onChange={handleCategoryClassChange} /> 지출
+        <input
+          type="radio"
+          name="category_class"
+          value="1"
+          onChange={handleCategoryClassChange}
+          defaultChecked
+        />{" "}
+        수입
+        <input
+          type="radio"
+          name="category_class"
+          value="2"
+          onChange={handleCategoryClassChange}
+        />{" "}
+        지출
       </div>
 
       <div>
@@ -61,7 +86,11 @@ export default function CreateLedgerDetailForm({ category }: WriteProps) {
 
       <div>
         <div>
-          <select className="w-full h-10" name="transaction_category_id" required>
+          <select
+            className="w-full h-10"
+            name="transaction_category_id"
+            required
+          >
             {transactionCategory.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.category_name}
@@ -103,14 +132,10 @@ export default function CreateLedgerDetailForm({ category }: WriteProps) {
       />
       <input
         name="category_code"
-        value={selectedCategoryClass || ''}
+        value={selectedCategoryClass || ""}
         type="hidden"
       />
-      <input
-        name="ledger_id"
-        value={params.id}
-        type="hidden"
-      />      
+      <input name="ledger_id" value={params.id} type="hidden" />
       <Button text="확인" />
     </form>
   );

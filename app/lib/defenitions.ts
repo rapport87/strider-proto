@@ -36,6 +36,19 @@ export interface ListInvitedLedgerProps{
     ledger_name : string;
 }
 
+export interface LedgerDetailProps{
+    id : number;
+    ledger_id : number;
+    asset_category_id : number;
+    transaction_category_id : number;
+    category_code : number;
+    title : string;
+    detail : string | null;
+    price : number;
+    photo : string | null;
+    evented_at : Date;
+}
+
 export interface ListLedgerDetailProps{
     id : number | undefined;
     category_code : number;
