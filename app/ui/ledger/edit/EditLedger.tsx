@@ -5,7 +5,6 @@ import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { updateLedger } from "@/app/lib/actions";
 import { SetDefaultLedger } from "./SetDefaultLedger";
-import getSession from "@/app/lib/session";
 import { DeleteLedger } from "./DeleteLedger";
 import LedgerUsers from "./LedgerUsers";
 

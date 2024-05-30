@@ -35,5 +35,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-app/ui/write/WriteUI copy.tsx
 prisma/migrations
+app/ui/ledger/write/WriteUI copy.tsx

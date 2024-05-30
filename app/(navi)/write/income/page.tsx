@@ -1,4 +1,4 @@
-import WriteUI from '@/app/ui/write/WriteUI';
+import WriteUI from '@/app/ui/ledger/write/WriteUI';
 import { getUserCategory } from '@/app/lib/actions';
 
 export default async function income(){

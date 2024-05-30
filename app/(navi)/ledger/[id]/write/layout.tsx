@@ -1,4 +1,4 @@
-import WriteNavigation from "@/app/ui/write/write_navigation";
+import WriteNavigation from "@/app/ui/ledger/write/write_navigation";
 
 export default function WriteNaviLayout({
   children,
