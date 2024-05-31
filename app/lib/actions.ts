@@ -459,6 +459,8 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
       evented_at: new Date(Date.now())
     }
 
+    console.log(data);
+
     await db.ledger_detail.create({
       data : ledgerDetailData
     });
@@ -955,4 +957,18 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
 
     redirect(`/ledger/${data.ledger_id}`);
   }
+}
+
+export async function deleteLedgerDetail(ledger_id : number, ledger_detail_id : number){
+    try{
+      await db.ledger_detail.delete({
+        where : {
+          id : ledger_detail_id
+        }
+      });
+    }catch(error){
+      return { message : '가계부 내역 삭제에 실패했습니다'}
+    }
+    
+    redirect(`/ledger/${ledger_id}`);
 }

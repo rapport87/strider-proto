@@ -135,7 +135,7 @@ export default function CreateLedgerDetailForm({ category }: WriteProps) {
         value={selectedCategoryClass || ""}
         type="hidden"
       />
-      <input name="ledger_id" value={params.id} type="hidden" />
+      <input name="ledger_id" value={params.ledgerId} type="hidden" />
       <Button text="확인" />
     </form>
   );

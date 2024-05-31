@@ -7,6 +7,7 @@ import Input from "@/app/ui/components/input";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import DeleteLedgerDetail from "./DeleteLedgerDetail";
 
 interface Category {
   id: number;
@@ -60,102 +61,110 @@ export default function EditLedgerDetailForm({
   const eventedAt = new Date(ledgerDetail.evented_at);
 
   return (
-    <form action={dispatch}>
-      <div>
-        <input
-          type="radio"
-          name="category_class"
-          value="1"
-          onChange={handleCategoryClassChange}
-          defaultChecked={selectedCategoryClass === 1}
-        />{" "}
-        수입
-        <input
-          type="radio"
-          name="category_class"
-          value="2"
-          onChange={handleCategoryClassChange}
-          defaultChecked={selectedCategoryClass === 2}
-        />{" "}
-        지출
-      </div>
-
-      <div>
+    <div>
+      <form action={dispatch}>
         <div>
-          <select
-            className="w-full h-10"
-            name="asset_category_id"
-            required
-            defaultValue={ledgerDetail.asset_category_id}
-          >
-            {assetCategory.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.category_name}
-              </option>
-            ))}
-          </select>
+          <input
+            type="radio"
+            name="category_class"
+            value="1"
+            onChange={handleCategoryClassChange}
+            defaultChecked={selectedCategoryClass === 1}
+          />{" "}
+          수입
+          <input
+            type="radio"
+            name="category_class"
+            value="2"
+            onChange={handleCategoryClassChange}
+            defaultChecked={selectedCategoryClass === 2}
+          />{" "}
+          지출
         </div>
-      </div>
 
-      <div>
         <div>
-          <select
-            className="w-full h-10"
-            name="transaction_category_id"
-            required
-            defaultValue={ledgerDetail.transaction_category_id}
-          >
-            {transactionCategory.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.category_name}
-              </option>
-            ))}
-          </select>
+          <div>
+            <select
+              className="w-full h-10"
+              name="asset_category_id"
+              required
+              defaultValue={ledgerDetail.asset_category_id}
+            >
+              {assetCategory.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.category_name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
 
-      <Input
-        name="title"
-        type="text"
-        placeholder="title"
-        required={true}
-        minLength={1}
-        errors={state?.fieldErrors.title}
-        defaultValue={ledgerDetail.title}
-      />
-      <Input
-        name="detail"
-        type="text"
-        placeholder="detail"
-        required={true}
-        minLength={1}
-        errors={state?.fieldErrors.detail}
-        defaultValue={ledgerDetail.detail || ""}
-      />
-      <Input
-        name="price"
-        type="number"
-        placeholder="price"
-        required={true}
-        minLength={1}
-        errors={state?.fieldErrors.price}
-        defaultValue={ledgerDetail.price}
-      />
-      <Input
-        name="evented_at"
-        type="datetime-local"
-        placeholder="evented_at"
-        errors={state?.fieldErrors.evented_at}
-        defaultValue={eventedAt.toISOString().slice(0, 16)}
-      />
-      <input
-        name="category_code"
-        value={selectedCategoryClass || ""}
-        type="hidden"
-      />
-      <input name="id" value={ledgerDetail.id} type="hidden" />
-      <input name="ledger_id" value={ledgerDetail.ledger_id} type="hidden" />
-      <Button text="확인" />
-    </form>
+        <div>
+          <div>
+            <select
+              className="w-full h-10"
+              name="transaction_category_id"
+              required
+              defaultValue={ledgerDetail.transaction_category_id}
+            >
+              {transactionCategory.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.category_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <Input
+          name="title"
+          type="text"
+          placeholder="title"
+          required={true}
+          minLength={1}
+          errors={state?.fieldErrors.title}
+          defaultValue={ledgerDetail.title}
+        />
+        <Input
+          name="detail"
+          type="text"
+          placeholder="detail"
+          required={true}
+          minLength={1}
+          errors={state?.fieldErrors.detail}
+          defaultValue={ledgerDetail.detail || ""}
+        />
+        <Input
+          name="price"
+          type="number"
+          placeholder="price"
+          required={true}
+          minLength={1}
+          errors={state?.fieldErrors.price}
+          defaultValue={ledgerDetail.price}
+        />
+        <Input
+          name="evented_at"
+          type="datetime-local"
+          placeholder="evented_at"
+          errors={state?.fieldErrors.evented_at}
+          defaultValue={eventedAt.toISOString().slice(0, 16)}
+        />
+        <input
+          name="category_code"
+          value={selectedCategoryClass || ""}
+          type="hidden"
+        />
+        <input name="id" value={ledgerDetail.id} type="hidden" />
+        <input name="ledger_id" value={ledgerDetail.ledger_id} type="hidden" />
+        <Button text="확인" />
+      </form>
+      <div className="text-right mt-1">
+        <DeleteLedgerDetail
+          ledger_id={ledgerDetail.ledger_id}
+          ledger_detail_id={ledgerDetail.id}
+        />
+      </div>
+    </div>
   );
 }
