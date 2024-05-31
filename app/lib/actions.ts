@@ -972,3 +972,45 @@ export async function deleteLedgerDetail(ledger_id : number, ledger_detail_id : 
     
     redirect(`/ledger/${ledger_id}`);
 }
+
+export async function createCategory(prevState: any, formData : FormData){
+  const session = await getSession();
+  const formSchema = z.object({
+    parent_id: z.preprocess(
+      (val) => (val === 'null' || val === null ? null : Number(val)),
+      z.number().nullable()
+    ),
+    category_name : z.string({
+      invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
+      required_error:"카테고리 이름은 필수입니다."})
+      .min(1)
+      .trim(),
+    category_code : z.coerce.number(),
+  });
+
+  const data = {
+    parent_id : formData.get("parent_id"),
+    user_id : session.id,
+    category_name : formData.get("category_name"),
+    category_code : formData.get("category_code"),
+  }
+
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    try{
+      await db.user_category.create({
+        data: {
+          parent_id : result.data.parent_id,
+          user_id : data.user_id,
+          category_name : result.data.category_name,
+          category_code : result.data.category_code
+        }
+      });
+    }catch(error){
+      throw new Error("카테고리 생성에 실패했습니다");
+    }
+    revalidatePath("/ledger/create-category");    
+  }
+}

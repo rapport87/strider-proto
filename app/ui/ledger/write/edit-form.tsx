@@ -25,7 +25,6 @@ export default function EditLedgerDetailForm({
   ledgerDetail: LedgerDetailProps;
 }) {
   const [state, dispatch] = useFormState(editLedgerDetail, null);
-  const params = useParams();
 
   const [selectedCategoryClass, setSelectedCategoryClass] = useState<number>(
     ledgerDetail.category_code
