@@ -517,21 +517,40 @@ export async function copyCategory(userId : number) {
   );
 }
 
-export async function getUserCategory(){
+export async function getUserCategory(category_id?: number){
   const user = await getSession();
 
-  const category = await db.user_category.findMany({
-    select: {
-      id: true,
-      parent_id: true,
-      category_code: true,
-      category_name: true,
-      is_active: true
-    },
-    where: {
-      user_id : user.id
-    }
-  });
+  const selectFields = {
+    id: true,
+    parent_id: true,
+    category_code: true,
+    category_name: true,
+    is_active: true,
+  };
+
+  let category;
+
+  if (category_id !== undefined) {
+    category = await db.user_category.findUnique({
+      select: selectFields,
+      where: {
+        id: category_id,
+        is_active : true
+      },
+    });
+
+    if (category) {
+      return [category];
+    }    
+  } else {
+    category = await db.user_category.findMany({
+      select: selectFields,
+      where: {
+        user_id: user.id,
+        is_active : true
+      },
+    });
+  }
 
   if (category) {
     return category;
@@ -1011,6 +1030,59 @@ export async function createCategory(prevState: any, formData : FormData){
     }catch(error){
       throw new Error("카테고리 생성에 실패했습니다");
     }
-    revalidatePath("/ledger/create-category");    
+    revalidatePath("/user/category/create-category");    
   }
+}
+
+export async function editCategory(prevState: any, formData : FormData){
+  const formSchema = z.object({
+    category_id : z.coerce.number(),
+    category_name : z.string({
+      invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
+      required_error:"카테고리 이름은 필수입니다."})
+      .min(1)
+      .trim(),
+  });
+
+  const data = {
+    category_id : formData.get("category_id"),
+    category_name : formData.get("category_name"),
+  }
+
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    try{
+      await db.user_category.update({
+        data: {
+          category_name : result.data.category_name,
+        },
+        where : {
+          id : result.data.category_id
+        }
+      });
+    }catch(error){
+      throw new Error("카테고리 수정에 실패했습니다");
+    }
+    redirect(`/user/category/`);    
+  }
+}
+
+
+export async function deleteCategory(user_category_id : number){
+  try{
+    await db.user_category.update({
+      data: {
+        is_active : false,
+      },
+      where : {
+        id : user_category_id
+      }
+    })
+  }catch(error){
+    return { message : '가계부 내역 삭제에 실패했습니다'}
+  }
+  
+  revalidatePath(`/user/category/`);    
 }

@@ -1,4 +1,4 @@
-import CreateCategoryForm from "@/app/ui/ledger/create-category/create-form";
+import CreateCategoryForm from "@/app/ui/user/category/create-form";
 import { getUserCategory } from "@/app/lib/actions";
 
 export default async function CreateCategory() {

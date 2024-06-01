@@ -53,8 +53,8 @@ export default function NavigationUI({ default_ledger_id }: NavigationUIProps) {
         )}
         <span>가계부</span>
       </Link>
-      <Link href="/profile" className="flex flex-col items-center gap-px">
-        {pathname === "/profile" ? (
+      <Link href="/user" className="flex flex-col items-center gap-px">
+        {pathname === "/user" ? (
           <SolidUserIcon className="w-7 h-7" />
         ) : (
           <OutlineUserIcon className="w-7 h-7" />

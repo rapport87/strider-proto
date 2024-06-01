@@ -23,11 +23,6 @@ export default async function ledger() {
             <InviteListLedger key={inviteList.id} {...inviteList} />
           ))
         : ""}
-      <Link href="/ledger/create-category">
-        <button className="rounded-md border p-2 text-black hover:bg-gray-100">
-          카테고리 생성
-        </button>
-      </Link>
     </div>
   );
 }
