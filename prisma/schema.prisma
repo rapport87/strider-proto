@@ -9,26 +9,29 @@ datasource db {
 }
 
 model user {
-  id            Int             @id @default(autoincrement())
-  email         String?         @unique @db.VarChar(100)
-  password      String          @db.VarChar(100)
-  user_name     String          @unique @db.VarChar(32)
-  phone         String?         @db.VarChar(11)
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
-  user_category user_category[]
-  user_ledger   user_ledger[]
+  id                  Int                   @id @default(autoincrement())
+  email               String?               @unique @db.VarChar(100)
+  password            String                @db.VarChar(100)
+  user_name           String                @unique @db.VarChar(32)
+  phone               String?               @db.VarChar(11)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  user_category       user_category[]
+  user_ledger         user_ledger[]
+  user_category_group user_category_group[]
 }
 
 model user_ledger {
-  user_id    Int
-  ledger_id  Int
-  is_default Boolean  @default(false)
-  is_owner   Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  user       user     @relation(fields: [user_id], references: [id])
-  ledger     ledger   @relation(fields: [ledger_id], references: [id])
+  user_id                   Int
+  ledger_id                 Int
+  user_category_group_id    Int
+  is_default                Boolean  @default(false)
+  is_owner                  Boolean  @default(false)
+  created_at                DateTime @default(now())
+  updated_at                DateTime @updatedAt
+  user                      user     @relation(fields: [user_id], references: [id])
+  ledger                    ledger   @relation(fields: [ledger_id], references: [id])
+  user_category_group_relId Int?
 
   @@id([user_id, ledger_id])
 }
@@ -51,7 +54,6 @@ model ledger {
   ledger_name      String               @db.VarChar(32)
   created_at       DateTime             @default(now())
   updated_at       DateTime             @updatedAt
-  ledger_category  ledger_category[]
   userLedger       user_ledger[]
   ledger_detail    ledger_detail[]
   userLedgerInvite user_ledger_invite[]
@@ -87,30 +89,39 @@ model category {
 }
 
 model user_category {
-  id                  Int               @id @default(autoincrement())
-  parent_id           Int?
-  user_id             Int
-  category_name       String            @db.VarChar(32)
-  category_code       Int
-  created_at          DateTime          @default(now())
-  updated_at          DateTime          @updatedAt
-  is_active           Boolean           @default(true)
-  user                user              @relation(fields: [user_id], references: [id])
-  ledger_category     ledger_category[]
-  parent              user_category?    @relation("CategoryToSubcategories", fields: [parent_id], references: [id])
-  subcategories       user_category[]   @relation("CategoryToSubcategories")
-  asset_details       ledger_detail[]   @relation("AssetCategoryRelation")
-  transaction_details ledger_detail[]   @relation("TransactionCategoryRelation")
+  id                      Int                       @id @default(autoincrement())
+  parent_id               Int?
+  user_id                 Int
+  category_name           String                    @db.VarChar(32)
+  category_code           Int
+  is_active               Boolean                   @default(true)
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+  user                    user                      @relation(fields: [user_id], references: [id])
+  parent                  user_category?            @relation("CategoryToSubcategories", fields: [parent_id], references: [id])
+  subcategories           user_category[]           @relation("CategoryToSubcategories")
+  asset_details           ledger_detail[]           @relation("AssetCategoryRelation")
+  transaction_details     ledger_detail[]           @relation("TransactionCategoryRelation")
+  user_category_group_rel user_category_group_rel[]
 }
 
-model ledger_category {
-  ledger_id        Int
-  user_category_id Int
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
-  ledger           ledger         @relation(fields: [ledger_id], references: [id])
-  user_category    user_category? @relation(fields: [user_category_id], references: [id])
-  categoryId       Int?
+model user_category_group {
+  id                      Int                       @id @default(autoincrement())
+  user_id                 Int
+  category_group_name     String                    @db.VarChar(32)
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+  user                    user                      @relation(fields: [user_id], references: [id])
+  user_category_group_rel user_category_group_rel[]
+}
 
-  @@id([ledger_id])
+model user_category_group_rel {
+  category_group_id   Int
+  user_category_id    Int
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  user_category       user_category       @relation(fields: [user_category_id], references: [id])
+  user_category_group user_category_group @relation(fields: [category_group_id], references: [id])
+
+  @@id([category_group_id, user_category_id])
 }

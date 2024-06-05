@@ -78,12 +78,15 @@ export async function signUp(prevState: any, formData : FormData){
         password : hashedPassword,
       }
     });
-    createDefaultLedger(user.id);
+    
     copyCategory(user.id);
+    const category_group_id = await createDefaultCategoryGroup(user.id);
+    createDefaultLedger(user.id, category_group_id);
+    
     const session = await getSession();
     session.id = user.id;
     await session.save();
-    redirect("/profile");
+    redirect("/user");
   }
 }  
 
@@ -225,7 +228,7 @@ export async function inviteUser(prevState: any, formData : FormData){
   }
 }
 
-export async function craeteLedger(prevState: any, formData : FormData){
+export async function createLedger(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
     ledger_name : z.string({
@@ -233,10 +236,13 @@ export async function craeteLedger(prevState: any, formData : FormData){
       required_error:"가계부 이름은 필수입니다."})
       .min(1)
       .trim(),
+
+    user_category_group_id : z.coerce.number(),
   });
 
   const data = {
     ledger_name : formData.get("ledger_name"),
+    user_category_group_id : formData.get("user_category_group_id"),
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -248,17 +254,18 @@ export async function craeteLedger(prevState: any, formData : FormData){
         ledger_name : result.data.ledger_name,
       }
     });
-    createUserLedger(session.id, ledger.id, false, true);
+    createUserLedger(session.id, ledger.id, result.data.user_category_group_id, false, true);
     redirect("/ledger");
     
   }
 }
 
-async function createUserLedger(user_id : number, ledger_id : number, is_default : boolean, is_owner : boolean){
+async function createUserLedger(user_id : number, ledger_id : number, user_category_group_id : number, is_default : boolean, is_owner : boolean){
   await db.user_ledger.create({
     data: { 
       user_id : user_id,
       ledger_id : ledger_id,
+      user_category_group_id : user_category_group_id,
       is_default : is_default,
       is_owner : is_owner
     }
@@ -319,7 +326,7 @@ export async function login(prevState: any, formData : FormData){
       const session = await getSession();
       session.id = user!.id;
       session.save();
-      redirect("/profile");
+      redirect("/user");
     } else {
       ctx.addIssue({
         code: "custom",
@@ -396,7 +403,7 @@ export async function getUser() {
   notFound();
 }
 
-export async function createDefaultLedger(id : number){
+export async function createDefaultLedger(user_id : number, user_category_group_id : number){
   const ledger = await db.ledger.create({
     data: {
       ledger_name : "기본 가계부"
@@ -405,12 +412,44 @@ export async function createDefaultLedger(id : number){
 
   await db.user_ledger.create({
     data: { 
-      user_id : id,
+      user_id : user_id,
       ledger_id : ledger.id,
+      user_category_group_id : user_category_group_id,
       is_default : true,
       is_owner : true,
     }
   })
+}
+
+export async function createDefaultCategoryGroup(id : number){
+  const category_group = await db.user_category_group.create({
+    data: {
+      user_id : id,
+      category_group_name : "기본 카테고리 그룹",
+    }
+  });
+
+  const user_category = await db.user_category.findMany({
+    select : {
+      id : true,
+    },
+    where: {
+      user_id: id,
+    },
+  });
+
+  await Promise.all(
+    user_category.map(async (category) => {
+      await db.user_category_group_rel.create({
+        data: {
+          category_group_id: category_group.id,
+          user_category_id: category.id,
+        },
+      });
+    })
+  );  
+
+  return category_group.id
 }
 
 export async function createLedgerDetail(prevState: any, formData : FormData){
@@ -622,12 +661,26 @@ export async function inviteRequest(ledger_id : number, prg_code : number){
   });
 
   if(prg_code === 1){
-    await db.user_ledger.create({
-      data : {
-        user_id : user.id,
+
+    const user_ledger = await db.user_ledger.findFirst({
+      where : {
         ledger_id : ledger_id,
+        is_owner : true
+      },
+      select : {
+        user_category_group_id : true
       }
-    });    
+    })
+
+    if (user_ledger){
+      await db.user_ledger.create({
+        data : {
+          user_id : user.id,
+          ledger_id : ledger_id,
+          user_category_group_id : user_ledger.user_category_group_id
+        }
+      });
+    }    
   }
 }
 
