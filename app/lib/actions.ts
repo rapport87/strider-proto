@@ -425,7 +425,7 @@ export async function createDefaultCategoryGroup(id : number){
   const category_group = await db.user_category_group.create({
     data: {
       user_id : id,
-      category_group_name : "기본 카테고리 그룹",
+      category_group_name : "기본 카테고리",
     }
   });
 
@@ -1138,4 +1138,19 @@ export async function deleteCategory(user_category_id : number){
   }
   
   revalidatePath(`/user/category/`);    
+}
+
+export async function getCategoryGroup(){
+  const user = await getSession();
+  const category_group = await db.user_category_group.findMany({
+    select : {
+      id : true,
+      category_group_name : true,
+    },
+    where : {
+      user_id : user.id,
+    }
+  })
+
+  return category_group
 }
