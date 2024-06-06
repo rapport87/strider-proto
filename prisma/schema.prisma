@@ -24,7 +24,6 @@ model user {
 model user_ledger {
   user_id                   Int
   ledger_id                 Int
-  user_category_group_id    Int
   is_default                Boolean  @default(false)
   is_owner                  Boolean  @default(false)
   created_at                DateTime @default(now())
@@ -50,13 +49,14 @@ model user_ledger_invite {
 }
 
 model ledger {
-  id               Int                  @id @default(autoincrement())
-  ledger_name      String               @db.VarChar(32)
-  created_at       DateTime             @default(now())
-  updated_at       DateTime             @updatedAt
-  userLedger       user_ledger[]
-  ledger_detail    ledger_detail[]
-  userLedgerInvite user_ledger_invite[]
+  id                     Int                  @id @default(autoincrement())
+  ledger_name            String               @db.VarChar(32)
+  user_category_group_id Int
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+  userLedger             user_ledger[]
+  ledger_detail          ledger_detail[]
+  userLedgerInvite       user_ledger_invite[]
 }
 
 model ledger_detail {
@@ -116,12 +116,12 @@ model user_category_group {
 }
 
 model user_category_group_rel {
-  category_group_id   Int
-  user_category_id    Int
-  created_at          DateTime            @default(now())
-  updated_at          DateTime            @updatedAt
-  user_category       user_category       @relation(fields: [user_category_id], references: [id])
-  user_category_group user_category_group @relation(fields: [category_group_id], references: [id])
+  user_category_group_id Int
+  user_category_id       Int
+  created_at             DateTime            @default(now())
+  updated_at             DateTime            @updatedAt
+  user_category          user_category       @relation(fields: [user_category_id], references: [id])
+  user_category_group    user_category_group @relation(fields: [user_category_group_id], references: [id])
 
-  @@id([category_group_id, user_category_id])
+  @@id([user_category_group_id, user_category_id])
 }

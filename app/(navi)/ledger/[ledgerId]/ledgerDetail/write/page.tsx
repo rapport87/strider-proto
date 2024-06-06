@@ -1,7 +1,11 @@
 import CreateLedgerDetailForm from "@/app/ui/ledger/write/create-form";
-import { getUserCategory } from "@/app/lib/actions";
+import { getUserCategoryByLedgerId } from "@/app/lib/actions";
 
-export default async function WriteLedgerDetail() {
-  const userCategory = await getUserCategory();
+export default async function WriteLedgerDetail({
+  params,
+}: {
+  params: { ledgerId: number };
+}) {
+  const userCategory = await getUserCategoryByLedgerId(params.ledgerId);
   return <CreateLedgerDetailForm category={userCategory} />;
 }

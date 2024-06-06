@@ -79,9 +79,9 @@ export async function signUp(prevState: any, formData : FormData){
       }
     });
     
-    copyCategory(user.id);
-    const category_group_id = await createDefaultCategoryGroup(user.id);
-    createDefaultLedger(user.id, category_group_id);
+    await copyCategory(user.id);
+    const user_category_group_id = await createDefaultCategoryGroup(user.id);
+    await createDefaultLedger(user.id, user_category_group_id);
     
     const session = await getSession();
     session.id = user.id;
@@ -252,20 +252,20 @@ export async function createLedger(prevState: any, formData : FormData){
     const ledger = await db.ledger.create({
       data: {
         ledger_name : result.data.ledger_name,
+        user_category_group_id : result.data.user_category_group_id
       }
     });
-    createUserLedger(session.id, ledger.id, result.data.user_category_group_id, false, true);
+    createUserLedger(session.id, ledger.id, false, true);
     redirect("/ledger");
     
   }
 }
 
-async function createUserLedger(user_id : number, ledger_id : number, user_category_group_id : number, is_default : boolean, is_owner : boolean){
+async function createUserLedger(user_id : number, ledger_id : number, is_default : boolean, is_owner : boolean){
   await db.user_ledger.create({
     data: { 
       user_id : user_id,
       ledger_id : ledger_id,
-      user_category_group_id : user_category_group_id,
       is_default : is_default,
       is_owner : is_owner
     }
@@ -406,7 +406,8 @@ export async function getUser() {
 export async function createDefaultLedger(user_id : number, user_category_group_id : number){
   const ledger = await db.ledger.create({
     data: {
-      ledger_name : "기본 가계부"
+      ledger_name : "기본 가계부",
+      user_category_group_id : user_category_group_id
     }
   });
 
@@ -414,7 +415,6 @@ export async function createDefaultLedger(user_id : number, user_category_group_
     data: { 
       user_id : user_id,
       ledger_id : ledger.id,
-      user_category_group_id : user_category_group_id,
       is_default : true,
       is_owner : true,
     }
@@ -422,7 +422,7 @@ export async function createDefaultLedger(user_id : number, user_category_group_
 }
 
 export async function createDefaultCategoryGroup(id : number){
-  const category_group = await db.user_category_group.create({
+  const user_category_group = await db.user_category_group.create({
     data: {
       user_id : id,
       category_group_name : "기본 카테고리",
@@ -442,14 +442,14 @@ export async function createDefaultCategoryGroup(id : number){
     user_category.map(async (category) => {
       await db.user_category_group_rel.create({
         data: {
-          category_group_id: category_group.id,
+          user_category_group_id: user_category_group.id,
           user_category_id: category.id,
         },
       });
     })
   );  
 
-  return category_group.id
+  return user_category_group.id
 }
 
 export async function createLedgerDetail(prevState: any, formData : FormData){
@@ -598,6 +598,46 @@ export async function getUserCategory(category_id?: number){
   notFound();
 }
 
+export async function getUserCategoryByLedgerId(ledger_id : number){
+  const user_category_group = await db.ledger.findUnique({
+    select : {
+      user_category_group_id : true,
+    },
+    where : { 
+      id : Number(ledger_id)
+    }
+  })
+
+  console.log(`Test Group Id is : ${user_category_group!.user_category_group_id}`);
+
+  if (!user_category_group) {
+    return notFound();
+  }    
+
+  const user_category_id = await db.user_category.findMany({
+    select: {
+      id: true,
+      parent_id: true,
+      category_code: true,
+      category_name: true,
+      is_active: true,
+    },
+    where: {
+      user_category_group_rel : {
+        some : {
+          user_category_group_id : Number(user_category_group!.user_category_group_id)
+        }
+      }
+    },
+  });
+
+  if (user_category_id) {
+    return user_category_id;
+  }    
+  
+  notFound();
+}
+
 export async function existsInvite(){
 //   SELECT t1.user_id, t1.ledger_id, t1.invite_prg_code, t1.created_at, t1.updated_at
 //     FROM user_ledger_invite t1
@@ -662,25 +702,12 @@ export async function inviteRequest(ledger_id : number, prg_code : number){
 
   if(prg_code === 1){
 
-    const user_ledger = await db.user_ledger.findFirst({
-      where : {
+    await db.user_ledger.create({
+      data : {
+        user_id : user.id,
         ledger_id : ledger_id,
-        is_owner : true
-      },
-      select : {
-        user_category_group_id : true
       }
-    })
-
-    if (user_ledger){
-      await db.user_ledger.create({
-        data : {
-          user_id : user.id,
-          ledger_id : ledger_id,
-          user_category_group_id : user_ledger.user_category_group_id
-        }
-      });
-    }    
+    });
   }
 }
 
