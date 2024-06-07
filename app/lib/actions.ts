@@ -719,6 +719,7 @@ export async function getLedger(ledger_id: number) {
     select: {
       id: true,
       ledger_name: true,
+      user_category_group_id : true,
       userLedger: {
         select: {
           user_id: true,
@@ -741,6 +742,7 @@ export async function getLedger(ledger_id: number) {
   const ledgerUsers = {
     id: ledger.id,
     ledger_name: ledger.ledger_name,
+    user_category_group_id: ledger.user_category_group_id,
     userLedger: ledger.userLedger.map((userLedger) => ({
       user_id: userLedger.user_id,
       is_owner: userLedger.is_owner,
@@ -837,23 +839,27 @@ export async function updateLedger(prevState: any, formData : FormData){
       .trim(),
 
     ledger_id : z.coerce.number(),
+
+    user_category_group_id : z.coerce.number(),
   });
 
   const data = {
     ledger_name : formData.get("ledger_name"),
-    ledger_id : formData.get("ledger_id")
+    ledger_id : formData.get("ledger_id"),
+    user_category_group_id : formData.get("user_category_group_id")
   };
 
   const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const ledger = await db.ledger.update({
+    await db.ledger.update({
         where : {
           id : result.data.ledger_id
         },
         data : {
           ledger_name : result.data.ledger_name,
+          user_category_group_id : result.data.user_category_group_id,
         }
     });
     redirect("/ledger"); 

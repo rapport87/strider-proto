@@ -30,7 +30,11 @@ export default function CreateLedger({ categoryGroup }: CategoryGroupProps) {
           errors={state?.fieldErrors.ledger_name}
         />
         <div>
-          <select className="w-full h-10" name="asset_category_id" required>
+          <select
+            className="w-full h-10"
+            name="user_category_group_id"
+            required
+          >
             {categoryGroup.map((catGrp) => (
               <option key={catGrp.id} value={catGrp.id}>
                 {catGrp.category_group_name}

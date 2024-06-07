@@ -9,54 +9,84 @@ import { DeleteLedger } from "./DeleteLedger";
 import LedgerUsers from "./LedgerUsers";
 
 interface User {
-  user_id : number;
-  user_name : string;
-  is_owner : boolean;
-  is_default : boolean;
+  user_id: number;
+  user_name: string;
+  is_owner: boolean;
+  is_default: boolean;
 }
 
 interface ledgerEditForm {
-  id : number;
-  ledger_name : string;
-  userLedger : User[]
+  id: number;
+  ledger_name: string;
+  user_category_group_id: number;
+  userLedger: User[];
 }
 
-export default function EditLedger({user_id, ledger} : {user_id : number, ledger : ledgerEditForm}) {
-  const [state, dispatch] = useFormState(updateLedger, null)
-  const isDefaultLedger = ledger.userLedger.some(user => user.user_id === user_id && !user.is_default);
+interface CategoryGroup {
+  id: number;
+  category_group_name: string;
+}
+
+interface EditLedgerProps {
+  user_id: number;
+  ledger: ledgerEditForm;
+  categoryGroup: CategoryGroup[];
+}
+
+export default function EditLedger({
+  user_id,
+  ledger,
+  categoryGroup,
+}: EditLedgerProps) {
+  const [state, dispatch] = useFormState(updateLedger, null);
+  const isDefaultLedger = ledger.userLedger.some(
+    (user) => user.user_id === user_id && !user.is_default
+  );
 
   return (
     <div>
       <form action={dispatch} className="flex flex-col gap-3">
-        <Input 
-            name="ledger_name"
-            type="text"
-            placeholder="가계부 이름"
-            defaultValue={ledger.ledger_name}
-            required={true}
-            errors={state?.fieldErrors.ledger_name}
+        <Input
+          name="ledger_name"
+          type="text"
+          placeholder="가계부 이름"
+          defaultValue={ledger.ledger_name}
+          required={true}
+          errors={state?.fieldErrors.ledger_name}
         />
-        <input
-            name="ledger_id"
-            value={ledger.id}
-            type="hidden"
-        />                
-        <Button
-            text="가계부 수정하기"
-        />
-      </form>
-      {isDefaultLedger &&
-      <div className="flex mt-1">
-        <div className="mr-auto">
-          <SetDefaultLedger ledger_id={ledger.id}/>
-        </div>
         <div>
-          <DeleteLedger ledger_id={ledger.id}/>
+          <select
+            className="w-full h-10"
+            name="user_category_group_id"
+            required
+            defaultValue={ledger.user_category_group_id}
+          >
+            {categoryGroup.map((catGrp) => (
+              <option key={catGrp.id} value={catGrp.id}>
+                {catGrp.category_group_name}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
-      }
+        <input name="ledger_id" value={ledger.id} type="hidden" />
+        <Button text="가계부 수정하기" />
+      </form>
+      {isDefaultLedger && (
+        <div className="flex mt-1">
+          <div className="mr-auto">
+            <SetDefaultLedger ledger_id={ledger.id} />
+          </div>
+          <div>
+            <DeleteLedger ledger_id={ledger.id} />
+          </div>
+        </div>
+      )}
       <div>
-        <LedgerUsers user_id={user_id} ledger_id={ledger.id} userLedger={ledger.userLedger}/>
+        <LedgerUsers
+          user_id={user_id}
+          ledger_id={ledger.id}
+          userLedger={ledger.userLedger}
+        />
       </div>
     </div>
   );

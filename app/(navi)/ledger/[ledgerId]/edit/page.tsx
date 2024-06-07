@@ -1,4 +1,4 @@
-import { getLedger, getUser } from "@/app/lib/actions";
+import { getCategoryGroup, getLedger, getUser } from "@/app/lib/actions";
 import getSession from "@/app/lib/session";
 import EditLedger from "@/app/ui/ledger/edit/EditLedger";
 import { notFound } from "next/navigation";
@@ -10,6 +10,7 @@ export default async function edit({
 }) {
   const id = params.ledgerId;
   const ledger = await getLedger(id);
+  const categoryGroup = await getCategoryGroup();
   const user_id = Number((await getSession()).id);
 
   if (!ledger) {
@@ -20,7 +21,11 @@ export default async function edit({
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">가계부 수정하기</h1>
       </div>
-      <EditLedger ledger={ledger} user_id={user_id} />
+      <EditLedger
+        ledger={ledger}
+        user_id={user_id}
+        categoryGroup={categoryGroup}
+      />
     </div>
   );
 }
