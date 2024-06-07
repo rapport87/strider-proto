@@ -261,6 +261,35 @@ export async function createLedger(prevState: any, formData : FormData){
   }
 }
 
+export async function createCategoryGroup(prevState: any, formData : FormData){
+  const session = await getSession();
+  const formSchema = z.object({
+    category_group_name : z.string({
+      invalid_type_error:"카테고리 그룹명은 문자로 입력되어야 합니다.", 
+      required_error:"카테고리 그룹명은 필수입니다."})
+      .min(1)
+      .trim(),
+  });
+
+  const data = {
+    category_group_name : formData.get("category_group_name"),
+  };
+
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    await db.user_category_group.create({
+      data: {
+        user_id : session.id,
+        category_group_name : result.data.category_group_name,
+      }
+    });
+    redirect("/ledger");
+    
+  }
+}
+
 async function createUserLedger(user_id : number, ledger_id : number, is_default : boolean, is_owner : boolean){
   await db.user_ledger.create({
     data: { 
@@ -607,8 +636,6 @@ export async function getUserCategoryByLedgerId(ledger_id : number){
       id : Number(ledger_id)
     }
   })
-
-  console.log(`Test Group Id is : ${user_category_group!.user_category_group_id}`);
 
   if (!user_category_group) {
     return notFound();
@@ -1187,3 +1214,47 @@ export async function getCategoryGroup(){
 
   return category_group
 }
+
+export async function getUserCategoryGroupRel() {
+  const user = await getSession();
+  const user_category_group_rel = await db.user_category_group_rel.findMany({
+    select: {
+      user_category_group_id: true,
+      user_category_id: true,
+    },
+    where: {
+      user_category_group : {
+        user_id : user.id
+      }
+    },
+  });
+
+  return user_category_group_rel;
+}
+
+export async function createUserCategoryGroupRel(
+  user_category_group_id: number,
+  user_category_id: number)  {
+  await db.user_category_group_rel.create({
+    data: {
+      user_category_id: user_category_id,
+      user_category_group_id: user_category_group_id,
+    },
+  });
+  revalidatePath("/user/category/category-group")
+};
+
+export async function deleteUserCategoryGroupRel(
+  user_category_group_id: number,
+  user_category_id: number
+){
+  await db.user_category_group_rel.delete({
+    where: {
+      user_category_group_id_user_category_id: {
+        user_category_id: user_category_id,
+        user_category_group_id: user_category_group_id,
+      },
+    },
+  });
+  revalidatePath("/user/category/category-group")
+};
