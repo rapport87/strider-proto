@@ -94,8 +94,7 @@ export async function inviteUser(prevState: any, formData : FormData){
   const CheckIsExistsLedger = async() => {
     const ledger_id = formData.get("ledger_id");
 
-    if (!ledger_id || isNaN(Number(ledger_id))) {
-      alert("잘못된 요청입니다");
+    if (!ledger_id) {
       redirect("/ledger");
     }
   }
@@ -110,7 +109,7 @@ export async function inviteUser(prevState: any, formData : FormData){
     return user?.id
   }
 
-  const checkInvitingUser = async ( user_id:number, ledger_id : number ) => {
+  const checkInvitingUser = async ( user_id: string, ledger_id : string ) => {
     const user = await db.user_ledger_invite.findFirst({
       select : { user_id : true, ledger_id : true, invite_prg_code: true },
       where : {
@@ -130,7 +129,7 @@ export async function inviteUser(prevState: any, formData : FormData){
       required_error:"사용자명은 필수입니다"})
       .min(1)
       .trim(),
-    ledger_id : z.coerce.number(),
+    ledger_id : z.string(),
   })
   // 가계부 주인 여부 조회
   .superRefine(async ({ledger_id}, ctx) => {
@@ -142,7 +141,7 @@ export async function inviteUser(prevState: any, formData : FormData){
       where : {
         user_id_ledger_id : {
           user_id : user.id,
-          ledger_id : Number(ledger_id),
+          ledger_id : ledger_id,
         },
         is_owner : true
       }
@@ -184,7 +183,7 @@ export async function inviteUser(prevState: any, formData : FormData){
       });
     } 
 
-    const inviting_user = await checkInvitingUser(invited_user_id as number, ledger_id)
+    const inviting_user = await checkInvitingUser(invited_user_id as string, ledger_id)
     if(inviting_user === 0 || inviting_user === 3){
       ctx.addIssue({
         code: "custom",
@@ -212,10 +211,10 @@ export async function inviteUser(prevState: any, formData : FormData){
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const user_id = await checkInvitedUser(result.data.user_name) as number;
+    const user_id = await checkInvitedUser(result.data.user_name);
 
     const inviteData = {
-      user_id : user_id,
+      user_id : user_id as string,
       ledger_id : result.data.ledger_id,
       invite_prg_code : 0
     }
@@ -237,7 +236,7 @@ export async function createLedger(prevState: any, formData : FormData){
       .min(1)
       .trim(),
 
-    user_category_group_id : z.coerce.number(),
+    user_category_group_id : z.string(),
   });
 
   const data = {
@@ -256,8 +255,8 @@ export async function createLedger(prevState: any, formData : FormData){
       }
     });
     createUserLedger(session.id, ledger.id, false, true);
+    revalidatePath("/ledger");
     redirect("/ledger");
-    
   }
 }
 
@@ -290,7 +289,7 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
   }
 }
 
-async function createUserLedger(user_id : number, ledger_id : number, is_default : boolean, is_owner : boolean){
+async function createUserLedger(user_id : string, ledger_id : string, is_default : boolean, is_owner : boolean){
   await db.user_ledger.create({
     data: { 
       user_id : user_id,
@@ -302,7 +301,7 @@ async function createUserLedger(user_id : number, ledger_id : number, is_default
 }
 
 
-async function changeDefaultLedger(user_id : number){
+async function changeDefaultLedger(user_id : string){
   await db.user_ledger.updateMany({
     where : {
       user_id : user_id,
@@ -432,7 +431,7 @@ export async function getUser() {
   notFound();
 }
 
-export async function createDefaultLedger(user_id : number, user_category_group_id : number){
+export async function createDefaultLedger(user_id : string, user_category_group_id : string){
   const ledger = await db.ledger.create({
     data: {
       ledger_name : "기본 가계부",
@@ -450,7 +449,7 @@ export async function createDefaultLedger(user_id : number, user_category_group_
   })
 }
 
-export async function createDefaultCategoryGroup(id : number){
+export async function createDefaultCategoryGroup(id : string){
   const user_category_group = await db.user_category_group.create({
     data: {
       user_id : id,
@@ -483,9 +482,9 @@ export async function createDefaultCategoryGroup(id : number){
 
 export async function createLedgerDetail(prevState: any, formData : FormData){
   const formSchema = z.object({
-    ledger_id : z.coerce.number(),
-    asset_category_id : z.coerce.number(),
-    transaction_category_id : z.coerce.number(),
+    ledger_id : z.string(),
+    asset_category_id : z.string(),
+    transaction_category_id : z.string(),
     category_code : z.coerce.number(),
     title: z.string()
     .trim()
@@ -495,7 +494,7 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
     .trim()
     .min(1),
 
-    price: z.coerce.number(),
+    price: z.coerce.bigint(),
 
     evented_at: z.date()
   })
@@ -527,8 +526,6 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
       evented_at: new Date(Date.now())
     }
 
-    console.log(data);
-
     await db.ledger_detail.create({
       data : ledgerDetailData
     });
@@ -538,7 +535,7 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
 }
 
   // 기본 상위 카테고리 데이터 조회
-export async function copyCategory(userId : number) {
+export async function copyCategory(userId : string) {
 
   // 기본 상위 카테고리 데이터 조회
   const parentCategories = await db.category.findMany({
@@ -585,7 +582,7 @@ export async function copyCategory(userId : number) {
   );
 }
 
-export async function getUserCategory(category_id?: number){
+export async function getUserCategory(category_id?: string){
   const user = await getSession();
 
   const selectFields = {
@@ -627,13 +624,13 @@ export async function getUserCategory(category_id?: number){
   notFound();
 }
 
-export async function getUserCategoryByLedgerId(ledger_id : number){
+export async function getUserCategoryByLedgerId(ledger_id : string){
   const user_category_group = await db.ledger.findUnique({
     select : {
       user_category_group_id : true,
     },
     where : { 
-      id : Number(ledger_id)
+      id : ledger_id
     }
   })
 
@@ -652,7 +649,7 @@ export async function getUserCategoryByLedgerId(ledger_id : number){
     where: {
       user_category_group_rel : {
         some : {
-          user_category_group_id : Number(user_category_group!.user_category_group_id)
+          user_category_group_id : user_category_group!.user_category_group_id
         }
       }
     },
@@ -717,7 +714,7 @@ export async function existsInvite(){
   }));
 }
 
-export async function inviteRequest(ledger_id : number, prg_code : number){
+export async function inviteRequest(ledger_id : string, prg_code : number){
   const user = await getSession();
   await db.user_ledger_invite.create({
     data : {
@@ -738,10 +735,10 @@ export async function inviteRequest(ledger_id : number, prg_code : number){
   }
 }
 
-export async function getLedger(ledger_id: number) {
+export async function getLedger(ledger_id: string) {
   const ledger = await db.ledger.findUnique({
     where: {
-      id: Number(ledger_id),
+      id: ledger_id,
     },
     select: {
       id: true,
@@ -804,7 +801,7 @@ export async function getLedgers(){
   }));  
 }
 
-export async function getLedgerDetails(ledger_id : number){
+export async function getLedgerDetails(ledger_id : string){
 //   SELECT ld.*
 //   FROM ledger_detail ld
 //  INNER JOIN ledger l ON l.id = ld.ledger_id
@@ -817,7 +814,7 @@ export async function getLedgerDetails(ledger_id : number){
   const user = await getSession();
   const ledgerDetails = await db.ledger_detail.findMany({
     where: {
-      ledger_id : Number(ledger_id),
+      ledger_id : ledger_id,
       ledger: {
         userLedger: {
           some: {
@@ -865,9 +862,9 @@ export async function updateLedger(prevState: any, formData : FormData){
       .min(1)
       .trim(),
 
-    ledger_id : z.coerce.number(),
+    ledger_id : z.string(),
 
-    user_category_group_id : z.coerce.number(),
+    user_category_group_id : z.string(),
   });
 
   const data = {
@@ -893,7 +890,7 @@ export async function updateLedger(prevState: any, formData : FormData){
   }
 }
 
-export async function setDefaultLedger(ledger_id : number){
+export async function setDefaultLedger(ledger_id : string){
   const user = await getSession();
     try{
       await db.user_ledger.updateMany({
@@ -924,7 +921,7 @@ export async function setDefaultLedger(ledger_id : number){
     redirect("/ledger"); 
 }
 
-export async function deleteLedger(ledger_id : number){
+export async function deleteLedger(ledger_id : string){
   const user = await getSession();
     try{
       await db.user_ledger.delete({
@@ -942,7 +939,7 @@ export async function deleteLedger(ledger_id : number){
     redirect("/ledger"); 
 }
 
-export async function revokeInviter(ledger_id : number, user_id : number){
+export async function revokeInviter(ledger_id : string, user_id : string){
     try{
       await db.user_ledger.delete({
         where : {
@@ -970,7 +967,7 @@ export async function revokeInviter(ledger_id : number, user_id : number){
     redirect("/ledger"); 
 }
 
-export async function transferLedger(ledger_id : number, user_id : number){
+export async function transferLedger(ledger_id : string, user_id : string){
   try{
     await db.user_ledger.updateMany({
       where : {
@@ -1003,7 +1000,7 @@ export async function transferLedger(ledger_id : number, user_id : number){
   redirect("/ledger"); 
 }
 
-export async function getLedgerDetail(ledgerDetailId : number){
+export async function getLedgerDetail(ledgerDetailId : string){
   try{
     const ledgerDetail = await db.ledger_detail.findUnique({
       select : {
@@ -1024,16 +1021,18 @@ export async function getLedgerDetail(ledgerDetailId : number){
     })
     return ledgerDetail
   }catch(error){
+    console.log(error);
+    console.log(`ledgerId is ==> ${ledgerDetailId}`);
     throw new Error("가계부 내역 불러오기에 실패했습니다");
   }
 } 
 
 export async function editLedgerDetail(prevState: any, formData : FormData){
   const formSchema = z.object({
-    id : z.coerce.number(),
-    ledger_id : z.coerce.number(),
-    asset_category_id : z.coerce.number(),
-    transaction_category_id : z.coerce.number(),
+    id : z.string(),
+    ledger_id : z.string(),
+    asset_category_id : z.string(),
+    transaction_category_id : z.string(),
     category_code : z.coerce.number(),
     title: z.string()
     .trim()
@@ -1043,7 +1042,7 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
     .trim()
     .min(1),
 
-    price: z.coerce.number(),
+    price: z.coerce.bigint(),
 
     evented_at: z.preprocess(
       (val) => (typeof val === 'string' ? new Date(val) : val),
@@ -1078,8 +1077,6 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
       price : result.data.price,
       evented_at: result.data.evented_at
     }
-    console.log(`id : ${result.data.id}`);
-    console.log(`data : ${data.price}`);
     await db.ledger_detail.update({
     where : {
       id : result.data.id
@@ -1091,7 +1088,7 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
   }
 }
 
-export async function deleteLedgerDetail(ledger_id : number, ledger_detail_id : number){
+export async function deleteLedgerDetail(ledger_id : string, ledger_detail_id : string){
     try{
       await db.ledger_detail.delete({
         where : {
@@ -1109,8 +1106,8 @@ export async function createCategory(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
     parent_id: z.preprocess(
-      (val) => (val === 'null' || val === null ? null : Number(val)),
-      z.number().nullable()
+      (val) => (val === 'null' || val === null ? null : val),
+      z.string().nullable()
     ),
     category_name : z.string({
       invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
@@ -1149,7 +1146,7 @@ export async function createCategory(prevState: any, formData : FormData){
 
 export async function editCategory(prevState: any, formData : FormData){
   const formSchema = z.object({
-    category_id : z.coerce.number(),
+    category_id : z.string(),
     category_name : z.string({
       invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
       required_error:"카테고리 이름은 필수입니다."})
@@ -1183,7 +1180,7 @@ export async function editCategory(prevState: any, formData : FormData){
 }
 
 
-export async function deleteCategory(user_category_id : number){
+export async function deleteCategory(user_category_id : string){
   try{
     await db.user_category.update({
       data: {
@@ -1233,8 +1230,8 @@ export async function getUserCategoryGroupRel() {
 }
 
 export async function createUserCategoryGroupRel(
-  user_category_group_id: number,
-  user_category_id: number)  {
+  user_category_group_id: string,
+  user_category_id: string)  {
   await db.user_category_group_rel.create({
     data: {
       user_category_id: user_category_id,
@@ -1245,8 +1242,8 @@ export async function createUserCategoryGroupRel(
 };
 
 export async function deleteUserCategoryGroupRel(
-  user_category_group_id: number,
-  user_category_id: number
+  user_category_group_id: string,
+  user_category_id: string
 ){
   await db.user_category_group_rel.delete({
     where: {

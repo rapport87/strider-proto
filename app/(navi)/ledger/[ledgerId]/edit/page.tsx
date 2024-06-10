@@ -6,12 +6,12 @@ import { notFound } from "next/navigation";
 export default async function edit({
   params,
 }: {
-  params: { ledgerId: number };
+  params: { ledgerId: string };
 }) {
   const id = params.ledgerId;
   const ledger = await getLedger(id);
   const categoryGroup = await getCategoryGroup();
-  const user_id = Number((await getSession()).id);
+  const user_id = (await getSession()).id;
 
   if (!ledger) {
     notFound();

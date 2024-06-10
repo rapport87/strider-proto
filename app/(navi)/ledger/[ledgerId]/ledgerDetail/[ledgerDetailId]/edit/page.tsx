@@ -5,11 +5,11 @@ import { notFound } from "next/navigation";
 export default async function EditLedgerDetail({
   params,
 }: {
-  params: { ledgerDetailId: number };
+  params: { ledgerDetailId: string };
 }) {
   const [userCategory, ledgerDetail] = await Promise.all([
     getUserCategory(),
-    getLedgerDetail(Number(params.ledgerDetailId)),
+    getLedgerDetail(params.ledgerDetailId),
   ]);
   if (!ledgerDetail) {
     notFound();

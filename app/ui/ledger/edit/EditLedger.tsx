@@ -9,26 +9,26 @@ import { DeleteLedger } from "./DeleteLedger";
 import LedgerUsers from "./LedgerUsers";
 
 interface User {
-  user_id: number;
+  user_id: string;
   user_name: string;
   is_owner: boolean;
   is_default: boolean;
 }
 
 interface ledgerEditForm {
-  id: number;
+  id: string;
   ledger_name: string;
-  user_category_group_id: number;
+  user_category_group_id: string;
   userLedger: User[];
 }
 
 interface CategoryGroup {
-  id: number;
+  id: string;
   category_group_name: string;
 }
 
 interface EditLedgerProps {
-  user_id: number;
+  user_id: string;
   ledger: ledgerEditForm;
   categoryGroup: CategoryGroup[];
 }

@@ -6,7 +6,7 @@ import { useFormState } from "react-dom";
 import { createLedger } from "@/app/lib/actions";
 
 interface CategoryGroup {
-  id: number;
+  id: string;
   category_group_name: string;
 }
 

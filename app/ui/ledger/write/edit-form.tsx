@@ -10,8 +10,8 @@ import { useFormState } from "react-dom";
 import DeleteLedgerDetail from "./DeleteLedgerDetail";
 
 interface Category {
-  id: number;
-  parent_id: number | null;
+  id: string;
+  parent_id: string | null;
   category_code: number;
   category_name: string;
   is_active: boolean;
@@ -140,7 +140,7 @@ export default function EditLedgerDetailForm({
           required={true}
           minLength={1}
           errors={state?.fieldErrors.price}
-          defaultValue={ledgerDetail.price}
+          defaultValue={ledgerDetail.price.toString()}
         />
         <Input
           name="evented_at"

@@ -4,8 +4,8 @@ export default function DeleteLedgerDetail({
   ledger_id,
   ledger_detail_id,
 }: {
-  ledger_id: number;
-  ledger_detail_id: number;
+  ledger_id: string;
+  ledger_detail_id: string;
 }) {
   const deleteLedgerDetailWithId = deleteLedgerDetail.bind(
     null,

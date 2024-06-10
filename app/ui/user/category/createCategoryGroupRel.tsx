@@ -8,21 +8,21 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface Category {
-  id: number;
-  parent_id: number | null;
+  id: string;
+  parent_id: string | null;
   category_code: number;
   category_name: string;
   is_active: boolean;
 }
 
 interface CategoryGroup {
-  id: number;
+  id: string;
   category_group_name: string;
 }
 
 interface CategoryGroupRel {
-  user_category_group_id: number;
-  user_category_id: number;
+  user_category_group_id: string;
+  user_category_id: string;
 }
 
 interface WriteProps {
@@ -37,12 +37,12 @@ export default function CreateCategoryGroupRel({
   category_group_rel,
 }: WriteProps) {
   const [selectedCategoryCode, setSelectedCategoryCode] = useState<number>(0);
-  const [selectedGroupId, setSelectedGroupId] = useState<number>(
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(
     category_group[0].id
   );
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [checkedCategories, setCheckedCategories] = useState<{
-    [key: number]: boolean;
+    [key: string]: boolean;
   }>({});
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function CreateCategoryGroupRel({
   useEffect(() => {
     if (selectedGroupId !== null) {
       const checked = category_group_rel.reduce(
-        (acc: { [key: number]: boolean }, rel) => {
+        (acc: { [key: string]: boolean }, rel) => {
           if (rel.user_category_group_id === selectedGroupId) {
             acc[rel.user_category_id] = true;
           }
@@ -75,10 +75,10 @@ export default function CreateCategoryGroupRel({
   };
 
   const handleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedGroupId(Number(e.target.value));
+    setSelectedGroupId(e.target.value);
   };
 
-  const handleCheckboxChange = (categoryId: number) => {
+  const handleCheckboxChange = (categoryId: string) => {
     const isChecked = !checkedCategories[categoryId];
     setCheckedCategories((prev) => ({
       ...prev,

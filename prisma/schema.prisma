@@ -9,7 +9,7 @@ datasource db {
 }
 
 model user {
-  id                  Int                   @id @default(autoincrement())
+  id                  String                @id @default(uuid())
   email               String?               @unique @db.VarChar(100)
   password            String                @db.VarChar(100)
   user_name           String                @unique @db.VarChar(32)
@@ -22,8 +22,8 @@ model user {
 }
 
 model user_ledger {
-  user_id                   Int
-  ledger_id                 Int
+  user_id                   String
+  ledger_id                 String
   is_default                Boolean  @default(false)
   is_owner                  Boolean  @default(false)
   created_at                DateTime @default(now())
@@ -36,9 +36,9 @@ model user_ledger {
 }
 
 model user_ledger_invite {
-  id              Int      @id @default(autoincrement())
-  user_id         Int
-  ledger_id       Int
+  id              String   @id @default(uuid())
+  user_id         String
+  ledger_id       String
   invite_prg_code Int?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
@@ -49,9 +49,9 @@ model user_ledger_invite {
 }
 
 model ledger {
-  id                     Int                  @id @default(autoincrement())
+  id                     String               @id @default(uuid())
   ledger_name            String               @db.VarChar(32)
-  user_category_group_id Int
+  user_category_group_id String
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
   userLedger             user_ledger[]
@@ -60,14 +60,14 @@ model ledger {
 }
 
 model ledger_detail {
-  id                      Int           @id @default(autoincrement())
-  ledger_id               Int
-  asset_category_id       Int
-  transaction_category_id Int
+  id                      String        @id @default(uuid())
+  ledger_id               String
+  asset_category_id       String
+  transaction_category_id String
   category_code           Int
   title                   String        @db.VarChar(100)
   detail                  String?       @db.VarChar(4000)
-  price                   Int
+  price                   BigInt
   photo                   String?       @db.VarChar(200)
   evented_at              DateTime      @default(now())
   created_at              DateTime      @default(now())
@@ -89,9 +89,9 @@ model category {
 }
 
 model user_category {
-  id                      Int                       @id @default(autoincrement())
-  parent_id               Int?
-  user_id                 Int
+  id                      String                    @id @default(uuid())
+  parent_id               String?
+  user_id                 String
   category_name           String                    @db.VarChar(32)
   category_code           Int
   is_active               Boolean                   @default(true)
@@ -106,8 +106,8 @@ model user_category {
 }
 
 model user_category_group {
-  id                      Int                       @id @default(autoincrement())
-  user_id                 Int
+  id                      String                    @id @default(uuid())
+  user_id                 String
   category_group_name     String                    @db.VarChar(32)
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @updatedAt
@@ -116,8 +116,8 @@ model user_category_group {
 }
 
 model user_category_group_rel {
-  user_category_group_id Int
-  user_category_id       Int
+  user_category_group_id String
+  user_category_id       String
   created_at             DateTime            @default(now())
   updated_at             DateTime            @updatedAt
   user_category          user_category       @relation(fields: [user_category_id], references: [id])

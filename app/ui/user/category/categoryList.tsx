@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import DeleteUserCategory from "./DeleteCategory";
 
 interface Category {
-  id: number;
-  parent_id: number | null;
+  id: string;
+  parent_id: string | null;
   category_code: number;
   category_name: string;
   is_active: boolean;

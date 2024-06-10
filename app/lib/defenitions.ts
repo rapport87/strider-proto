@@ -1,5 +1,5 @@
 export interface SessionContent{
-    id:number;
+    id:string;
 }
 
 export interface InputProps{
@@ -16,47 +16,47 @@ export interface SmsTokenProps{
 }
 
 export interface UserLedger{
-    user_id : number;
-    ledger_id : number;
+    user_id : string;
+    ledger_id : string;
     ledger_name : string;
 }
 
 export interface ListLedgerProps{
-    user_id : number;
-    ledger_id : number;
+    user_id : string;
+    ledger_id : string;
     ledger_name : string;
     is_default : boolean;
     is_owner : boolean;
 }
 
 export interface ListInvitedLedgerProps{
-    id : number;
-    user_id : number;
-    ledger_id : number;
+    id : string;
+    user_id : string;
+    ledger_id : string;
     ledger_name : string;
 }
 
 export interface LedgerDetailProps{
-    id : number;
-    ledger_id : number;
-    asset_category_id : number;
-    transaction_category_id : number;
+    id : string;
+    ledger_id : string;
+    asset_category_id : string;
+    transaction_category_id : string;
     category_code : number;
     title : string;
     detail : string | null;
-    price : number;
+    price : bigint;
     photo : string | null;
     evented_at : Date;
 }
 
 export interface ListLedgerDetailProps{
-    id : number | undefined;
+    id : string | undefined;
     category_code : number;
-    asset_category_id : number | undefined;
-    transaction_category_id : number;
+    asset_category_id : string | undefined;
+    transaction_category_id : string;
     asset_category_name : string;
     transaction_category_name : string;
     title : string;
-    price : number;
+    price : bigint;
     evented_at : Date;
 }

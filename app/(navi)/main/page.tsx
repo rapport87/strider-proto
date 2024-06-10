@@ -4,7 +4,7 @@ import ListLedgerDetail from "@/app/ui/components/ledger_detail_list";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-async function getIsOwner(userId: number) {
+async function getIsOwner(userId: string) {
   const session = await getSession();
   if (session.id) {
     return (session.id = userId);

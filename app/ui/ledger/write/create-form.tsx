@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 
 interface Category {
-  id: number;
-  parent_id: number | null;
+  id: string;
+  parent_id: string | null;
   category_code: number;
   category_name: string;
   is_active: boolean;

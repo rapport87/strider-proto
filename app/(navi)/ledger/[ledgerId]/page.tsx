@@ -5,7 +5,7 @@ import Link from "next/link";
 export default async function ViewLedger({
   params,
 }: {
-  params: { ledgerId: number };
+  params: { ledgerId: string };
 }) {
   const ledgerDetails = await getLedgerDetails(params.ledgerId);
 

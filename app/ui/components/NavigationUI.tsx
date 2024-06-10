@@ -16,7 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavigationUIProps {
-  default_ledger_id: number;
+  default_ledger_id: string;
 }
 
 export default function NavigationUI({ default_ledger_id }: NavigationUIProps) {

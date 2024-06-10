@@ -10,6 +10,6 @@ function parseDate(dateString: string) {
     return { year, month, day, hours, minutes };
   }
 
-export function formatToWon(price:number){
+export function formatToWon(price:bigint){
     return price.toLocaleString("ko-KR");
 }

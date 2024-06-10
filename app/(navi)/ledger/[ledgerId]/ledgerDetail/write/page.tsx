@@ -4,7 +4,7 @@ import { getUserCategoryByLedgerId } from "@/app/lib/actions";
 export default async function WriteLedgerDetail({
   params,
 }: {
-  params: { ledgerId: number };
+  params: { ledgerId: string };
 }) {
   const userCategory = await getUserCategoryByLedgerId(params.ledgerId);
   return <CreateLedgerDetailForm category={userCategory} />;
