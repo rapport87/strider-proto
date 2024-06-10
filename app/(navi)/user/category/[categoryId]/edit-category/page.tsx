@@ -1,7 +1,7 @@
 import EditCategoryForm from "@/app/ui/user/category/edit-form";
 import { getUserCategory } from "@/app/lib/actions";
 
-export default async function EditCategory({
+export default async function Page({
   params,
 }: {
   params: { categoryId: string };

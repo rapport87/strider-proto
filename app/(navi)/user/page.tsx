@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/app/lib/actions";
 import Link from "next/link";
 
-export default async function Profile() {
+export default async function Page() {
   const user = await getUser();
   const logOut = async () => {
     "use server";

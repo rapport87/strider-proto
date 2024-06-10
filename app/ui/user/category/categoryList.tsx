@@ -3,18 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import DeleteUserCategory from "./DeleteCategory";
-
-interface Category {
-  id: string;
-  parent_id: string | null;
-  category_code: number;
-  category_name: string;
-  is_active: boolean;
-}
-
-interface WriteProps {
-  category: Category[];
-}
+import { Category, WriteProps } from "@/app/lib/defenitions";
 
 export default function CategoryList({ category }: WriteProps) {
   const [selectedCategoryCode, setSelectedCategoryCode] = useState<number>(0);

@@ -14,10 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-interface NavigationUIProps {
-  default_ledger_id: string;
-}
+import { NavigationUIProps } from "@/app/lib/defenitions";
 
 export default function NavigationUI({ default_ledger_id }: NavigationUIProps) {
   const pathname = usePathname();

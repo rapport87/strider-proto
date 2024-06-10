@@ -60,3 +60,73 @@ export interface ListLedgerDetailProps{
     price : bigint;
     evented_at : Date;
 }
+
+// NavigationUI.tsx
+export interface NavigationUIProps {
+    default_ledger_id: string;
+  }
+
+
+// EditLedger.tsx
+export interface User {
+    user_id: string;
+    user_name: string;
+    is_owner: boolean;
+    is_default: boolean;
+  }
+  
+export interface ledgerEditForm {
+    id: string;
+    ledger_name: string;
+    user_category_group_id: string;
+    userLedger: User[];
+  }
+  
+export interface CategoryGroup {
+    id: string;
+    category_group_name: string;
+  }
+  
+export interface EditLedgerProps {
+    user_id: string;
+    ledger: ledgerEditForm;
+    categoryGroup: CategoryGroup[];
+  }  
+  
+export interface UserLedgerProps {
+    user_id: string;
+    ledger_id: string;
+    userLedger: User[];
+  }
+
+export interface Category {
+    id: string;
+    parent_id: string | null;
+    category_code: number;
+    category_name: string;
+    is_active: boolean;
+  }
+  
+export interface WriteProps {
+    category: Category[];
+  }  
+
+export interface CategoryGroup {
+    id: string;
+    category_group_name: string;
+  }
+  
+export interface CategoryGroupProps {
+    categoryGroup: CategoryGroup[];
+  }  
+
+export interface CategoryGroupRel {
+    user_category_group_id: string;
+    user_category_id: string;
+  }
+
+export interface CreateCategoryGroupRelProps {
+    category: Category[];
+    category_group: CategoryGroup[];
+    category_group_rel: CategoryGroupRel[];
+  }  

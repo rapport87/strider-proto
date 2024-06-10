@@ -5,18 +5,7 @@ import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-
-interface Category {
-  id: string;
-  parent_id: string | null;
-  category_code: number;
-  category_name: string;
-  is_active: boolean;
-}
-
-interface WriteProps {
-  category: Category[];
-}
+import { Category, WriteProps } from "@/app/lib/defenitions";
 
 export default function CreateCategoryForm({ category }: WriteProps) {
   const [state, dispatch] = useFormState(createCategory, null);

@@ -7,31 +7,7 @@ import { updateLedger } from "@/app/lib/actions";
 import { SetDefaultLedger } from "./SetDefaultLedger";
 import { DeleteLedger } from "./DeleteLedger";
 import LedgerUsers from "./LedgerUsers";
-
-interface User {
-  user_id: string;
-  user_name: string;
-  is_owner: boolean;
-  is_default: boolean;
-}
-
-interface ledgerEditForm {
-  id: string;
-  ledger_name: string;
-  user_category_group_id: string;
-  userLedger: User[];
-}
-
-interface CategoryGroup {
-  id: string;
-  category_group_name: string;
-}
-
-interface EditLedgerProps {
-  user_id: string;
-  ledger: ledgerEditForm;
-  categoryGroup: CategoryGroup[];
-}
+import { EditLedgerProps } from "@/app/lib/defenitions";
 
 export default function EditLedger({
   user_id,

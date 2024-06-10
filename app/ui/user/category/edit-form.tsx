@@ -1,17 +1,10 @@
 "use client";
 
 import { editCategory } from "@/app/lib/actions";
+import { Category } from "@/app/lib/defenitions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useFormState } from "react-dom";
-
-interface Category {
-  id: string;
-  parent_id: string | null;
-  category_code: number;
-  category_name: string;
-  is_active: boolean;
-}
 
 export default function EditCategoryForm({ category }: { category: Category }) {
   const [state, dispatch] = useFormState(editCategory, null);

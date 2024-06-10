@@ -1,18 +1,6 @@
 import { RevokeInviter } from "./RevokeInviter";
 import { TransferLedger } from "./TransferLedger";
-
-interface User {
-  user_id: string;
-  user_name: string;
-  is_owner: boolean;
-  is_default: boolean;
-}
-
-interface UserLedgerProps {
-  user_id: string;
-  ledger_id: string;
-  userLedger: User[];
-}
+import { UserLedgerProps } from "@/app/lib/defenitions";
 
 export default async function LedgerUsers({
   user_id,

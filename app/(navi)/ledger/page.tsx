@@ -4,7 +4,7 @@ import InviteListLedger from "@/app/ui/components/invite_ledger_list";
 import ListLedger from "@/app/ui/components/ledger_list";
 import Link from "next/link";
 
-export default async function ledger() {
+export default async function Page() {
   const ledgerList = await getLedgers();
   const inviteList = await existsInvite();
   return (

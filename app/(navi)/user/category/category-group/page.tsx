@@ -6,7 +6,7 @@ import {
 import CreateCategoryGroupRel from "@/app/ui/user/category/createCategoryGroupRel";
 import Link from "next/link";
 
-export default async function CategoryGroup() {
+export default async function Page() {
   const userCategory = await getUserCategory();
   const userCategoryGroup = await getCategoryGroup();
   const userCategoryGroupRel = await getUserCategoryGroupRel();

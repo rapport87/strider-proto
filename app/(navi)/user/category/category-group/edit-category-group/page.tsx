@@ -1,3 +1,3 @@
-export default async function editCategoryGroup() {
+export default async function Page() {
   return <div>Edit Category Group</div>;
 }

@@ -4,38 +4,15 @@ import {
   createUserCategoryGroupRel,
   deleteUserCategoryGroupRel,
 } from "@/app/lib/actions";
+import { Category, CreateCategoryGroupRelProps } from "@/app/lib/defenitions";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-interface Category {
-  id: string;
-  parent_id: string | null;
-  category_code: number;
-  category_name: string;
-  is_active: boolean;
-}
-
-interface CategoryGroup {
-  id: string;
-  category_group_name: string;
-}
-
-interface CategoryGroupRel {
-  user_category_group_id: string;
-  user_category_id: string;
-}
-
-interface WriteProps {
-  category: Category[];
-  category_group: CategoryGroup[];
-  category_group_rel: CategoryGroupRel[];
-}
 
 export default function CreateCategoryGroupRel({
   category,
   category_group,
   category_group_rel,
-}: WriteProps) {
+}: CreateCategoryGroupRelProps) {
   const [selectedCategoryCode, setSelectedCategoryCode] = useState<number>(0);
   const [selectedGroupId, setSelectedGroupId] = useState<string>(
     category_group[0].id

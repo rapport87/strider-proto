@@ -3,7 +3,7 @@ import getSession from "@/app/lib/session";
 import EditLedger from "@/app/ui/ledger/edit/EditLedger";
 import { notFound } from "next/navigation";
 
-export default async function edit({
+export default async function Page({
   params,
 }: {
   params: { ledgerId: string };

@@ -1,23 +1,12 @@
 "use client";
 
 import { createLedgerDetail } from "@/app/lib/actions";
+import { Category, WriteProps } from "@/app/lib/defenitions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-
-interface Category {
-  id: string;
-  parent_id: string | null;
-  category_code: number;
-  category_name: string;
-  is_active: boolean;
-}
-
-interface WriteProps {
-  category: Category[];
-}
 
 export default function CreateLedgerDetailForm({ category }: WriteProps) {
   const [state, dispatch] = useFormState(createLedgerDetail, null);

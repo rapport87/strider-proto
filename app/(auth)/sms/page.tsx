@@ -5,7 +5,7 @@ import Input from "@/app/ui/components/input";
 import { useFormState } from "react-dom";
 import { smsLogin } from "@/app/lib/actions";
 
-export default function SMSLogin() {
+export default function Page() {
   const initialState = {
     token: false,
     errors: undefined,

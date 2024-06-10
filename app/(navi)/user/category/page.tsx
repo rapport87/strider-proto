@@ -2,7 +2,7 @@ import { getUserCategory } from "@/app/lib/actions";
 import CategoryList from "@/app/ui/user/category/categoryList";
 import Link from "next/link";
 
-export default async function Category() {
+export default async function Page() {
   const userCategory = await getUserCategory();
   return (
     <div>

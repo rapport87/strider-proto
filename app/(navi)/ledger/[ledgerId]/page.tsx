@@ -2,7 +2,7 @@ import { getLedgerDetails } from "@/app/lib/actions";
 import ListLedgerDetail from "@/app/ui/components/ledger_detail_list";
 import Link from "next/link";
 
-export default async function ViewLedger({
+export default async function Page({
   params,
 }: {
   params: { ledgerId: string };

@@ -5,7 +5,7 @@ import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { inviteUser } from "@/app/lib/actions";
 
-export default function Invite({ params }: { params: { ledgerId: number } }) {
+export default function Page({ params }: { params: { ledgerId: number } }) {
   const [state, dispatch] = useFormState(inviteUser, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">

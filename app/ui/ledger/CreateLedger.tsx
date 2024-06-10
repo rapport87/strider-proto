@@ -4,15 +4,7 @@ import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { createLedger } from "@/app/lib/actions";
-
-interface CategoryGroup {
-  id: string;
-  category_group_name: string;
-}
-
-interface CategoryGroupProps {
-  categoryGroup: CategoryGroup[];
-}
+import { CategoryGroupProps } from "@/app/lib/defenitions";
 
 export default function CreateLedger({ categoryGroup }: CategoryGroupProps) {
   const [state, dispatch] = useFormState(createLedger, null);

@@ -12,7 +12,7 @@ async function getIsOwner(userId: string) {
   return false;
 }
 
-export default async function main() {
+export default async function Page() {
   const defaultLedger = (await getLedgers()).filter(
     (ledger) => ledger.is_default === true
   );
