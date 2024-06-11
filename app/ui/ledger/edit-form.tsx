@@ -4,12 +4,12 @@ import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { updateLedger } from "@/app/lib/actions";
-import { SetDefaultLedger } from "./SetDefaultLedger";
-import { DeleteLedger } from "./DeleteLedger";
-import LedgerUsers from "./LedgerUsers";
+import { SetDefaultLedger } from "@/app/ui/ledger/buttons";
+import { DeleteLedger } from "@/app/ui/ledger/buttons";
+import LedgerUsersTable from "@/app/ui/ledger/member-list";
 import { EditLedgerProps } from "@/app/lib/defenitions";
 
-export default function EditLedger({
+export default function EditLedgerForm({
   user_id,
   ledger,
   categoryGroup,
@@ -58,7 +58,7 @@ export default function EditLedger({
         </div>
       )}
       <div>
-        <LedgerUsers
+        <LedgerUsersTable
           user_id={user_id}
           ledger_id={ledger.id}
           userLedger={ledger.userLedger}

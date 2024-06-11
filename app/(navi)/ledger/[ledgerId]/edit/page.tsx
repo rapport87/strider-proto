@@ -1,6 +1,6 @@
-import { getCategoryGroup, getLedger, getUser } from "@/app/lib/actions";
+import { getCategoryGroup, getLedger } from "@/app/lib/actions";
 import getSession from "@/app/lib/session";
-import EditLedger from "@/app/ui/ledger/edit/EditLedger";
+import EditLedgerForm from "@/app/ui/ledger/edit-form";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -21,7 +21,7 @@ export default async function Page({
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">가계부 수정하기</h1>
       </div>
-      <EditLedger
+      <EditLedgerForm
         ledger={ledger}
         user_id={user_id}
         categoryGroup={categoryGroup}

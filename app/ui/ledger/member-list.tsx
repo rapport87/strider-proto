@@ -1,8 +1,8 @@
-import { RevokeInviter } from "./RevokeInviter";
-import { TransferLedger } from "./TransferLedger";
+import { RemoveLedgerUser } from "@/app/ui/ledger/buttons";
+import { TransferLedgerOwner } from "@/app/ui/ledger/buttons";
 import { UserLedgerProps } from "@/app/lib/defenitions";
 
-export default async function LedgerUsers({
+export default async function MemberList({
   user_id,
   ledger_id,
   userLedger,
@@ -22,10 +22,16 @@ export default async function LedgerUsers({
           {isOwner && user_id !== user.user_id ? (
             <>
               <span>
-                <RevokeInviter ledger_id={ledger_id} user_id={user.user_id} />
+                <RemoveLedgerUser
+                  ledger_id={ledger_id}
+                  user_id={user.user_id}
+                />
               </span>
               <span>
-                <TransferLedger ledger_id={ledger_id} user_id={user.user_id} />
+                <TransferLedgerOwner
+                  ledger_id={ledger_id}
+                  user_id={user.user_id}
+                />
               </span>
             </>
           ) : (

@@ -6,7 +6,9 @@ import { useFormState } from "react-dom";
 import { createLedger } from "@/app/lib/actions";
 import { CategoryGroupProps } from "@/app/lib/defenitions";
 
-export default function CreateLedger({ categoryGroup }: CategoryGroupProps) {
+export default function CreateLedgerForm({
+  categoryGroup,
+}: CategoryGroupProps) {
   const [state, dispatch] = useFormState(createLedger, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">

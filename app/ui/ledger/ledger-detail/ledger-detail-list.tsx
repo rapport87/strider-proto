@@ -24,7 +24,7 @@ function formatDateTime(date: Date) {
   return `${formattedDate.replace(/\s/g, "")} ${formattedTime}`;
 }
 
-export default function ListLedgerDetail({
+export default function LedgerDetailList({
   id,
   title,
   price,

@@ -939,7 +939,7 @@ export async function deleteLedger(ledger_id : string){
     redirect("/ledger"); 
 }
 
-export async function revokeInviter(ledger_id : string, user_id : string){
+export async function removeLedgerUser(ledger_id : string, user_id : string){
     try{
       await db.user_ledger.delete({
         where : {
@@ -967,7 +967,7 @@ export async function revokeInviter(ledger_id : string, user_id : string){
     redirect("/ledger"); 
 }
 
-export async function transferLedger(ledger_id : string, user_id : string){
+export async function transferLedgerOwner(ledger_id : string, user_id : string){
   try{
     await db.user_ledger.updateMany({
       where : {

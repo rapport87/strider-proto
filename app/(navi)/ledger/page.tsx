@@ -1,7 +1,6 @@
 import { existsInvite, getLedgers } from "@/app/lib/actions";
-import getSession from "@/app/lib/session";
-import InviteListLedger from "@/app/ui/components/invite_ledger_list";
-import ListLedger from "@/app/ui/components/ledger_list";
+import InvitedLedgerList from "@/app/ui/ledger/invited-ledger-list";
+import LedgerList from "@/app/ui/ledger/ledger-list";
 import Link from "next/link";
 
 export default async function Page() {
@@ -10,7 +9,7 @@ export default async function Page() {
   return (
     <div>
       {ledgerList.map((ledgerList) => (
-        <ListLedger key={ledgerList.ledger_id} {...ledgerList} />
+        <LedgerList key={ledgerList.ledger_id} {...ledgerList} />
       ))}
       <div className="text-right">
         <Link className="text-black" href={`/ledger/create-ledger`}>
@@ -20,7 +19,7 @@ export default async function Page() {
       {inviteList.length > 0 ? <div className="mt-5">초대받은 가계부</div> : ""}
       {inviteList.length > 0
         ? inviteList.map((inviteList) => (
-            <InviteListLedger key={inviteList.id} {...inviteList} />
+            <InvitedLedgerList key={inviteList.id} {...inviteList} />
           ))
         : ""}
     </div>
