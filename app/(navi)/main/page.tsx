@@ -1,6 +1,6 @@
 import { getLedgers, getLedgerDetails } from "@/app/lib/actions";
 import getSession from "@/app/lib/session";
-import ListLedgerDetail from "@/app/ui/ledger/ledger_detail_list";
+import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

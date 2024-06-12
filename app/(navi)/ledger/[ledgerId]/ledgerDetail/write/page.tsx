@@ -1,4 +1,4 @@
-import CreateLedgerDetailForm from "@/app/ui/ledger/write/create-form";
+import CreateLedgerDetailForm from "@/app/ui/ledger/ledger-detail/create-form";
 import { getUserCategoryByLedgerId } from "@/app/lib/actions";
 
 export default async function Page({

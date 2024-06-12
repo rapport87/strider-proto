@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import DeleteUserCategory from "./DeleteCategory";
+import DeleteUserCategory from "@/app/ui/user/category/buttons";
 import { Category, WriteProps } from "@/app/lib/defenitions";
 
 export default function CategoryList({ category }: WriteProps) {

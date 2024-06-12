@@ -8,7 +8,7 @@ import { Category, CreateCategoryGroupRelProps } from "@/app/lib/defenitions";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function CreateCategoryGroupRel({
+export default function CategoryGroupRelList({
   category,
   category_group,
   category_group_rel,

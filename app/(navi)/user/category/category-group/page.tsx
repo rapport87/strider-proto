@@ -3,7 +3,7 @@ import {
   getUserCategory,
   getUserCategoryGroupRel,
 } from "@/app/lib/actions";
-import CreateCategoryGroupRel from "@/app/ui/user/category/createCategoryGroupRel";
+import CategoryGroupRelList from "@/app/ui/user/category/category-group-rel/category-group-rel-list";
 import Link from "next/link";
 
 export default async function Page() {
@@ -13,7 +13,7 @@ export default async function Page() {
   return (
     <div>
       <div>카테고리 그룹</div>
-      <CreateCategoryGroupRel
+      <CategoryGroupRelList
         category={userCategory}
         category_group={userCategoryGroup}
         category_group_rel={userCategoryGroupRel}

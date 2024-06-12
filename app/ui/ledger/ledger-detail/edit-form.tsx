@@ -4,11 +4,10 @@ import { editLedgerDetail } from "@/app/lib/actions";
 import { LedgerDetailProps } from "@/app/lib/defenitions";
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
-import { useParams } from "next/navigation";
 import { Category } from "@/app/lib/defenitions";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import DeleteLedgerDetail from "./DeleteLedgerDetail";
+import DeleteLedgerDetail from "@/app/ui/ledger/ledger-detail/buttons";
 
 export default function EditLedgerDetailForm({
   category,

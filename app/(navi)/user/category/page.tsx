@@ -1,5 +1,5 @@
 import { getUserCategory } from "@/app/lib/actions";
-import CategoryList from "@/app/ui/user/category/categoryList";
+import CategoryList from "@/app/ui/user/category/category-list";
 import Link from "next/link";
 
 export default async function Page() {

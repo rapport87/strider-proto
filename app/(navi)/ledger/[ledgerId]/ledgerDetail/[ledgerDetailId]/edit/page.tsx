@@ -1,4 +1,4 @@
-import EditLedgerDetailForm from "@/app/ui/ledger/write/edit-form";
+import EditLedgerDetailForm from "@/app/ui/ledger/ledger-detail/edit-form";
 import { getLedgerDetail, getUserCategory } from "@/app/lib/actions";
 import { notFound } from "next/navigation";
 
