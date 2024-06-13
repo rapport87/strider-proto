@@ -1,4 +1,4 @@
-import { getLedgerDetails } from "@/app/lib/actions";
+import { getLedgerDetails } from "@/app/lib/data";
 import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
 

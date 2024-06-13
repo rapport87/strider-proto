@@ -1,6 +1,6 @@
 import getSession from "@/app/lib/session";
 import { redirect } from "next/navigation";
-import { getUser } from "@/app/lib/actions";
+import { getUser } from "@/app/lib/data";
 import Link from "next/link";
 
 export default async function Page() {

@@ -1,4 +1,4 @@
-import { getUserCategory } from "@/app/lib/actions";
+import { getUserCategory } from "@/app/lib/data";
 import CategoryList from "@/app/ui/user/category/category-list";
 import Link from "next/link";
 

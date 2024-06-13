@@ -1,5 +1,5 @@
 import EditLedgerDetailForm from "@/app/ui/ledger/ledger-detail/edit-form";
-import { getLedgerDetail, getUserCategory } from "@/app/lib/actions";
+import { getLedgerDetail, getUserCategory } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 
 export default async function Page({

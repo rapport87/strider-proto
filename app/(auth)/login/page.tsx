@@ -4,10 +4,10 @@ import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import SocialLogin from "@/app/ui/components/social-login";
 import { useFormState } from "react-dom";
-import { login } from "@/app/lib/actions";
+import { signIn } from "@/app/lib/actions";
 
 export default function Page() {
-  const [state, dispatch] = useFormState(login, null);
+  const [state, dispatch] = useFormState(signIn, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">

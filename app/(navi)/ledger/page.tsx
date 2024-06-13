@@ -1,11 +1,11 @@
-import { existsInvite, getLedgers } from "@/app/lib/actions";
+import { getInvitedLedgerList, getLedgers } from "@/app/lib/data";
 import InvitedLedgerList from "@/app/ui/ledger/invited-ledger-list";
 import LedgerList from "@/app/ui/ledger/ledger-list";
 import Link from "next/link";
 
 export default async function Page() {
   const ledgerList = await getLedgers();
-  const inviteList = await existsInvite();
+  const inviteList = await getInvitedLedgerList();
   return (
     <div>
       {ledgerList.map((ledgerList) => (

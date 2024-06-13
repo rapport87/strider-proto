@@ -2,7 +2,7 @@ import {
   getCategoryGroup,
   getUserCategory,
   getUserCategoryGroupRel,
-} from "@/app/lib/actions";
+} from "@/app/lib/data";
 import CategoryGroupRelList from "@/app/ui/user/category/category-group-rel/category-group-rel-list";
 import Link from "next/link";
 

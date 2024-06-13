@@ -1,4 +1,4 @@
-import { getCategoryGroup, getLedger } from "@/app/lib/actions";
+import { getCategoryGroup, getLedger } from "@/app/lib/data";
 import getSession from "@/app/lib/session";
 import EditLedgerForm from "@/app/ui/ledger/edit-form";
 import { notFound } from "next/navigation";
