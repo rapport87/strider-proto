@@ -1,4 +1,4 @@
-import { RemoveLedgerUser } from "@/app/ui/ledger/buttons";
+import { expelUserFromLedger } from "@/app/ui/ledger/buttons";
 import { TransferLedgerOwner } from "@/app/ui/ledger/buttons";
 import { UserLedgerProps } from "@/app/lib/defenitions";
 
@@ -22,7 +22,7 @@ export default async function MemberList({
           {isOwner && user_id !== user.user_id ? (
             <>
               <span>
-                <RemoveLedgerUser
+                <expelUserFromLedger
                   ledger_id={ledger_id}
                   user_id={user.user_id}
                 />

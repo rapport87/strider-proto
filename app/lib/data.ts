@@ -17,7 +17,7 @@ export async function getUser() {
     notFound();
   }
 
-  export async function getUserCategory(category_id?: string){
+  export async function getUserCategoryById(category_id?: string){
     const user = await getSession();
   
     const selectFields = {
@@ -59,7 +59,7 @@ export async function getUser() {
     notFound();
   }  
 
-  export async function getUserCategoryByLedgerId(ledger_id : string){
+  export async function getUserCategoryByIdByLedgerId(ledger_id : string){
     const user_category_group = await db.ledger.findUnique({
       select : {
         user_category_group_id : true,
@@ -112,7 +112,7 @@ export async function getUser() {
     return category_group
   }
 
-  export async function getUserCategoryGroupRel() {
+  export async function getUserCategoryByIdGroupRel() {
     const user = await getSession();
     const user_category_group_rel = await db.user_category_group_rel.findMany({
       select: {
@@ -130,7 +130,7 @@ export async function getUser() {
   }  
 
   
-export async function getLedgerDetail(ledgerDetailId : string){
+export async function getLedgerDetailById(ledgerDetailId : string){
   try{
     const ledgerDetail = await db.ledger_detail.findUnique({
       where : {
@@ -145,7 +145,7 @@ export async function getLedgerDetail(ledgerDetailId : string){
   }
 }
 
-export async function getLedger(ledger_id: string) {
+export async function getLedgerById(ledger_id: string) {
     const ledger = await db.ledger.findUnique({
       where: {
         id: ledger_id,
@@ -213,7 +213,7 @@ export async function getLedger(ledger_id: string) {
   }
   
 
-  export async function getLedgerDetails(ledger_id : string){
+  export async function getLedgerDetailsByLedgerId(ledger_id : string){
     //   SELECT ld.*
     //   FROM ledger_detail ld
     //  INNER JOIN ledger l ON l.id = ld.ledger_id

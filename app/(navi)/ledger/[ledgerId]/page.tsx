@@ -1,4 +1,4 @@
-import { getLedgerDetails } from "@/app/lib/data";
+import { getLedgerDetailsByLedgerId } from "@/app/lib/data";
 import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
 
@@ -7,7 +7,7 @@ export default async function Page({
 }: {
   params: { ledgerId: string };
 }) {
-  const ledgerDetails = await getLedgerDetails(params.ledgerId);
+  const ledgerDetails = await getLedgerDetailsByLedgerId(params.ledgerId);
 
   return (
     <div>

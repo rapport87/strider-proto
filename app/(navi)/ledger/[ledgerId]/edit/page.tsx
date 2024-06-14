@@ -1,4 +1,4 @@
-import { getCategoryGroup, getLedger } from "@/app/lib/data";
+import { getCategoryGroup, getLedgerById } from "@/app/lib/data";
 import getSession from "@/app/lib/session";
 import EditLedgerForm from "@/app/ui/ledger/edit-form";
 import { notFound } from "next/navigation";
@@ -9,7 +9,7 @@ export default async function Page({
   params: { ledgerId: string };
 }) {
   const id = params.ledgerId;
-  const ledger = await getLedger(id);
+  const ledger = await getLedgerById(id);
   const categoryGroup = await getCategoryGroup();
   const user_id = (await getSession()).id;
 

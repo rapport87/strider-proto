@@ -1,4 +1,4 @@
-import { getLedgers, getLedgerDetails } from "@/app/lib/data";
+import { getLedgers, getLedgerDetailsByLedgerId } from "@/app/lib/data";
 import getSession from "@/app/lib/session";
 import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
@@ -16,7 +16,9 @@ export default async function Page() {
   const defaultLedger = (await getLedgers()).filter(
     (ledger) => ledger.is_default === true
   );
-  const ledgerDetails = await getLedgerDetails(defaultLedger[0].ledger_id);
+  const ledgerDetails = await getLedgerDetailsByLedgerId(
+    defaultLedger[0].ledger_id
+  );
 
   return (
     <div>

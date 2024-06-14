@@ -34,7 +34,8 @@ export async function signUp(prevState: any, formData : FormData){
   } : {
     password : string;
     confirm_password : string;
-  }) => password === confirm_password;
+  }) => password === confirm_password
+    
 
   const formSchema = z.object({
     email: z.string()
@@ -79,7 +80,7 @@ export async function signUp(prevState: any, formData : FormData){
       }
     });
     
-    await copyCategory(user.id);
+    await createDefaultCategory(user.id);
     const user_category_group_id = await createDefaultCategoryGroup(user.id);
     await createDefaultLedger(user.id, user_category_group_id);
     
@@ -155,7 +156,7 @@ export async function signIn(prevState: any, formData : FormData){
   }
 }
 
-export async function inviteUser(prevState: any, formData : FormData){
+export async function inviteUserToLedger(prevState: any, formData : FormData){
   const CheckIsExistsLedger = async() => {
     const ledger_id = formData.get("ledger_id");
 
@@ -365,19 +366,7 @@ async function createUserLedger(user_id : string, ledger_id : string, is_default
   })
 }
 
-async function changeDefaultLedger(user_id : string){
-  await db.user_ledger.updateMany({
-    where : {
-      user_id : user_id,
-      is_default : true,
-    },
-    data : {
-      is_default : false,
-    }
-  });
-}
-
-export async function smsLogin(prevState : SmsTokenProps, formData : FormData){
+export async function smsSignIn(prevState : SmsTokenProps, formData : FormData){
   const phoneSchema = z
     .string()
     .trim()
@@ -519,7 +508,7 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
 }
 
   // 기본 상위 카테고리 데이터 조회
-export async function copyCategory(userId : string) {
+export async function createDefaultCategory(userId : string) {
 
   // 기본 상위 카테고리 데이터 조회
   const parentCategories = await db.category.findMany({
@@ -566,7 +555,7 @@ export async function copyCategory(userId : string) {
   );
 }
 
-export async function inviteRequest(ledger_id : string, prg_code : number){
+export async function createInviteResponse(ledger_id : string, prg_code : number){
   const user = await getSession();
   await db.user_ledger_invite.create({
     data : {
@@ -577,7 +566,6 @@ export async function inviteRequest(ledger_id : string, prg_code : number){
   });
 
   if(prg_code === 1){
-
     await db.user_ledger.create({
       data : {
         user_id : user.id,
@@ -587,8 +575,7 @@ export async function inviteRequest(ledger_id : string, prg_code : number){
   }
 }
 
-export async function updateLedger(prevState: any, formData : FormData){
-  const session = await getSession();
+export async function editLedger(prevState: any, formData : FormData){
   const formSchema = z.object({
     ledger_name : z.string({
       invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
@@ -673,7 +660,7 @@ export async function deleteLedger(ledger_id : string){
     redirect("/ledger"); 
 }
 
-export async function removeLedgerUser(ledger_id : string, user_id : string){
+export async function expelUserFromLedger(ledger_id : string, user_id : string){
     try{
       await db.user_ledger.delete({
         where : {

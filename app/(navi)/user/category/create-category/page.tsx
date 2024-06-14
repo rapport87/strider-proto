@@ -1,7 +1,7 @@
 import CreateCategoryForm from "@/app/ui/user/category/create-form";
-import { getUserCategory } from "@/app/lib/data";
+import { getUserCategoryById } from "@/app/lib/data";
 
 export default async function Page() {
-  const userCategory = await getUserCategory();
+  const userCategory = await getUserCategoryById();
   return <CreateCategoryForm category={userCategory} />;
 }

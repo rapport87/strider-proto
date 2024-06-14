@@ -3,7 +3,7 @@
 import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
-import { updateLedger } from "@/app/lib/actions";
+import { editLedger } from "@/app/lib/actions";
 import { SetDefaultLedger } from "@/app/ui/ledger/buttons";
 import { DeleteLedger } from "@/app/ui/ledger/buttons";
 import LedgerUsersTable from "@/app/ui/ledger/member-list";
@@ -14,7 +14,7 @@ export default function EditLedgerForm({
   ledger,
   categoryGroup,
 }: EditLedgerProps) {
-  const [state, dispatch] = useFormState(updateLedger, null);
+  const [state, dispatch] = useFormState(editLedger, null);
   const isDefaultLedger = ledger.userLedger.some(
     (user) => user.user_id === user_id && !user.is_default
   );

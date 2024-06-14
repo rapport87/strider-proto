@@ -1,15 +1,15 @@
 import {
   getCategoryGroup,
-  getUserCategory,
-  getUserCategoryGroupRel,
+  getUserCategoryById,
+  getUserCategoryByIdGroupRel,
 } from "@/app/lib/data";
 import CategoryGroupRelList from "@/app/ui/user/category/category-group-rel/category-group-rel-list";
 import Link from "next/link";
 
 export default async function Page() {
-  const userCategory = await getUserCategory();
+  const userCategory = await getUserCategoryById();
   const userCategoryGroup = await getCategoryGroup();
-  const userCategoryGroupRel = await getUserCategoryGroupRel();
+  const userCategoryGroupRel = await getUserCategoryByIdGroupRel();
   return (
     <div>
       <div>카테고리 그룹</div>

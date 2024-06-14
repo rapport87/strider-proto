@@ -2,8 +2,8 @@ import {
   deleteLedger,
   setDefaultLedger,
   transferLedgerOwner,
-  removeLedgerUser,
-  inviteRequest,
+  expelUserFromLedger,
+  createInviteResponse,
 } from "@/app/lib/actions";
 
 export function DeleteLedger({ ledger_id }: { ledger_id: string }) {
@@ -47,20 +47,20 @@ export function TransferLedgerOwner({
   );
 }
 
-export function RemoveLedgerUser({
+export function expelUser({
   ledger_id,
   user_id,
 }: {
   ledger_id: string;
   user_id: string;
 }) {
-  const removeLedgerUserWithId = removeLedgerUser.bind(
+  const expelUserFromLedgerWithId = expelUserFromLedger.bind(
     null,
     ledger_id,
     user_id
   );
   return (
-    <form action={removeLedgerUserWithId}>
+    <form action={expelUserFromLedgerWithId}>
       <button className="rounded-md border p-2 bg-red-500 text-white hover:bg-red-700">
         추방
       </button>
@@ -69,7 +69,7 @@ export function RemoveLedgerUser({
 }
 
 export function AgreeInviteButton({ ledger_id }: { ledger_id: string }) {
-  const agreeAction = inviteRequest.bind(null, ledger_id, 1);
+  const agreeAction = createInviteResponse.bind(null, ledger_id, 1);
   return (
     <form action={agreeAction}>
       <button className="rounded-md border p-2 hover:bg-gray-100">수락</button>
@@ -78,7 +78,7 @@ export function AgreeInviteButton({ ledger_id }: { ledger_id: string }) {
 }
 
 export function RefuseInviteButton({ ledger_id }: { ledger_id: string }) {
-  const refuseAction = inviteRequest.bind(null, ledger_id, 2);
+  const refuseAction = createInviteResponse.bind(null, ledger_id, 2);
   return (
     <form action={refuseAction}>
       <button className="rounded-md border p-2 hover:bg-gray-100">거절</button>
@@ -87,7 +87,7 @@ export function RefuseInviteButton({ ledger_id }: { ledger_id: string }) {
 }
 
 export function IgnoreInviteButton({ ledger_id }: { ledger_id: string }) {
-  const ignoreAction = inviteRequest.bind(null, ledger_id, 3);
+  const ignoreAction = createInviteResponse.bind(null, ledger_id, 3);
   return (
     <form action={ignoreAction}>
       <button className="rounded-md border p-2 hover:bg-gray-100">무시</button>

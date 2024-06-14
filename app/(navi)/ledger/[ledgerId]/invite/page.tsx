@@ -3,10 +3,10 @@
 import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
-import { inviteUser } from "@/app/lib/actions";
+import { inviteUserToLedger } from "@/app/lib/actions";
 
 export default function Page({ params }: { params: { ledgerId: number } }) {
-  const [state, dispatch] = useFormState(inviteUser, null);
+  const [state, dispatch] = useFormState(inviteUserToLedger, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">

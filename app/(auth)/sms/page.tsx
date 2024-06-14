@@ -3,14 +3,14 @@
 import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useFormState } from "react-dom";
-import { smsLogin } from "@/app/lib/actions";
+import { smsSignIn } from "@/app/lib/actions";
 
 export default function Page() {
   const initialState = {
     token: false,
     errors: undefined,
   };
-  const [state, dispatch] = useFormState(smsLogin, initialState);
+  const [state, dispatch] = useFormState(smsSignIn, initialState);
 
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
