@@ -47,7 +47,7 @@ export function TransferLedgerOwner({
   );
 }
 
-export function expelUser({
+export function ExpelUserFromLedger({
   ledger_id,
   user_id,
 }: {
