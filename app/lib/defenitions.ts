@@ -110,8 +110,8 @@ export interface Category {
     category_code: number;
     category_name: string;
     is_active: boolean;
-  }
-  
+}  
+
 export interface WriteProps {
     category: Category[];
   }  

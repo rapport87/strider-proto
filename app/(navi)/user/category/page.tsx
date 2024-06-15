@@ -1,9 +1,9 @@
-import { getUserCategoryById } from "@/app/lib/data";
+import { getUserCategory } from "@/app/lib/data";
 import CategoryList from "@/app/ui/user/category/category-list";
 import Link from "next/link";
 
 export default async function Page() {
-  const userCategory = await getUserCategoryById();
+  const userCategory = await getUserCategory();
   return (
     <div>
       <div>Category</div>

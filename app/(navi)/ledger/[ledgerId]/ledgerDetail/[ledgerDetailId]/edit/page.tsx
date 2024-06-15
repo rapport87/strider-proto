@@ -1,5 +1,5 @@
 import LedgerDetailForm from "@/app/ui/ledger/ledger-detail/ledger-detail-form";
-import { getLedgerDetailById, getUserCategoryById } from "@/app/lib/data";
+import { getLedgerDetailById, getUserCategory } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -8,7 +8,7 @@ export default async function Page({
   params: { ledgerDetailId: string };
 }) {
   const [userCategory, ledgerDetail] = await Promise.all([
-    getUserCategoryById(),
+    getUserCategory(),
     getLedgerDetailById(params.ledgerDetailId),
   ]);
   if (!ledgerDetail) {

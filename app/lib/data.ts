@@ -17,41 +17,40 @@ export async function getUser() {
     notFound();
   }
 
-  export async function getUserCategoryById(category_id?: string){
-    const user = await getSession();
+  export async function getUserCategory() {
+    const session = await getSession();
+    const userId = session.id;
   
-    const selectFields = {
-      id: true,
-      parent_id: true,
-      category_code: true,
-      category_name: true,
-      is_active: true,
-    };
+    const categories = await db.user_category.findMany({
+      where: { user_id: userId, is_active: true },
+      select: {
+        id: true,
+        parent_id: true,
+        category_name: true,
+        category_code: true,
+        is_active: true,
+      },
+    });
   
-    let category;
-  
-    if (category_id !== undefined) {
-      category = await db.user_category.findUnique({
-        select: selectFields,
-        where: {
-          id: category_id,
-          is_active : true
-        },
-      });
-  
-      if (category) {
-        return [category];
-      }    
-    } else {
-      category = await db.user_category.findMany({
-        select: selectFields,
-        where: {
-          user_id: user.id,
-          is_active : true
-        },
-      });
-    }
-  
+    return categories;
+  }
+
+  export async function getUserCategoryById(category_id : string){
+
+    const category = await db.user_category.findUnique({
+      select: {
+        id: true,
+        parent_id: true,
+        category_code: true,
+        category_name: true,
+        is_active: true,
+      },
+      where: {
+        id: category_id,
+        is_active : true
+      },
+    });
+
     if (category) {
       return category;
     }    

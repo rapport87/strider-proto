@@ -1,13 +1,13 @@
 import {
   getCategoryGroup,
-  getUserCategoryById,
+  getUserCategory,
   getUserCategoryByIdGroupRel,
 } from "@/app/lib/data";
 import CategoryGroupRelList from "@/app/ui/user/category/category-group-rel/category-group-rel-list";
 import Link from "next/link";
 
 export default async function Page() {
-  const userCategory = await getUserCategoryById();
+  const userCategory = await getUserCategory();
   const userCategoryGroup = await getCategoryGroup();
   const userCategoryGroupRel = await getUserCategoryByIdGroupRel();
   return (
