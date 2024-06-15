@@ -35,7 +35,7 @@ export async function getUser() {
     return categories;
   }
 
-  export async function getUserCategoryById(category_id : string){
+  export async function getUserCategoryById(categoryId : string){
 
     const category = await db.user_category.findUnique({
       select: {
@@ -46,7 +46,7 @@ export async function getUser() {
         is_active: true,
       },
       where: {
-        id: category_id,
+        id: categoryId,
         is_active : true
       },
     });
@@ -58,21 +58,21 @@ export async function getUser() {
     notFound();
   }  
 
-  export async function getUserCategoryByIdByLedgerId(ledger_id : string){
-    const user_category_group = await db.ledger.findUnique({
+  export async function getUserCategoryByIdByLedgerId(ledgerId : string){
+    const userCategoryGroup = await db.ledger.findUnique({
       select : {
         user_category_group_id : true,
       },
       where : { 
-        id : ledger_id
+        id : ledgerId
       }
     })
   
-    if (!user_category_group) {
+    if (!userCategoryGroup) {
       return notFound();
     }    
   
-    const user_category_id = await db.user_category.findMany({
+    const userCategory = await db.user_category.findMany({
       select: {
         id: true,
         parent_id: true,
@@ -83,14 +83,14 @@ export async function getUser() {
       where: {
         user_category_group_rel : {
           some : {
-            user_category_group_id : user_category_group!.user_category_group_id
+            user_category_group_id : userCategoryGroup!.user_category_group_id
           }
         }
       },
     });
   
-    if (user_category_id) {
-      return user_category_id;
+    if (userCategory) {
+      return userCategory;
     }    
     
     notFound();
@@ -138,16 +138,14 @@ export async function getLedgerDetailById(ledgerDetailId : string){
     })
     return ledgerDetail
   }catch(error){
-    console.log(error);
-    console.log(`ledgerId is ==> ${ledgerDetailId}`);
     throw new Error("가계부 내역 불러오기에 실패했습니다");
   }
 }
 
-export async function getLedgerById(ledger_id: string) {
+export async function getLedgerById(ledgerId: string) {
     const ledger = await db.ledger.findUnique({
       where: {
-        id: ledger_id,
+        id: ledgerId,
       },
       select: {
         id: true,
@@ -212,7 +210,7 @@ export async function getLedgerById(ledger_id: string) {
   }
   
 
-  export async function getLedgerDetailsByLedgerId(ledger_id : string){
+  export async function getLedgerDetailsByLedgerId(ledgerId : string){
     //   SELECT ld.*
     //   FROM ledger_detail ld
     //  INNER JOIN ledger l ON l.id = ld.ledger_id
@@ -225,7 +223,7 @@ export async function getLedgerById(ledger_id: string) {
       const user = await getSession();
       const ledgerDetails = await db.ledger_detail.findMany({
         where: {
-          ledger_id : ledger_id,
+          ledger_id : ledgerId,
           ledger: {
             userLedger: {
               some: {
