@@ -17,18 +17,14 @@ export default function CreateLedgerForm({
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
-          name="ledger_name"
+          name="ledgerName"
           type="text"
           placeholder="가계부 이름"
           required={true}
-          errors={state?.fieldErrors.ledger_name}
+          errors={state?.fieldErrors.ledgerName}
         />
         <div>
-          <select
-            className="w-full h-10"
-            name="user_category_group_id"
-            required
-          >
+          <select className="w-full h-10" name="userCategoryGroupId" required>
             {categoryGroup.map((catGrp) => (
               <option key={catGrp.id} value={catGrp.id}>
                 {catGrp.category_group_name}

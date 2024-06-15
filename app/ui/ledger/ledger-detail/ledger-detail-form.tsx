@@ -70,7 +70,7 @@ export default function LedgerDetailForm({
         <div>
           <input
             type="radio"
-            name="category_class"
+            name="categoryClass"
             value="1"
             onChange={handleCategoryClassChange}
             defaultChecked={selectedCategoryClass === 1}
@@ -78,7 +78,7 @@ export default function LedgerDetailForm({
           수입
           <input
             type="radio"
-            name="category_class"
+            name="categoryClass"
             value="2"
             onChange={handleCategoryClassChange}
             defaultChecked={selectedCategoryClass === 2}
@@ -90,7 +90,7 @@ export default function LedgerDetailForm({
           <div>
             <select
               className="w-full h-10"
-              name="asset_category_id"
+              name="assetCategoryId"
               required
               defaultValue={ledgerDetail ? ledgerDetail.asset_category_id : ""}
             >
@@ -107,7 +107,7 @@ export default function LedgerDetailForm({
           <div>
             <select
               className="w-full h-10"
-              name="transaction_category_id"
+              name="transactionCategoryId"
               required
               defaultValue={
                 ledgerDetail ? ledgerDetail.transaction_category_id : ""
@@ -150,14 +150,14 @@ export default function LedgerDetailForm({
           defaultValue={ledgerDetail ? ledgerDetail.price.toString() : ""}
         />
         <Input
-          name="evented_at"
+          name="eventedAt"
           type="datetime-local"
           placeholder="evented_at"
-          errors={state?.fieldErrors.evented_at}
+          errors={state?.fieldErrors.eventedAt}
           defaultValue={eventedAt}
         />
         <input
-          name="category_code"
+          name="categoryCode"
           value={selectedCategoryClass || ""}
           type="hidden"
         />
@@ -165,13 +165,13 @@ export default function LedgerDetailForm({
           <>
             <input name="id" value={ledgerDetail.id} type="hidden" />
             <input
-              name="ledger_id"
+              name="ledgerId"
               value={ledgerDetail.ledger_id}
               type="hidden"
             />
           </>
         ) : (
-          <input name="ledger_id" value={params.ledgerId} type="hidden" />
+          <input name="ledgerId" value={params.ledgerId} type="hidden" />
         )}
         <Button text="확인" />
       </form>

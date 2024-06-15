@@ -105,7 +105,7 @@ export default function CreateCategoryForm({ category }: WriteProps) {
           type="text"
           placeholder="카테고리 이름"
           required={true}
-          errors={state?.fieldErrors.category_name}
+          errors={state?.fieldErrors.categoryName}
         />
         <Button text="카테고리 생성" />
       </form>

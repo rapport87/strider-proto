@@ -23,13 +23,13 @@ export default function Page() {
           errors={state?.fieldErrors.email}
         />
         <Input
-          name="username"
+          name="userName"
           type="text"
-          placeholder="Nickname"
+          placeholder="Name"
           required={true}
           minLength={1}
           maxLength={12}
-          errors={state?.fieldErrors.username}
+          errors={state?.fieldErrors.userName}
         />
         <Input
           name="password"
@@ -40,12 +40,12 @@ export default function Page() {
           errors={state?.fieldErrors.password}
         />
         <Input
-          name="confirm_password"
+          name="confirmPassword"
           type="password"
           placeholder="Confirm Password"
           required={true}
           minLength={10}
-          errors={state?.fieldErrors.confirm_password}
+          errors={state?.fieldErrors.confirmPassword}
         />
         <Button text="계정 생성하기" />
       </form>

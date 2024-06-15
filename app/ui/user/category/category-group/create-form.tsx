@@ -14,11 +14,11 @@ export default function CreateCategoryGroup() {
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
-          name="category_group_name"
+          name="categoryGroupName"
           type="text"
           placeholder="카테고리 그룹명"
           required={true}
-          errors={state?.fieldErrors.category_group_name}
+          errors={state?.fieldErrors.categoryGroupName}
         />
         <Button text="카테고리 그룹 생성하기" />
       </form>

@@ -9,10 +9,11 @@ import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { revalidatePath } from "next/cache";
 import { getUser } from "@/app/lib/data";
+import { userAgent } from "next/server";
 
 
 export async function signUp(prevState: any, formData : FormData){
-  const checkUniqueEmail = async ( email:string ) => {
+  const checkUniqueEmail = async ( email : string ) => {
     const user = await db.user.findUnique({
       select : { id:true },
       where : { email }
@@ -20,21 +21,21 @@ export async function signUp(prevState: any, formData : FormData){
     return !Boolean(user)
   }
 
-  const checkUniqueUsername = async ( user_name:string ) => {
+  const checkUniqueUserName = async ( userName : string ) => {
     const user = await db.user.findUnique({
       select : { id:true },
-      where : { user_name }
+      where : { user_name : userName }
     });    
     return !Boolean(user)
   }  
 
   const checkPasswordMatch = ({
     password,
-    confirm_password
+    confirmPassword
   } : {
     password : string;
-    confirm_password : string;
-  }) => password === confirm_password
+    confirmPassword : string;
+  }) => password === confirmPassword
     
 
   const formSchema = z.object({
@@ -43,29 +44,29 @@ export async function signUp(prevState: any, formData : FormData){
     .toLowerCase()
     .refine(checkUniqueEmail, "이미 사용 중인 메일 주소입니다."),
 
-    username : z.string({
+    userName : z.string({
       invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
       required_error:"사용자명은 필수입니다."})
       .min(1)
       .trim()
-      .refine(checkUniqueUsername, "이미 사용 중인 사용자명 입니다."),
+      .refine(checkUniqueUserName, "이미 사용 중인 사용자명 입니다."),
     
     password: z.string()
     .min(PASSWORD_MIN_LENGTH,"암호는 8자 이상이어야 합니다.")
     .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERR_MSG),
 
-    confirm_password: z.string()
+    confirmPassword: z.string()
     .min(PASSWORD_MIN_LENGTH,"암호는 8자 이상이어야 합니다."),
   }).refine(checkPasswordMatch, {
     message : "암호가 동일하지 않습니다",
-    path : ["confirm_password"],
+    path : ["confirmPassword"],
   })
   
   const data = {
     email : formData.get("email"),
-    username : formData.get("username"),
+    user_name : formData.get("userName"),
     password : formData.get("password"),
-    confirm_password : formData.get("confirm_password"),
+    confirm_password : formData.get("confirmPassword"),
   }
   const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
@@ -75,14 +76,14 @@ export async function signUp(prevState: any, formData : FormData){
     const user = await db.user.create({
       data: {
         email : result.data.email,
-        user_name : result.data.username,
+        user_name : result.data.userName,
         password : hashedPassword,
       }
     });
     
     await createDefaultCategory(user.id);
-    const user_category_group_id = await createDefaultCategoryGroup(user.id);
-    await createDefaultLedger(user.id, user_category_group_id);
+    const userCategoryGroupId = await createDefaultCategoryGroup(user.id);
+    await createDefaultLedger(user.id, userCategoryGroupId);
     
     const session = await getSession();
     session.id = user.id;
@@ -158,29 +159,29 @@ export async function signIn(prevState: any, formData : FormData){
 
 export async function inviteUserToLedger(prevState: any, formData : FormData){
   const CheckIsExistsLedger = async() => {
-    const ledger_id = formData.get("ledger_id");
+    const ledgerId = formData.get("ledgerId");
 
-    if (!ledger_id) {
+    if (!ledgerId) {
       redirect("/ledger");
     }
   }
   
   CheckIsExistsLedger();
 
-  const checkInvitedUser = async ( user_name:string | undefined) => {
+  const checkInvitedUser = async ( userName : string | undefined) => {
     const user = await db.user.findUnique({
       select : { id:true },
-      where : { user_name }
+      where : { user_name : userName }
     });    
     return user?.id
   }
 
-  const checkInvitingUser = async ( user_id: string, ledger_id : string ) => {
+  const checkInvitingUser = async ( userId: string, ledgerId : string ) => {
     const user = await db.user_ledger_invite.findFirst({
       select : { user_id : true, ledger_id : true, invite_prg_code: true },
       where : {
-        user_id: user_id,
-        ledger_id: ledger_id
+        user_id: userId,
+        ledger_id: ledgerId
       },
       orderBy: {
         created_at: 'desc',
@@ -190,15 +191,15 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
   }
 
   const formSchema = z.object({
-    user_name : z.string({
+    userName : z.string({
       invalid_type_error:"사용자명은 문자로 입력되어야 합니다.", 
       required_error:"사용자명은 필수입니다"})
       .min(1)
       .trim(),
-    ledger_id : z.string(),
+    ledgerId : z.string(),
   })
   // 가계부 주인 여부 조회
-  .superRefine(async ({ledger_id}, ctx) => {
+  .superRefine(async ({ledgerId}, ctx) => {
     const user = await getSession();
     const isOwner = await db.user_ledger.findUnique({
       select : {
@@ -207,7 +208,7 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
       where : {
         user_id_ledger_id : {
           user_id : user.id,
-          ledger_id : ledger_id,
+          ledger_id : ledgerId,
         },
         is_owner : true
       }
@@ -216,15 +217,15 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
       ctx.addIssue({
         code: "custom",
         message: "가계부의 주인만 초대 권한이 있습니다",
-        path: ["user_name"],
+        path: ["userName"],
         fatal: true,            
       })
     }
     return z.NEVER;    
   })
   // 초대 대상자 존재 여부 조회
-  .superRefine(async ({user_name}, ctx) => {
-    const exists_invited_user = await checkInvitedUser(user_name);
+  .superRefine(async ({userName}, ctx) => {
+    const exists_invited_user = await checkInvitedUser(userName);
     if(!exists_invited_user){
       ctx.addIssue({
         code: "custom",
@@ -236,32 +237,32 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
     return z.NEVER;
   })
   // 초대 대상자가 자기 자신인지, 이미 초대중인지, 이미 초대가 완료됐는지 조회
-  .superRefine(async ({user_name, ledger_id}, ctx) => {
+  .superRefine(async ({userName, ledgerId}, ctx) => {
     const user = await getUser();
-    const invited_user_id = await checkInvitedUser(user_name);
+    const invitedUserId = await checkInvitedUser(userName);
 
-    if(user.id === invited_user_id){
+    if(user.id === invitedUserId){
       ctx.addIssue({
         code: "custom",
         message: "자기 자신을 초대할 수 없습니다",
-        path: ["user_name"],
+        path: ["userName"],
         fatal: true,        
       });
     } 
 
-    const inviting_user = await checkInvitingUser(invited_user_id as string, ledger_id)
-    if(inviting_user === 0 || inviting_user === 3){
+    const invitingUser = await checkInvitingUser(invitedUserId as string, ledgerId)
+    if(invitingUser === 0 || invitingUser === 3){
       ctx.addIssue({
         code: "custom",
         message: "이미 초대중인 사용자 입니다",
-        path: ["user_name"],
+        path: ["userName"],
         fatal: true,        
       });        
-    } else if (inviting_user === 1){
+    } else if (invitingUser === 1){
       ctx.addIssue({
         code: "custom",
         message: "이미 초대가 완료된 사용자 입니다",
-        path: ["user_name"],
+        path: ["userName"],
         fatal: true,        
       });
     }
@@ -269,19 +270,19 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
   })
  
   const data = {
-    user_name : formData.get("user_name"),
-    ledger_id : formData.get("ledger_id"),
+    user_name : formData.get("userName"),
+    ledger_id : formData.get("ledgerId"),
   }
   const result = await formSchema.safeParseAsync(data);
 
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const user_id = await checkInvitedUser(result.data.user_name);
+    const userId = await checkInvitedUser(result.data.userName);
 
     const inviteData = {
-      user_id : user_id as string,
-      ledger_id : result.data.ledger_id,
+      user_id : userId as string,
+      ledger_id : result.data.ledgerId,
       invite_prg_code : 0
     }
   
@@ -296,18 +297,18 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
 export async function createLedger(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
-    ledger_name : z.string({
+    ledgerName : z.string({
       invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
       required_error:"가계부 이름은 필수입니다."})
       .min(1)
       .trim(),
 
-    user_category_group_id : z.string(),
+    userCategoryGroupId : z.string(),
   });
 
   const data = {
-    ledger_name : formData.get("ledger_name"),
-    user_category_group_id : formData.get("user_category_group_id"),
+    ledger_name : formData.get("ledgerName"),
+    user_category_group_id : formData.get("userCategoryGroupId"),
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -316,11 +317,11 @@ export async function createLedger(prevState: any, formData : FormData){
   } else {
     const ledger = await db.ledger.create({
       data: {
-        ledger_name : result.data.ledger_name,
-        user_category_group_id : result.data.user_category_group_id
+        ledger_name : result.data.ledgerName,
+        user_category_group_id : result.data.userCategoryGroupId
       }
     });
-    createUserLedger(session.id, ledger.id, false, true);
+    await createUserLedger(session.id, ledger.id, false, true);
     revalidatePath("/ledger");
     redirect("/ledger");
   }
@@ -329,7 +330,7 @@ export async function createLedger(prevState: any, formData : FormData){
 export async function createCategoryGroup(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
-    category_group_name : z.string({
+    categoryGroupName : z.string({
       invalid_type_error:"카테고리 그룹명은 문자로 입력되어야 합니다.", 
       required_error:"카테고리 그룹명은 필수입니다."})
       .min(1)
@@ -337,7 +338,7 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
   });
 
   const data = {
-    category_group_name : formData.get("category_group_name"),
+    category_group_name : formData.get("categoryGroupName"),
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -347,7 +348,7 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
     await db.user_category_group.create({
       data: {
         user_id : session.id,
-        category_group_name : result.data.category_group_name,
+        category_group_name : result.data.categoryGroupName,
       }
     });
     redirect("/ledger");
@@ -355,13 +356,13 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
   }
 }
 
-async function createUserLedger(user_id : string, ledger_id : string, is_default : boolean, is_owner : boolean){
+async function createUserLedger(userId : string, ledgerId : string, isDefault : boolean, isOwner : boolean){
   await db.user_ledger.create({
     data: { 
-      user_id : user_id,
-      ledger_id : ledger_id,
-      is_default : is_default,
-      is_owner : is_owner
+      user_id : userId,
+      ledger_id : ledgerId,
+      is_default : isDefault,
+      is_owner : isOwner
     }
   })
 }
@@ -404,17 +405,17 @@ export async function smsSignIn(prevState : SmsTokenProps, formData : FormData){
   }
 }
 
-export async function createDefaultLedger(user_id : string, user_category_group_id : string){
+export async function createDefaultLedger(userId : string, userCategoryGroupId : string){
   const ledger = await db.ledger.create({
     data: {
       ledger_name : "기본 가계부",
-      user_category_group_id : user_category_group_id
+      user_category_group_id : userCategoryGroupId
     }
   });
 
   await db.user_ledger.create({
     data: { 
-      user_id : user_id,
+      user_id : userId,
       ledger_id : ledger.id,
       is_default : true,
       is_owner : true,
@@ -423,7 +424,7 @@ export async function createDefaultLedger(user_id : string, user_category_group_
 }
 
 export async function createDefaultCategoryGroup(id : string){
-  const user_category_group = await db.user_category_group.create({
+  const userCategoryGroup = await db.user_category_group.create({
     data: {
       user_id : id,
       category_group_name : "기본 카테고리",
@@ -443,22 +444,22 @@ export async function createDefaultCategoryGroup(id : string){
     user_category.map(async (category) => {
       await db.user_category_group_rel.create({
         data: {
-          user_category_group_id: user_category_group.id,
+          user_category_group_id: userCategoryGroup.id,
           user_category_id: category.id,
         },
       });
     })
   );  
 
-  return user_category_group.id
+  return userCategoryGroup.id
 }
 
 export async function createLedgerDetail(prevState: any, formData : FormData){
   const formSchema = z.object({
-    ledger_id : z.string(),
-    asset_category_id : z.string(),
-    transaction_category_id : z.string(),
-    category_code : z.coerce.number(),
+    ledgerId : z.string(),
+    assetCategoryId : z.string(),
+    transactionCategoryId : z.string(),
+    categoryCode : z.coerce.number(),
     title: z.string()
     .trim()
     .min(1, "제목은 1자 이상이어야 합니다."),
@@ -469,14 +470,14 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
 
     price: z.coerce.bigint(),
 
-    evented_at: z.date()
+    eventedAt: z.date()
   })
   
   const data = {
-    ledger_id: formData.get("ledger_id"),
-    asset_category_id: formData.get("asset_category_id"),
-    transaction_category_id: formData.get("transaction_category_id"),
-    category_code: formData.get("category_code"),
+    ledger_id: formData.get("ledgerId"),
+    asset_category_id: formData.get("assetCategoryId"),
+    transaction_category_id: formData.get("transactionCategoryId"),
+    category_code: formData.get("categoryCode"),
     title : formData.get("title"),
     detail : formData.get("detail"),
     price : formData.get("price"),
@@ -489,10 +490,10 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
     return result.error.flatten();
   } else {
     const ledgerDetailData = {
-      ledger_id : result.data.ledger_id,
-      asset_category_id : result.data.asset_category_id,
-      transaction_category_id : result.data.transaction_category_id,
-      category_code : result.data.category_code,
+      ledger_id : result.data.ledgerId,
+      asset_category_id : result.data.assetCategoryId,
+      transaction_category_id : result.data.transactionCategoryId,
+      category_code : result.data.categoryCode,
       title : result.data.title,
       detail : result.data.detail,
       price : result.data.price,
@@ -555,21 +556,21 @@ export async function createDefaultCategory(userId : string) {
   );
 }
 
-export async function createInviteResponse(ledger_id : string, prg_code : number){
+export async function createInviteResponse(ledgerId : string, prgCode : number){
   const user = await getSession();
   await db.user_ledger_invite.create({
     data : {
       user_id : user.id,
-      ledger_id : ledger_id,
-      invite_prg_code : prg_code,
+      ledger_id : ledgerId,
+      invite_prg_code : prgCode,
     }
   });
 
-  if(prg_code === 1){
+  if(prgCode === 1){
     await db.user_ledger.create({
       data : {
         user_id : user.id,
-        ledger_id : ledger_id,
+        ledger_id : ledgerId,
       }
     });
   }
@@ -577,21 +578,21 @@ export async function createInviteResponse(ledger_id : string, prg_code : number
 
 export async function editLedger(prevState: any, formData : FormData){
   const formSchema = z.object({
-    ledger_name : z.string({
+    ledgerName : z.string({
       invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
       required_error:"가계부 이름은 필수입니다."})
       .min(1)
       .trim(),
 
-    ledger_id : z.string(),
+    ledgerId : z.string(),
 
-    user_category_group_id : z.string(),
+    userCategoryGroupId : z.string(),
   });
 
   const data = {
-    ledger_name : formData.get("ledger_name"),
-    ledger_id : formData.get("ledger_id"),
-    user_category_group_id : formData.get("user_category_group_id")
+    ledger_name : formData.get("ledgerName"),
+    ledger_id : formData.get("ledgerId"),
+    user_category_group_id : formData.get("userCategoryGroupId")
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -600,18 +601,18 @@ export async function editLedger(prevState: any, formData : FormData){
   } else {
     await db.ledger.update({
         where : {
-          id : result.data.ledger_id
+          id : result.data.ledgerId
         },
         data : {
-          ledger_name : result.data.ledger_name,
-          user_category_group_id : result.data.user_category_group_id,
+          ledger_name : result.data.ledgerName,
+          user_category_group_id : result.data.userCategoryGroupId,
         }
     });
     redirect("/ledger"); 
   }
 }
 
-export async function setDefaultLedger(ledger_id : string){
+export async function setDefaultLedger(ledgerId : string){
   const user = await getSession();
     try{
       await db.user_ledger.updateMany({
@@ -629,7 +630,7 @@ export async function setDefaultLedger(ledger_id : string){
     try{
       await db.user_ledger.updateMany({
         where : {
-          ledger_id : ledger_id
+          ledger_id : ledgerId
         },
         data : {
           is_default : true
@@ -642,14 +643,14 @@ export async function setDefaultLedger(ledger_id : string){
     redirect("/ledger"); 
 }
 
-export async function deleteLedger(ledger_id : string){
+export async function deleteLedger(ledgerId : string){
   const user = await getSession();
     try{
       await db.user_ledger.delete({
         where : {
           user_id_ledger_id : {
             user_id : user.id,
-            ledger_id : ledger_id,
+            ledger_id : ledgerId,
           },          
         }
       });
@@ -660,13 +661,13 @@ export async function deleteLedger(ledger_id : string){
     redirect("/ledger"); 
 }
 
-export async function expelUserFromLedger(ledger_id : string, user_id : string){
+export async function expelUserFromLedger(ledgerId : string, userId : string){
     try{
       await db.user_ledger.delete({
         where : {
           user_id_ledger_id : {
-            user_id : user_id,
-            ledger_id : ledger_id,
+            user_id : ledgerId,
+            ledger_id : userId,
           },
         }
       });
@@ -677,8 +678,8 @@ export async function expelUserFromLedger(ledger_id : string, user_id : string){
     try{
       await db.user_ledger_invite.create({
         data: {
-          user_id : user_id,
-          ledger_id : ledger_id,
+          user_id : userId,
+          ledger_id : ledgerId,
         }
       })
     }catch(error){
@@ -688,11 +689,11 @@ export async function expelUserFromLedger(ledger_id : string, user_id : string){
     redirect("/ledger"); 
 }
 
-export async function transferLedgerOwner(ledger_id : string, user_id : string){
+export async function transferLedgerOwner(ledgerId : string, userId : string){
   try{
     await db.user_ledger.updateMany({
       where : {
-        ledger_id : ledger_id
+        ledger_id : ledgerId
       },
       data : {
         is_owner : false
@@ -706,8 +707,8 @@ export async function transferLedgerOwner(ledger_id : string, user_id : string){
     await db.user_ledger.update({
       where : {
         user_id_ledger_id : {
-          user_id : user_id,
-          ledger_id : ledger_id
+          user_id : userId,
+          ledger_id : ledgerId
         }
       },
       data : {
@@ -724,10 +725,10 @@ export async function transferLedgerOwner(ledger_id : string, user_id : string){
 export async function editLedgerDetail(prevState: any, formData : FormData){
   const formSchema = z.object({
     id : z.string(),
-    ledger_id : z.string(),
-    asset_category_id : z.string(),
-    transaction_category_id : z.string(),
-    category_code : z.coerce.number(),
+    ledgerId : z.string(),
+    assetCategoryId : z.string(),
+    transactionCategoryId : z.string(),
+    categoryCode : z.coerce.number(),
     title: z.string()
     .trim()
     .min(1, "제목은 1자 이상이어야 합니다."),
@@ -738,7 +739,7 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
 
     price: z.coerce.bigint(),
 
-    evented_at: z.preprocess(
+    eventedAt: z.preprocess(
       (val) => (typeof val === 'string' ? new Date(val) : val),
       z.date()
     ),
@@ -746,14 +747,14 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
   
   const data = {
     id : formData.get("id"),
-    ledger_id: formData.get("ledger_id"),
-    asset_category_id: formData.get("asset_category_id"),
-    transaction_category_id: formData.get("transaction_category_id"),
-    category_code: formData.get("category_code"),
+    ledger_id: formData.get("ledgerId"),
+    asset_category_id: formData.get("assetCategoryId"),
+    transaction_category_id: formData.get("transactionCategoryId"),
+    category_code: formData.get("categoryCode"),
     title : formData.get("title"),
     detail : formData.get("detail"),
     price : formData.get("price"),
-    evented_at : formData.get("evented_at"),
+    evented_at : formData.get("eventedAt"),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -762,14 +763,14 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
     return result.error.flatten();
   } else {
     const ledgerDetailData = {
-      ledger_id : result.data.ledger_id,
-      asset_category_id : result.data.asset_category_id,
-      transaction_category_id : result.data.transaction_category_id,
-      category_code : result.data.category_code,
+      ledger_id : result.data.ledgerId,
+      asset_category_id : result.data.assetCategoryId,
+      transaction_category_id : result.data.transactionCategoryId,
+      category_code : result.data.categoryCode,
       title : result.data.title,
       detail : result.data.detail,
       price : result.data.price,
-      evented_at: result.data.evented_at
+      evented_at: result.data.eventedAt
     }
     await db.ledger_detail.update({
     where : {
@@ -782,40 +783,39 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
   }
 }
 
-export async function deleteLedgerDetail(ledger_id : string, ledger_detail_id : string){
+export async function deleteLedgerDetail(ledgerId : string, ledgerDetailId : string){
     try{
       await db.ledger_detail.delete({
         where : {
-          id : ledger_detail_id
+          id : ledgerDetailId
         }
       });
     }catch(error){
       return { message : '가계부 내역 삭제에 실패했습니다'}
     }
     
-    redirect(`/ledger/${ledger_id}`);
+    redirect(`/ledger/${ledgerId}`);
 }
 
 export async function createCategory(prevState: any, formData : FormData){
   const session = await getSession();
   const formSchema = z.object({
-    parent_id: z.preprocess(
+    parentId: z.preprocess(
       (val) => (val === 'null' || val === null ? null : val),
       z.string().nullable()
     ),
-    category_name : z.string({
+    categoryName : z.string({
       invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
       required_error:"카테고리 이름은 필수입니다."})
       .min(1)
       .trim(),
-    category_code : z.coerce.number(),
+    categoryCode : z.coerce.number(),
   });
 
   const data = {
-    parent_id : formData.get("parent_id"),
-    user_id : session.id,
-    category_name : formData.get("category_name"),
-    category_code : formData.get("category_code"),
+    parent_id : formData.get("parentId"),
+    category_name : formData.get("categoryName"),
+    category_code : formData.get("categoryCode"),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -825,10 +825,10 @@ export async function createCategory(prevState: any, formData : FormData){
     try{
       await db.user_category.create({
         data: {
-          parent_id : result.data.parent_id,
-          user_id : data.user_id,
-          category_name : result.data.category_name,
-          category_code : result.data.category_code
+          parent_id : result.data.parentId,
+          user_id : session.id,
+          category_name : result.data.categoryName,
+          category_code : result.data.categoryCode
         }
       });
     }catch(error){
@@ -840,8 +840,8 @@ export async function createCategory(prevState: any, formData : FormData){
 
 export async function editCategory(prevState: any, formData : FormData){
   const formSchema = z.object({
-    category_id : z.string(),
-    category_name : z.string({
+    categoryId : z.string(),
+    categoryName : z.string({
       invalid_type_error:"카테고리 이름은 문자로 입력되어야 합니다.", 
       required_error:"카테고리 이름은 필수입니다."})
       .min(1)
@@ -849,8 +849,8 @@ export async function editCategory(prevState: any, formData : FormData){
   });
 
   const data = {
-    category_id : formData.get("category_id"),
-    category_name : formData.get("category_name"),
+    category_id : formData.get("categoryId"),
+    category_name : formData.get("categoryName"),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -860,10 +860,10 @@ export async function editCategory(prevState: any, formData : FormData){
     try{
       await db.user_category.update({
         data: {
-          category_name : result.data.category_name,
+          category_name : result.data.categoryName,
         },
         where : {
-          id : result.data.category_id
+          id : result.data.categoryId
         }
       });
     }catch(error){
@@ -873,14 +873,14 @@ export async function editCategory(prevState: any, formData : FormData){
   }
 }
 
-export async function deleteCategory(user_category_id : string){
+export async function deleteCategory(userCategoryId : string){
   try{
     await db.user_category.update({
       data: {
         is_active : false,
       },
       where : {
-        id : user_category_id
+        id : userCategoryId
       }
     })
   }catch(error){
@@ -891,26 +891,26 @@ export async function deleteCategory(user_category_id : string){
 }
 
 export async function createUserCategoryGroupRel(
-  user_category_group_id: string,
-  user_category_id: string)  {
+  userCategoryGroupId: string,
+  userCategoryId: string)  {
   await db.user_category_group_rel.create({
     data: {
-      user_category_id: user_category_id,
-      user_category_group_id: user_category_group_id,
+      user_category_id: userCategoryGroupId,
+      user_category_group_id: userCategoryId,
     },
   });
   revalidatePath("/user/category/category-group")
 };
 
 export async function deleteUserCategoryGroupRel(
-  user_category_group_id: string,
-  user_category_id: string
+  userCategoryGroupId: string,
+  userCategoryId: string
 ){
   await db.user_category_group_rel.delete({
     where: {
       user_category_group_id_user_category_id: {
-        user_category_id: user_category_id,
-        user_category_group_id: user_category_group_id,
+        user_category_id: userCategoryId,
+        user_category_group_id: userCategoryGroupId,
       },
     },
   });

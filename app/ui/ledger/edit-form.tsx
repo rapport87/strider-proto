@@ -23,17 +23,17 @@ export default function EditLedgerForm({
     <div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
-          name="ledger_name"
+          name="ledgerName"
           type="text"
           placeholder="가계부 이름"
           defaultValue={ledger.ledger_name}
           required={true}
-          errors={state?.fieldErrors.ledger_name}
+          errors={state?.fieldErrors.ledgerName}
         />
         <div>
           <select
             className="w-full h-10"
-            name="user_category_group_id"
+            name="userCategoryGroupId"
             required
             defaultValue={ledger.user_category_group_id}
           >
@@ -44,7 +44,7 @@ export default function EditLedgerForm({
             ))}
           </select>
         </div>
-        <input name="ledger_id" value={ledger.id} type="hidden" />
+        <input name="ledgerId" value={ledger.id} type="hidden" />
         <Button text="가계부 수정하기" />
       </form>
       {isDefaultLedger && (

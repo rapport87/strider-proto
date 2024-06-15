@@ -12,15 +12,15 @@ export default function EditCategoryForm({ category }: { category: Category }) {
     <div>
       <form action={dispatch}>
         <Input
-          name="category_name"
+          name="categoryName"
           type="text"
           placeholder="카테고리 이름"
           required={true}
           defaultValue={category.category_name}
-          errors={state?.fieldErrors?.category_name}
+          errors={state?.fieldErrors?.categoryName}
         />
         <Button text="카테고리 수정" />
-        <input name="category_id" value={category.id} type="hidden" />
+        <input name="categoryId" value={category.id} type="hidden" />
       </form>
     </div>
   );

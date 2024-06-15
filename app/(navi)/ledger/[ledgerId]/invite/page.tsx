@@ -14,13 +14,13 @@ export default function Page({ params }: { params: { ledgerId: number } }) {
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
-          name="user_name"
+          name="userName"
           type="text"
           placeholder="사용자명"
           required={true}
-          errors={state?.fieldErrors.user_name}
+          errors={state?.fieldErrors.userName}
         />
-        <input name="ledger_id" value={params.ledgerId} type="hidden" />
+        <input name="ledgerId" value={params.ledgerId} type="hidden" />
         <Button text="가계부 초대하기" />
       </form>
     </div>
