@@ -1,4 +1,4 @@
-import CreateLedgerDetailForm from "@/app/ui/ledger/ledger-detail/create-form";
+import LedgerDetailForm from "@/app/ui/ledger/ledger-detail/ledger-detail-form";
 import { getUserCategoryByIdByLedgerId } from "@/app/lib/data";
 
 export default async function Page({
@@ -7,5 +7,5 @@ export default async function Page({
   params: { ledgerId: string };
 }) {
   const userCategory = await getUserCategoryByIdByLedgerId(params.ledgerId);
-  return <CreateLedgerDetailForm category={userCategory} />;
+  return <LedgerDetailForm category={userCategory} />;
 }

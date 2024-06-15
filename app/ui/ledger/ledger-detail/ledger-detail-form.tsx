@@ -1,25 +1,34 @@
 "use client";
 
-import { editLedgerDetail } from "@/app/lib/actions";
-import { LedgerDetailProps } from "@/app/lib/defenitions";
-import Button from "@/app/ui/components/button";
-import Input from "@/app/ui/components/input";
-import { Category } from "@/app/lib/defenitions";
-import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import moment from "moment-timezone";
+import Input from "@/app/ui/components/input";
+import Button from "@/app/ui/components/button";
+import { createLedgerDetail, editLedgerDetail } from "@/app/lib/actions";
+import { Category, LedgerDetailProps } from "@/app/lib/defenitions";
 import DeleteLedgerDetail from "@/app/ui/ledger/ledger-detail/buttons";
 
-export default function EditLedgerDetailForm({
+interface LedgerDetailFormProps {
+  category: Category[];
+  ledgerDetail?: LedgerDetailProps;
+  isEdit?: boolean;
+}
+
+export default function LedgerDetailForm({
   category,
   ledgerDetail,
-}: {
-  category: Category[];
-  ledgerDetail: LedgerDetailProps;
-}) {
-  const [state, dispatch] = useFormState(editLedgerDetail, null);
+  isEdit = false,
+}: LedgerDetailFormProps) {
+  const [state, dispatch] = useFormState(
+    isEdit ? editLedgerDetail : createLedgerDetail,
+    null
+  );
+  const params = useParams();
 
   const [selectedCategoryClass, setSelectedCategoryClass] = useState<number>(
-    ledgerDetail.category_code
+    ledgerDetail ? ledgerDetail.category_code : 1
   );
   const [assetCategory, setAssetCategory] = useState<Category[]>([]);
   const [transactionCategory, setTransactionCategory] = useState<Category[]>(
@@ -49,7 +58,11 @@ export default function EditLedgerDetailForm({
     setSelectedCategoryClass(Number(e.target.value));
   };
 
-  const eventedAt = new Date(ledgerDetail.evented_at);
+  const eventedAt = ledgerDetail
+    ? moment(ledgerDetail.evented_at)
+        .tz("Asia/Seoul")
+        .format("YYYY-MM-DDTHH:mm")
+    : moment().tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm");
 
   return (
     <div>
@@ -79,7 +92,7 @@ export default function EditLedgerDetailForm({
               className="w-full h-10"
               name="asset_category_id"
               required
-              defaultValue={ledgerDetail.asset_category_id}
+              defaultValue={ledgerDetail ? ledgerDetail.asset_category_id : ""}
             >
               {assetCategory.map((cat) => (
                 <option key={cat.id} value={cat.id}>
@@ -96,7 +109,9 @@ export default function EditLedgerDetailForm({
               className="w-full h-10"
               name="transaction_category_id"
               required
-              defaultValue={ledgerDetail.transaction_category_id}
+              defaultValue={
+                ledgerDetail ? ledgerDetail.transaction_category_id : ""
+              }
             >
               {transactionCategory.map((cat) => (
                 <option key={cat.id} value={cat.id}>
@@ -114,7 +129,7 @@ export default function EditLedgerDetailForm({
           required={true}
           minLength={1}
           errors={state?.fieldErrors.title}
-          defaultValue={ledgerDetail.title}
+          defaultValue={ledgerDetail ? ledgerDetail.title : ""}
         />
         <Input
           name="detail"
@@ -123,7 +138,7 @@ export default function EditLedgerDetailForm({
           required={true}
           minLength={1}
           errors={state?.fieldErrors.detail}
-          defaultValue={ledgerDetail.detail || ""}
+          defaultValue={ledgerDetail ? ledgerDetail.detail || "" : ""}
         />
         <Input
           name="price"
@@ -132,30 +147,42 @@ export default function EditLedgerDetailForm({
           required={true}
           minLength={1}
           errors={state?.fieldErrors.price}
-          defaultValue={ledgerDetail.price.toString()}
+          defaultValue={ledgerDetail ? ledgerDetail.price.toString() : ""}
         />
         <Input
           name="evented_at"
           type="datetime-local"
           placeholder="evented_at"
           errors={state?.fieldErrors.evented_at}
-          defaultValue={eventedAt.toISOString().slice(0, 16)}
+          defaultValue={eventedAt}
         />
         <input
           name="category_code"
           value={selectedCategoryClass || ""}
           type="hidden"
         />
-        <input name="id" value={ledgerDetail.id} type="hidden" />
-        <input name="ledger_id" value={ledgerDetail.ledger_id} type="hidden" />
+        {ledgerDetail ? (
+          <>
+            <input name="id" value={ledgerDetail.id} type="hidden" />
+            <input
+              name="ledger_id"
+              value={ledgerDetail.ledger_id}
+              type="hidden"
+            />
+          </>
+        ) : (
+          <input name="ledger_id" value={params.ledgerId} type="hidden" />
+        )}
         <Button text="확인" />
       </form>
-      <div className="text-right mt-1">
-        <DeleteLedgerDetail
-          ledger_id={ledgerDetail.ledger_id}
-          ledger_detail_id={ledgerDetail.id}
-        />
-      </div>
+      {isEdit && ledgerDetail && (
+        <div className="text-right mt-1">
+          <DeleteLedgerDetail
+            ledger_id={ledgerDetail.ledger_id}
+            ledger_detail_id={ledgerDetail.id}
+          />
+        </div>
+      )}
     </div>
   );
 }

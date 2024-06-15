@@ -1,4 +1,4 @@
-import EditLedgerDetailForm from "@/app/ui/ledger/ledger-detail/edit-form";
+import LedgerDetailForm from "@/app/ui/ledger/ledger-detail/ledger-detail-form";
 import { getLedgerDetailById, getUserCategoryById } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 
@@ -15,6 +15,10 @@ export default async function Page({
     notFound();
   }
   return (
-    <EditLedgerDetailForm category={userCategory} ledgerDetail={ledgerDetail} />
+    <LedgerDetailForm
+      category={userCategory}
+      ledgerDetail={ledgerDetail}
+      isEdit={true}
+    />
   );
 }

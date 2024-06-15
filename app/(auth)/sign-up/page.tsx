@@ -49,7 +49,7 @@ export default function Page() {
         />
         <Button text="계정 생성하기" />
       </form>
-      <div className="w-full h-px bg-neutral-500" />
+      {/* <div className="w-full h-px bg-neutral-500" />
       <div>
         <Link
           className="primary-btn flex h-10 items-center justify-center gap-2"
@@ -60,7 +60,7 @@ export default function Page() {
           </span>
           <span>휴대전화(SMS) 회원가입</span>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

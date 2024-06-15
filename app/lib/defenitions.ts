@@ -66,6 +66,11 @@ export interface NavigationUIProps {
     default_ledger_id: string;
   }
 
+export interface LedgerDetailFormProps {
+    category: Category[];
+    ledgerDetail?: LedgerDetailProps;
+    isEdit?: boolean;
+}
 
 // EditLedger.tsx
 export interface User {
