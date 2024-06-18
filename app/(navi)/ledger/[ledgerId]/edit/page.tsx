@@ -22,9 +22,9 @@ export default async function Page({
         <h1 className="text-2xl">가계부 수정하기</h1>
       </div>
       <EditLedgerForm
-        ledger={ledger}
         user_id={user_id}
-        categoryGroup={categoryGroup}
+        ledger={ledger}
+        category_group={categoryGroup}
       />
     </div>
   );

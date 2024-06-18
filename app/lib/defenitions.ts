@@ -64,7 +64,7 @@ export interface ListLedgerDetailProps{
 // NavigationUI.tsx
 export interface NavigationUIProps {
     default_ledger_id: string;
-  }
+}
 
 export interface LedgerDetailFormProps {
     category: Category[];
@@ -75,34 +75,34 @@ export interface LedgerDetailFormProps {
 // EditLedger.tsx
 export interface User {
     user_id: string;
-    user_name: string;
-    is_owner: boolean;
     is_default: boolean;
-  }
-  
-export interface ledgerEditForm {
-    id: string;
-    ledger_name: string;
-    user_category_group_id: string;
-    user_ledger: User[];
-  }
-  
+    is_owner: boolean;
+    user_name: string;
+}
+
 export interface CategoryGroup {
     id: string;
     category_group_name: string;
-  }
+}
   
 export interface EditLedgerProps {
     user_id: string;
     ledger: ledgerEditForm;
     category_group: CategoryGroup[];
-  }  
+}  
   
+export interface ledgerEditForm {
+  id: string;
+  ledger_name: string;
+  user_category_group_id: string;
+  user_ledger: User[];
+}
+
 export interface UserLedgerProps {
     user_id: string;
     ledger_id: string;
     user_ledger: User[];
-  }
+}
 
 export interface Category {
     id: string;
@@ -110,28 +110,28 @@ export interface Category {
     category_code: number;
     category_name: string;
     is_active: boolean;
-  }
+}
   
 export interface WriteProps {
     category: Category[];
-  }  
+}  
 
 export interface CategoryGroup {
     id: string;
     category_group_name: string;
-  }
+}
   
 export interface CategoryGroupProps {
-    categoryGroup: CategoryGroup[];
-  }  
+    category_group: CategoryGroup[];
+}  
 
 export interface CategoryGroupRel {
     user_category_group_id: string;
     user_category_id: string;
-  }
+}
 
 export interface CreateCategoryGroupRelProps {
     category: Category[];
     category_group: CategoryGroup[];
     category_group_rel: CategoryGroupRel[];
-  }  
+}  

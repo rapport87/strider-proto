@@ -174,7 +174,7 @@ export async function getLedgerById(ledgerId: string) {
       id: ledger.id,
       ledger_name: ledger.ledger_name,
       user_category_group_id: ledger.user_category_group_id,
-      userLedger: ledger.userLedger.map((userLedger) => ({
+      user_ledger: ledger.userLedger.map((userLedger) => ({
         user_id: userLedger.user_id,
         is_owner: userLedger.is_owner,
         is_default: userLedger.is_default,
