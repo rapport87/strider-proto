@@ -9,7 +9,6 @@ import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { revalidatePath } from "next/cache";
 import { getUser } from "@/app/lib/data";
-import { userAgent } from "next/server";
 
 
 export async function signUp(prevState: any, formData : FormData){
@@ -64,9 +63,9 @@ export async function signUp(prevState: any, formData : FormData){
   
   const data = {
     email : formData.get("email"),
-    user_name : formData.get("userName"),
+    userName : formData.get("userName"),
     password : formData.get("password"),
-    confirm_password : formData.get("confirmPassword"),
+    confirmPassword : formData.get("confirmPassword"),
   }
   const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
@@ -270,8 +269,8 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
   })
  
   const data = {
-    user_name : formData.get("userName"),
-    ledger_id : formData.get("ledgerId"),
+    userName : formData.get("userName"),
+    ledgerId : formData.get("ledgerId"),
   }
   const result = await formSchema.safeParseAsync(data);
 
@@ -307,8 +306,8 @@ export async function createLedger(prevState: any, formData : FormData){
   });
 
   const data = {
-    ledger_name : formData.get("ledgerName"),
-    user_category_group_id : formData.get("userCategoryGroupId"),
+    ledgerName : formData.get("ledgerName"),
+    userCategoryGroupId : formData.get("userCategoryGroupId"),
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -338,7 +337,7 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
   });
 
   const data = {
-    category_group_name : formData.get("categoryGroupName"),
+    categoryGroupName : formData.get("categoryGroupName"),
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -474,14 +473,14 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
   })
   
   const data = {
-    ledger_id: formData.get("ledgerId"),
-    asset_category_id: formData.get("assetCategoryId"),
-    transaction_category_id: formData.get("transactionCategoryId"),
-    category_code: formData.get("categoryCode"),
+    ledgerId: formData.get("ledgerId"),
+    assetCategoryId: formData.get("assetCategoryId"),
+    transactionCategoryId: formData.get("transactionCategoryId"),
+    categoryCode: formData.get("categoryCode"),
     title : formData.get("title"),
     detail : formData.get("detail"),
     price : formData.get("price"),
-    evented_at : new Date(Date.now()),
+    eventedAt : new Date(Date.now()),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -504,7 +503,7 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
       data : ledgerDetailData
     });
 
-    redirect(`/ledger/${data.ledger_id}`);
+    redirect(`/ledger/${ledgerDetailData.ledger_id}`);
   }
 }
 
@@ -590,9 +589,9 @@ export async function editLedger(prevState: any, formData : FormData){
   });
 
   const data = {
-    ledger_name : formData.get("ledgerName"),
-    ledger_id : formData.get("ledgerId"),
-    user_category_group_id : formData.get("userCategoryGroupId")
+    ledgerName : formData.get("ledgerName"),
+    ledgerId : formData.get("ledgerId"),
+    userCategoryGroupId : formData.get("userCategoryGroupId")
   };
 
   const result = await formSchema.safeParseAsync(data);
@@ -747,14 +746,14 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
   
   const data = {
     id : formData.get("id"),
-    ledger_id: formData.get("ledgerId"),
-    asset_category_id: formData.get("assetCategoryId"),
-    transaction_category_id: formData.get("transactionCategoryId"),
-    category_code: formData.get("categoryCode"),
+    ledgerId: formData.get("ledgerId"),
+    assetCategoryId: formData.get("assetCategoryId"),
+    transactionCategoryId: formData.get("transactionCategoryId"),
+    categoryCode: formData.get("categoryCode"),
     title : formData.get("title"),
     detail : formData.get("detail"),
     price : formData.get("price"),
-    evented_at : formData.get("eventedAt"),
+    eventedAt : formData.get("eventedAt"),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -779,7 +778,7 @@ export async function editLedgerDetail(prevState: any, formData : FormData){
     data : ledgerDetailData
   });
 
-    redirect(`/ledger/${data.ledger_id}`);
+    redirect(`/ledger/${ledgerDetailData.ledger_id}`);
   }
 }
 
@@ -813,9 +812,9 @@ export async function createCategory(prevState: any, formData : FormData){
   });
 
   const data = {
-    parent_id : formData.get("parentId"),
-    category_name : formData.get("categoryName"),
-    category_code : formData.get("categoryCode"),
+    parentId : formData.get("parentId"),
+    categoryName : formData.get("categoryName"),
+    categoryCode : formData.get("categoryCode"),
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -849,8 +848,8 @@ export async function editCategory(prevState: any, formData : FormData){
   });
 
   const data = {
-    category_id : formData.get("categoryId"),
-    category_name : formData.get("categoryName"),
+    categoryId : formData.get("categoryId"),
+    categoryName : formData.get("categoryName"),
   }
 
   const result = await formSchema.safeParseAsync(data);
