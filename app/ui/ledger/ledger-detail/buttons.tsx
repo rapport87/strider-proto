@@ -1,16 +1,16 @@
 import { deleteLedgerDetail } from "@/app/lib/actions";
 
 export default function DeleteLedgerDetail({
-  ledger_id,
-  ledger_detail_id,
+  ledgerId,
+  ledgerDetailId,
 }: {
-  ledger_id: string;
-  ledger_detail_id: string;
+  ledgerId: string;
+  ledgerDetailId: string;
 }) {
   const deleteLedgerDetailWithId = deleteLedgerDetail.bind(
     null,
-    ledger_id,
-    ledger_detail_id
+    ledgerId,
+    ledgerDetailId
   );
   return (
     <form action={deleteLedgerDetailWithId}>

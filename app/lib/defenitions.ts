@@ -68,7 +68,7 @@ export interface NavigationUIProps {
 
 export interface LedgerDetailFormProps {
     category: Category[];
-    ledgerDetail?: LedgerDetailProps;
+    ledger_detail?: LedgerDetailProps;
     isEdit?: boolean;
 }
 
@@ -84,7 +84,7 @@ export interface ledgerEditForm {
     id: string;
     ledger_name: string;
     user_category_group_id: string;
-    userLedger: User[];
+    user_ledger: User[];
   }
   
 export interface CategoryGroup {
@@ -95,13 +95,13 @@ export interface CategoryGroup {
 export interface EditLedgerProps {
     user_id: string;
     ledger: ledgerEditForm;
-    categoryGroup: CategoryGroup[];
+    category_group: CategoryGroup[];
   }  
   
 export interface UserLedgerProps {
     user_id: string;
     ledger_id: string;
-    userLedger: User[];
+    user_ledger: User[];
   }
 
 export interface Category {
@@ -110,8 +110,8 @@ export interface Category {
     category_code: number;
     category_name: string;
     is_active: boolean;
-}  
-
+  }
+  
 export interface WriteProps {
     category: Category[];
   }  

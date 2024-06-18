@@ -178,8 +178,8 @@ export default function LedgerDetailForm({
       {isEdit && ledgerDetail && (
         <div className="text-right mt-1">
           <DeleteLedgerDetail
-            ledger_id={ledgerDetail.ledger_id}
-            ledger_detail_id={ledgerDetail.id}
+            ledgerId={ledgerDetail.ledger_id}
+            ledgerDetailId={ledgerDetail.id}
           />
         </div>
       )}

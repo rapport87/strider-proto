@@ -7,9 +7,9 @@ import { UserLedgerProps } from "@/app/lib/defenitions";
 export default async function MemberList({
   user_id,
   ledger_id,
-  userLedger,
+  user_ledger,
 }: UserLedgerProps) {
-  const isOwner = userLedger.some(
+  const isOwner = user_ledger.some(
     (user) => user.user_id === user_id && user.is_owner
   );
   return (
@@ -17,7 +17,7 @@ export default async function MemberList({
       <div className="mt-5">
         <h2>가계부 사용자</h2>
       </div>
-      {userLedger.map((user) => (
+      {user_ledger.map((user) => (
         <div className="flex" key={user.user_id}>
           <span>{user.user_name}</span>
 
