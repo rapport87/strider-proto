@@ -24,6 +24,7 @@ model user {
 model user_ledger {
   user_id                   String
   ledger_id                 String
+  ledger_name               String   @db.VarChar(32)
   is_default                Boolean  @default(false)
   is_owner                  Boolean  @default(false)
   created_at                DateTime @default(now())
@@ -50,7 +51,6 @@ model user_ledger_invite {
 
 model ledger {
   id                     String               @id @default(uuid())
-  ledger_name            String               @db.VarChar(32)
   user_category_group_id String
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt

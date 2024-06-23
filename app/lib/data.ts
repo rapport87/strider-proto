@@ -149,11 +149,11 @@ export async function getLedgerById(ledgerId: string) {
       },
       select: {
         id: true,
-        ledger_name: true,
         user_category_group_id : true,
         userLedger: {
           select: {
             user_id: true,
+            ledger_name: true,
             is_owner: true,
             is_default: true,
             user: {
@@ -172,10 +172,10 @@ export async function getLedgerById(ledgerId: string) {
   
     const ledgerUsers = {
       id: ledger.id,
-      ledger_name: ledger.ledger_name,
       user_category_group_id: ledger.user_category_group_id,
       user_ledger: ledger.userLedger.map((userLedger) => ({
         user_id: userLedger.user_id,
+        ledger_name: userLedger.ledger_name,
         is_owner: userLedger.is_owner,
         is_default: userLedger.is_default,
         user_name: userLedger.user.user_name,
@@ -192,18 +192,18 @@ export async function getLedgerById(ledgerId: string) {
       where: {
         user_id : user.id
       },
-      include: {
-        ledger: {
-          select: {
-            ledger_name: true,
-          },
-        },    
+      select : {
+        user_id : true,
+        ledger_id : true,
+        ledger_name : true,
+        is_default : true,
+        is_owner : true
       }
     })
     return ledger.map((userLedger) => ({
       user_id: userLedger.user_id,
       ledger_id : userLedger.ledger_id,
-      ledger_name : userLedger.ledger.ledger_name,
+      ledger_name : userLedger.ledger_name,
       is_default : userLedger.is_default,
       is_owner : userLedger.is_owner
     }));  
@@ -297,9 +297,13 @@ export async function getInvitedLedgerList(){
     },
     include: {
       ledger: {
-        select: {
-          ledger_name: true,
-        },
+        include : {
+          userLedger : {
+            select : {
+              ledger_name : true
+            }
+          }
+        }
       },
     },    
   });
@@ -311,7 +315,7 @@ export async function getInvitedLedgerList(){
     invite_prg_code: invite.invite_prg_code,
     created_at: invite.created_at,
     updated_at: invite.updated_at,
-    ledger_name: invite.ledger.ledger_name,
+    ledger_name: invite.ledger.userLedger[0].ledger_name,
   }));
 }    
 

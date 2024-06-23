@@ -316,11 +316,10 @@ export async function createLedger(prevState: any, formData : FormData){
   } else {
     const ledger = await db.ledger.create({
       data: {
-        ledger_name : result.data.ledgerName,
         user_category_group_id : result.data.userCategoryGroupId
       }
     });
-    await createUserLedger(session.id, ledger.id, false, true);
+    await createUserLedger(session.id, ledger.id, result.data.ledgerName, false, true);
     revalidatePath("/ledger");
     redirect("/ledger");
   }
@@ -355,11 +354,12 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
   }
 }
 
-async function createUserLedger(userId : string, ledgerId : string, isDefault : boolean, isOwner : boolean){
+async function createUserLedger(userId : string, ledgerId : string, ledgerName : string, isDefault : boolean, isOwner : boolean){
   await db.user_ledger.create({
     data: { 
       user_id : userId,
       ledger_id : ledgerId,
+      ledger_name : ledgerName,
       is_default : isDefault,
       is_owner : isOwner
     }
@@ -407,7 +407,6 @@ export async function smsSignIn(prevState : SmsTokenProps, formData : FormData){
 export async function createDefaultLedger(userId : string, userCategoryGroupId : string){
   const ledger = await db.ledger.create({
     data: {
-      ledger_name : "기본 가계부",
       user_category_group_id : userCategoryGroupId
     }
   });
@@ -416,6 +415,7 @@ export async function createDefaultLedger(userId : string, userCategoryGroupId :
     data: { 
       user_id : userId,
       ledger_id : ledger.id,
+      ledger_name : "기본 가계부",
       is_default : true,
       is_owner : true,
     }
@@ -566,16 +566,31 @@ export async function createInviteResponse(ledgerId : string, prgCode : number){
   });
 
   if(prgCode === 1){
-    await db.user_ledger.create({
-      data : {
-        user_id : user.id,
+    const userLedger = await db.user_ledger.findFirst({
+      where : {
+        is_owner : true,
         ledger_id : ledgerId,
+      },
+      select : {
+        ledger_name : true
       }
-    });
+    })
+
+    if (userLedger){
+      await db.user_ledger.create({
+        data : {
+          user_id : user.id,
+          ledger_id : ledgerId,
+          ledger_name : userLedger.ledger_name
+        }
+      });
+    }
   }
 }
 
 export async function editLedger(prevState: any, formData : FormData){
+  const user = await getSession();
+
   const formSchema = z.object({
     ledgerName : z.string({
       invalid_type_error:"가계부 이름은 문자로 입력되어야 합니다.", 
@@ -598,15 +613,34 @@ export async function editLedger(prevState: any, formData : FormData){
   if (!result.success) {
     return result.error.flatten();
   } else {
-    await db.ledger.update({
+    try{
+      await db.ledger.update({
         where : {
           id : result.data.ledgerId
         },
         data : {
-          ledger_name : result.data.ledgerName,
           user_category_group_id : result.data.userCategoryGroupId,
         }
-    });
+      });
+    } catch(error){
+      throw new Error("가계부 카테고리 그룹 변경에 실패하였습니다.");
+    }
+
+    try{
+      await db.user_ledger.update({
+        where : {
+          user_id_ledger_id : {
+            user_id : user.id,
+            ledger_id : result.data.ledgerId
+          }
+        },
+        data : {
+          ledger_name : result.data.ledgerName,
+        }
+      });
+    } catch(error){
+      throw new Error("가계부 카테고리 그룹 변경에 실패하였습니다.");
+    }    
     redirect("/ledger"); 
   }
 }

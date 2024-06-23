@@ -18,6 +18,9 @@ export default function EditLedgerForm({
   const isDefaultLedger = ledger.user_ledger.some(
     (user) => user.user_id === user_id && !user.is_default
   );
+  const ledgerName = ledger.user_ledger.find(
+    (user) => user.user_id === user_id
+  )?.ledger_name;
 
   return (
     <div>
@@ -26,7 +29,7 @@ export default function EditLedgerForm({
           name="ledgerName"
           type="text"
           placeholder="가계부 이름"
-          defaultValue={ledger.ledger_name}
+          defaultValue={ledgerName}
           required={true}
           errors={state?.fieldErrors.ledgerName}
         />

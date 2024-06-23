@@ -75,6 +75,7 @@ export interface LedgerDetailFormProps {
 // EditLedger.tsx
 export interface User {
     user_id: string;
+    ledger_name: string;
     is_default: boolean;
     is_owner: boolean;
     user_name: string;
@@ -93,7 +94,6 @@ export interface EditLedgerProps {
   
 export interface ledgerEditForm {
   id: string;
-  ledger_name: string;
   user_category_group_id: string;
   user_ledger: User[];
 }

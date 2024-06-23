@@ -7,7 +7,7 @@ import { createLedger } from "@/app/lib/actions";
 import { CategoryGroupProps } from "@/app/lib/defenitions";
 
 export default function CreateLedgerForm({
-  categoryGroup,
+  category_group,
 }: CategoryGroupProps) {
   const [state, dispatch] = useFormState(createLedger, null);
   return (
@@ -25,7 +25,7 @@ export default function CreateLedgerForm({
         />
         <div>
           <select className="w-full h-10" name="userCategoryGroupId" required>
-            {categoryGroup.map((catGrp) => (
+            {category_group.map((catGrp) => (
               <option key={catGrp.id} value={catGrp.id}>
                 {catGrp.category_group_name}
               </option>
