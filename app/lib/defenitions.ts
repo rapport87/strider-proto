@@ -35,16 +35,16 @@ export interface LedgerDetail{
     asset_category_id : string;
     transaction_category_id : string;
     title : string;
-    detail : string | null;
+    detail? : string;
     price : bigint;
-    photo : string | null;
+    photo? : string;
     evented_at : Date;
 }
 
 export interface LedgerDetailListProps{
-    id : string | undefined;
+    id? : string;
     category_code : number;
-    asset_category_id : string | undefined;
+    asset_category_id? : string;
     transaction_category_id : string;
     asset_category_name : string;
     transaction_category_name : string;
@@ -91,7 +91,7 @@ export interface MemberListProps {
 
 export interface UserCategory {
     id: string;
-    parent_id: string | null;
+    parent_id? : string;
     category_code: number;
     category_name: string;
     is_active: boolean;
