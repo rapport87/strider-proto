@@ -14,9 +14,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavigationUIProps } from "@/app/lib/defenitions";
+import { NavigationProps } from "@/app/lib/defenitions";
 
-export default function Navigation({ default_ledger_id }: NavigationUIProps) {
+export default function Navigation({ ledger_id }: NavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -30,12 +30,10 @@ export default function Navigation({ default_ledger_id }: NavigationUIProps) {
         <span>홈</span>
       </Link>
       <Link
-        href={`/ledger/${default_ledger_id}/ledgerDetail/write`}
+        href={`/ledger/${ledger_id}/ledgerDetail/write`}
         className="flex flex-col items-center gap-px"
       >
-        {pathname.startsWith(
-          `/ledger/${default_ledger_id}/ledgerDetail/write`
-        ) ? (
+        {pathname.startsWith(`/ledger/${ledger_id}/ledgerDetail/write`) ? (
           <SolidPencilIcon className="w-7 h-7" />
         ) : (
           <OutlinePencilIcon className="w-7 h-7" />

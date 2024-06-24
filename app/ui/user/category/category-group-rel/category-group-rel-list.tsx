@@ -4,7 +4,10 @@ import {
   createUserCategoryGroupRel,
   deleteUserCategoryGroupRel,
 } from "@/app/lib/actions";
-import { Category, CreateCategoryGroupRelProps } from "@/app/lib/defenitions";
+import {
+  UserCategory,
+  CreateCategoryGroupRelProps,
+} from "@/app/lib/defenitions";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -17,7 +20,7 @@ export default function CategoryGroupRelList({
   const [selectedGroupId, setSelectedGroupId] = useState<string>(
     category_group[0].id
   );
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const [categoryList, setCategoryList] = useState<UserCategory[]>([]);
   const [checkedCategories, setCheckedCategories] = useState<{
     [key: string]: boolean;
   }>({});

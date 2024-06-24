@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import DeleteUserCategory from "@/app/ui/user/category/buttons";
-import { Category, WriteProps } from "@/app/lib/defenitions";
+import { UserCategory, UserCategoryProps } from "@/app/lib/defenitions";
 
-export default function CategoryList({ category }: WriteProps) {
+export default function CategoryList({ category }: UserCategoryProps) {
   const [selectedCategoryCode, setSelectedCategoryCode] = useState<number>(0);
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const [categoryList, setCategoryList] = useState<UserCategory[]>([]);
 
   useEffect(() => {
     if (selectedCategoryCode !== null) {
@@ -86,7 +86,7 @@ export default function CategoryList({ category }: WriteProps) {
       <div>
         <input
           type="radio"
-          name="category_code"
+          name="categoryCode"
           value="0"
           onChange={handleCategoryCodeChange}
           defaultChecked
@@ -94,14 +94,14 @@ export default function CategoryList({ category }: WriteProps) {
         자산
         <input
           type="radio"
-          name="category_code"
+          name="categoryCode"
           value="1"
           onChange={handleCategoryCodeChange}
         />{" "}
         수입
         <input
           type="radio"
-          name="category_code"
+          name="categoryCode"
           value="2"
           onChange={handleCategoryCodeChange}
         />{" "}

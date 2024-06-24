@@ -1,4 +1,4 @@
-import { ListInvitedLedgerProps } from "@/app/lib/defenitions";
+import { InvitedLedgerListProps } from "@/app/lib/defenitions";
 import {
   AgreeInviteButton,
   IgnoreInviteButton,
@@ -8,7 +8,7 @@ import {
 export default function InvitedLedgerList({
   ledger_id,
   ledger_name,
-}: ListInvitedLedgerProps) {
+}: InvitedLedgerListProps) {
   return (
     <div>
       <div className="border border-black p-2 mt-2">

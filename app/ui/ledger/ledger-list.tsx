@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ListLedgerProps } from "@/app/lib/defenitions";
+import { UserLedgerProps } from "@/app/lib/defenitions";
 
 export default function LedgerList({
   ledger_id,
   ledger_name,
   is_default,
   is_owner,
-}: ListLedgerProps) {
+}: UserLedgerProps) {
   return (
     <div>
       <div className="border border-black p-2 mt-2">

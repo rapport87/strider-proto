@@ -4,11 +4,11 @@ import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { useFormState } from "react-dom";
 import { createLedger } from "@/app/lib/actions";
-import { CategoryGroupProps } from "@/app/lib/defenitions";
+import { CreateLedgerProps } from "@/app/lib/defenitions";
 
 export default function CreateLedgerForm({
   category_group,
-}: CategoryGroupProps) {
+}: CreateLedgerProps) {
   const [state, dispatch] = useFormState(createLedger, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">

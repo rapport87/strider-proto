@@ -6,7 +6,7 @@ export default async function Page() {
   const userCategory = await getUserCategory();
   return (
     <div>
-      <div>Category</div>
+      <div>UserCategory</div>
       <CategoryList category={userCategory} />
       <div className="flex justify-between mt-1">
         <Link href="/user/category/category-group">

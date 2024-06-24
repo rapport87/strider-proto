@@ -2,13 +2,13 @@ import {
   ExpelUserFromLedger,
   TransferLedgerOwner,
 } from "@/app/ui/ledger/buttons";
-import { UserLedgerProps } from "@/app/lib/defenitions";
+import { MemberListProps } from "@/app/lib/defenitions";
 
 export default async function MemberList({
   user_id,
   ledger_id,
   user_ledger,
-}: UserLedgerProps) {
+}: MemberListProps) {
   const isOwner = user_ledger.some(
     (user) => user.user_id === user_id && user.is_owner
   );

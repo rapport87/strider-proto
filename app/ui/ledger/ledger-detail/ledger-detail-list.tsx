@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ListLedgerDetailProps } from "@/app/lib/defenitions";
+import { LedgerDetailListProps } from "@/app/lib/defenitions";
 
 function formatDateTime(date: Date) {
   const optionsDate: Intl.DateTimeFormatOptions = {
@@ -25,14 +25,13 @@ function formatDateTime(date: Date) {
 }
 
 export default function LedgerDetailList({
-  id,
   title,
   price,
   evented_at,
   asset_category_name,
   transaction_category_name,
   category_code,
-}: ListLedgerDetailProps) {
+}: LedgerDetailListProps) {
   return (
     <div className="border text-black border-black p-2 mt-2">
       <div className="grid grid-cols-6 items-center text-center">

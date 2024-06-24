@@ -1,8 +1,7 @@
-import { getLedgers, getLedgerDetailsByLedgerId } from "@/app/lib/data";
+import { getUserLedgers, getLedgerDetailsByLedgerId } from "@/app/lib/data";
 import getSession from "@/app/lib/session";
-import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
+import LedgerDetailList from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 async function getIsOwner(userId: string) {
   const session = await getSession();
@@ -13,7 +12,7 @@ async function getIsOwner(userId: string) {
 }
 
 export default async function Page() {
-  const defaultLedger = (await getLedgers()).filter(
+  const defaultLedger = (await getUserLedgers()).filter(
     (ledger) => ledger.is_default === true
   );
   const ledgerDetails = await getLedgerDetailsByLedgerId(
@@ -28,7 +27,7 @@ export default async function Page() {
             key={ledgerDetail.id}
             href={`/ledger/${defaultLedger[0].ledger_id}/ledgerDetail/${ledgerDetail.id}/edit`}
           >
-            <ListLedgerDetail {...ledgerDetail} />
+            <LedgerDetailList {...ledgerDetail} />
           </Link>
         ))}
       </div>

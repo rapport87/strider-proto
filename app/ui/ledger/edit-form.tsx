@@ -7,13 +7,13 @@ import { editLedger } from "@/app/lib/actions";
 import { SetDefaultLedger } from "@/app/ui/ledger/buttons";
 import { DeleteLedger } from "@/app/ui/ledger/buttons";
 import MemberList from "@/app/ui/ledger/member-list";
-import { EditLedgerProps } from "@/app/lib/defenitions";
+import { EditLedgerFormProps } from "@/app/lib/defenitions";
 
 export default function EditLedgerForm({
   user_id,
   ledger,
   category_group,
-}: EditLedgerProps) {
+}: EditLedgerFormProps) {
   const [state, dispatch] = useFormState(editLedger, null);
   const isDefaultLedger = ledger.user_ledger.some(
     (user) => user.user_id === user_id && !user.is_default

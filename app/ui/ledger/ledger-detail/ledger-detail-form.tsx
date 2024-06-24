@@ -7,14 +7,8 @@ import moment from "moment-timezone";
 import Input from "@/app/ui/components/input";
 import Button from "@/app/ui/components/button";
 import { createLedgerDetail, editLedgerDetail } from "@/app/lib/actions";
-import { Category, LedgerDetailProps } from "@/app/lib/defenitions";
+import { LedgerDetailFormProps, UserCategory } from "@/app/lib/defenitions";
 import DeleteLedgerDetail from "@/app/ui/ledger/ledger-detail/buttons";
-
-interface LedgerDetailFormProps {
-  category: Category[];
-  ledgerDetail?: LedgerDetailProps;
-  isEdit?: boolean;
-}
 
 export default function LedgerDetailForm({
   category,
@@ -30,10 +24,10 @@ export default function LedgerDetailForm({
   const [selectedCategoryClass, setSelectedCategoryClass] = useState<number>(
     ledgerDetail ? ledgerDetail.category_code : 1
   );
-  const [assetCategory, setAssetCategory] = useState<Category[]>([]);
-  const [transactionCategory, setTransactionCategory] = useState<Category[]>(
-    []
-  );
+  const [assetCategory, setAssetCategory] = useState<UserCategory[]>([]);
+  const [transactionCategory, setTransactionCategory] = useState<
+    UserCategory[]
+  >([]);
 
   useEffect(() => {
     if (selectedCategoryClass !== null) {

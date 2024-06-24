@@ -1,4 +1,4 @@
-export interface SessionContent{
+export interface SessionContentProps{
     id:string;
 }
 
@@ -15,33 +15,25 @@ export interface SmsTokenProps{
     token: boolean;
 }
 
-export interface UserLedger{
-    user_id : string;
-    ledger_id : string;
-    ledger_name : string;
-}
-
-export interface ListLedgerProps{
-    user_id : string;
-    ledger_id : string;
-    ledger_name : string;
-    is_default : boolean;
-    is_owner : boolean;
-}
-
-export interface ListInvitedLedgerProps{
+export interface InvitedLedgerListProps{
     id : string;
     user_id : string;
     ledger_id : string;
     ledger_name : string;
 }
 
-export interface LedgerDetailProps{
+export interface LedgerDetailFormProps {
+    category: UserCategory[];
+    ledgerDetail?: LedgerDetail;
+    isEdit?: boolean;
+  }
+
+export interface LedgerDetail{
     id : string;
     ledger_id : string;
+    category_code : number;
     asset_category_id : string;
     transaction_category_id : string;
-    category_code : number;
     title : string;
     detail : string | null;
     price : bigint;
@@ -49,7 +41,7 @@ export interface LedgerDetailProps{
     evented_at : Date;
 }
 
-export interface ListLedgerDetailProps{
+export interface LedgerDetailListProps{
     id : string | undefined;
     category_code : number;
     asset_category_id : string | undefined;
@@ -61,20 +53,13 @@ export interface ListLedgerDetailProps{
     evented_at : Date;
 }
 
-// NavigationUI.tsx
-export interface NavigationUIProps {
-    default_ledger_id: string;
+export interface NavigationProps {
+    ledger_id: string;
 }
 
-export interface LedgerDetailFormProps {
-    category: Category[];
-    ledger_detail?: LedgerDetailProps;
-    isEdit?: boolean;
-}
-
-// EditLedger.tsx
-export interface User {
+export interface UserLedgerProps {
     user_id: string;
+    ledger_id: string;
     ledger_name: string;
     is_default: boolean;
     is_owner: boolean;
@@ -85,26 +70,26 @@ export interface CategoryGroup {
     id: string;
     category_group_name: string;
 }
-  
-export interface EditLedgerProps {
+
+export interface EditLedgerFormProps {
     user_id: string;
-    ledger: ledgerEditForm;
+    ledger: Ledger;
     category_group: CategoryGroup[];
 }  
   
-export interface ledgerEditForm {
+export interface Ledger {
   id: string;
   user_category_group_id: string;
-  user_ledger: User[];
+  user_ledger: UserLedgerProps[];
 }
 
-export interface UserLedgerProps {
+export interface MemberListProps {
     user_id: string;
     ledger_id: string;
-    user_ledger: User[];
+    user_ledger: UserLedgerProps[];
 }
 
-export interface Category {
+export interface UserCategory {
     id: string;
     parent_id: string | null;
     category_code: number;
@@ -112,16 +97,12 @@ export interface Category {
     is_active: boolean;
 }
   
-export interface WriteProps {
-    category: Category[];
+export interface UserCategoryProps {
+    category: UserCategory[];
 }  
 
-export interface CategoryGroup {
-    id: string;
-    category_group_name: string;
-}
-  
-export interface CategoryGroupProps {
+
+export interface CreateLedgerProps {
     category_group: CategoryGroup[];
 }  
 
@@ -131,7 +112,7 @@ export interface CategoryGroupRel {
 }
 
 export interface CreateCategoryGroupRelProps {
-    category: Category[];
+    category: UserCategory[];
     category_group: CategoryGroup[];
     category_group_rel: CategoryGroupRel[];
 }  

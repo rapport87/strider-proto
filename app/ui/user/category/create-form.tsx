@@ -5,13 +5,13 @@ import Button from "@/app/ui/components/button";
 import Input from "@/app/ui/components/input";
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { Category, WriteProps } from "@/app/lib/defenitions";
+import { UserCategory, UserCategoryProps } from "@/app/lib/defenitions";
 
-export default function CreateCategoryForm({ category }: WriteProps) {
+export default function CreateCategoryForm({ category }: UserCategoryProps) {
   const [state, dispatch] = useFormState(createCategory, null);
   const [selectedCategoryCode, setSelectedCategoryCode] = useState<number>(0);
   const [selectedParentExists, setSelectedParentExists] = useState<number>(0);
-  const [assetCategory, setAssetCategory] = useState<Category[]>([]);
+  const [assetCategory, setAssetCategory] = useState<UserCategory[]>([]);
 
   useEffect(() => {
     if (selectedCategoryCode !== null) {
@@ -43,7 +43,7 @@ export default function CreateCategoryForm({ category }: WriteProps) {
         <div>
           <input
             type="radio"
-            name="category_code"
+            name="categoryCode"
             value="0"
             onChange={handleCategoryCodeChange}
             defaultChecked
@@ -51,14 +51,14 @@ export default function CreateCategoryForm({ category }: WriteProps) {
           자산
           <input
             type="radio"
-            name="category_code"
+            name="categoryCode"
             value="1"
             onChange={handleCategoryCodeChange}
           />{" "}
           수입
           <input
             type="radio"
-            name="category_code"
+            name="categoryCode"
             value="2"
             onChange={handleCategoryCodeChange}
           />{" "}
@@ -71,7 +71,7 @@ export default function CreateCategoryForm({ category }: WriteProps) {
                 type="radio"
                 value="0"
                 onChange={handleParentExistsChange}
-                name="parent_exists"
+                name="parentExists"
                 defaultChecked
               />{" "}
               자산 그룹
@@ -79,13 +79,13 @@ export default function CreateCategoryForm({ category }: WriteProps) {
                 type="radio"
                 value="1"
                 onChange={handleParentExistsChange}
-                name="parent_exists"
+                name="parentExists"
               />{" "}
               자산 세분류
             </div>
             {selectedCategoryCode === 0 && selectedParentExists === 1 ? (
               <div>
-                <select className="w-full h-10" name="parent_id" required>
+                <select className="w-full h-10" name="parentId" required>
                   {assetCategory.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.category_name}
@@ -101,7 +101,7 @@ export default function CreateCategoryForm({ category }: WriteProps) {
           ""
         )}
         <Input
-          name="category_name"
+          name="categoryName"
           type="text"
           placeholder="카테고리 이름"
           required={true}

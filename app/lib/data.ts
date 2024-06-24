@@ -186,7 +186,7 @@ export async function getLedgerById(ledgerId: string) {
   }
 
 
-  export async function getLedgers(){
+  export async function getUserLedgers(){
     const user = await getSession();
     const ledger = await db.user_ledger.findMany({
       where: {
@@ -208,6 +208,20 @@ export async function getLedgerById(ledgerId: string) {
       is_owner : userLedger.is_owner
     }));  
   }
+
+  export async function getDefaultLedger(){
+    const user = await getSession();
+    const ledger = await db.user_ledger.findMany({
+      where: {
+        user_id : user.id,
+        is_default : true
+      },
+      select : {
+        ledger_id : true,
+      }
+    })
+    return ledger
+  }  
   
 
   export async function getLedgerDetailsByLedgerId(ledgerId : string){

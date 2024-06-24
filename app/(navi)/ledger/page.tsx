@@ -1,15 +1,15 @@
-import { getInvitedLedgerList, getLedgers } from "@/app/lib/data";
+import { getInvitedLedgerList, getUserLedgers } from "@/app/lib/data";
 import InvitedLedgerList from "@/app/ui/ledger/invited-ledger-list";
 import LedgerList from "@/app/ui/ledger/ledger-list";
 import Link from "next/link";
 
 export default async function Page() {
-  const ledgerList = await getLedgers();
+  const userLedgerList = await getUserLedgers();
   const inviteList = await getInvitedLedgerList();
   return (
     <div>
-      {ledgerList.map((ledgerList) => (
-        <LedgerList key={ledgerList.ledger_id} {...ledgerList} />
+      {userLedgerList.map((userLedgerList) => (
+        <LedgerList key={userLedgerList.ledger_id} {...userLedgerList} />
       ))}
       <div className="text-right">
         <Link className="text-black" href={`/ledger/create-ledger`}>

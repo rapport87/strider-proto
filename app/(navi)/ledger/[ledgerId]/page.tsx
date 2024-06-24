@@ -1,5 +1,5 @@
 import { getLedgerDetailsByLedgerId } from "@/app/lib/data";
-import ListLedgerDetail from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
+import LedgerDetailList from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
 import Link from "next/link";
 
 export default async function Page({
@@ -17,7 +17,7 @@ export default async function Page({
             key={ledgerDetail.id}
             href={`/ledger/${params.ledgerId}/ledgerDetail/${ledgerDetail.id}/edit`}
           >
-            <ListLedgerDetail {...ledgerDetail} />
+            <LedgerDetailList {...ledgerDetail} />
           </Link>
         ))}
       </div>
