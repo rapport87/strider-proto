@@ -14,7 +14,7 @@ export default async function Page() {
     redirect("/");
   };
   return (
-    <div className="mt-3">
+    <div className="px-3 mt-3">
       {/* <h1 className="font-extrabold text-2xl mb-3">사용자</h1> */}
       <h2 className="font-semibold text-lg">{user?.user_name}님</h2>
       <div className="my-5 border-t border-solid border-gray-200 w-full mx-auto" />
