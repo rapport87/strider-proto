@@ -59,7 +59,6 @@ export interface NavigationProps {
 
 export interface UserLedgerProps {
     user_id: string;
-    ledger_id: string;
     ledger_name: string;
     is_default: boolean;
     is_owner: boolean;
@@ -81,6 +80,14 @@ export interface Ledger {
   id: string;
   user_category_group_id: string;
   user_ledger: UserLedgerProps[];
+}
+
+export interface LedgerListProps{
+    user_id: string;
+    ledger_id: string;
+    ledger_name: string;
+    is_default: boolean;
+    is_owner: boolean;
 }
 
 export interface MemberListProps {

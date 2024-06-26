@@ -197,16 +197,10 @@ export async function getLedgerById(ledgerId: string) {
         ledger_id : true,
         ledger_name : true,
         is_default : true,
-        is_owner : true
+        is_owner : true,
       }
     })
-    return ledger.map((userLedger) => ({
-      user_id: userLedger.user_id,
-      ledger_id : userLedger.ledger_id,
-      ledger_name : userLedger.ledger_name,
-      is_default : userLedger.is_default,
-      is_owner : userLedger.is_owner
-    }));  
+    return ledger
   }
 
   export async function getDefaultLedger(){

@@ -2,9 +2,8 @@ import getSession from "@/app/lib/session";
 import { redirect } from "next/navigation";
 import { getUser } from "@/app/lib/data";
 import Link from "next/link";
-
-import { UserIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
-
+import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/solid";
 export default async function Page() {
   const user = await getUser();
   const logOut = async () => {
@@ -15,8 +14,15 @@ export default async function Page() {
   };
   return (
     <div className="px-3 mt-3">
-      {/* <h1 className="font-extrabold text-2xl mb-3">사용자</h1> */}
-      <h2 className="font-semibold text-lg">{user?.user_name}님</h2>
+      <div className="flex">
+        <UserIcon className="w-7 h-7" />
+        <h1 className="ml-1 font-extrabold text-2xl mb-3">사용자</h1>
+      </div>
+      {/* <div className="my-5 border-t border-solid border-gray-200 w-full mx-auto" /> */}
+      <h2 className="font-semibold text-lg text-right">
+        {user?.user_name}
+        <span className="font-medium text-base"> 님</span>
+      </h2>
       <div className="my-5 border-t border-solid border-gray-200 w-full mx-auto" />
       <ul>
         <li className="my-5">

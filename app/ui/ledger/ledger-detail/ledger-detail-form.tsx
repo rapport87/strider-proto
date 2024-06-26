@@ -61,29 +61,73 @@ export default function LedgerDetailForm({
   return (
     <div>
       <form action={dispatch}>
-        <div>
-          <input
-            type="radio"
-            name="categoryClass"
-            value="1"
-            onChange={handleCategoryClassChange}
-            defaultChecked={selectedCategoryClass === 1}
-          />{" "}
-          수입
-          <input
-            type="radio"
-            name="categoryClass"
-            value="2"
-            onChange={handleCategoryClassChange}
-            defaultChecked={selectedCategoryClass === 2}
-          />{" "}
-          지출
+        <ul className="w-full flex mb-5">
+          <li className="mr-2">
+            <input
+              type="radio"
+              id="income"
+              name="categoryClass"
+              className="hidden peer"
+              value="1"
+              onChange={handleCategoryClassChange}
+              defaultChecked={selectedCategoryClass === 1}
+              required
+            />
+            <label
+              htmlFor="income"
+              className="inline-flex items-center p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
+            >
+              <div className="block">
+                <div className="w-full">수입</div>
+              </div>
+            </label>
+          </li>
+          <li>
+            <input
+              type="radio"
+              id="expend"
+              name="categoryClass"
+              className="hidden peer"
+              value="2"
+              onChange={handleCategoryClassChange}
+              defaultChecked={selectedCategoryClass === 2}
+            />
+            <label
+              htmlFor="expend"
+              className="inline-flex items-center p-2 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100"
+            >
+              <div className="block">
+                <div className="w-full">지출</div>
+              </div>
+            </label>
+          </li>
+        </ul>
+        <div className="mb-5">
+          <label
+            htmlFor="price"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            날짜
+          </label>
+          <Input
+            name="eventedAt"
+            type="datetime-local"
+            placeholder="evented_at"
+            errors={state?.fieldErrors.eventedAt}
+            defaultValue={eventedAt}
+          />
         </div>
-
-        <div>
+        <div className="mt-3">
           <div>
+            <label
+              htmlFor="assetCategoryId"
+              className="block mb-1 text-sm font-medium text-gray-900"
+            >
+              자산 분류
+            </label>
             <select
-              className="w-full h-10"
+              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+              id="assetCategoryId"
               name="assetCategoryId"
               required
               defaultValue={ledgerDetail ? ledgerDetail.asset_category_id : ""}
@@ -99,8 +143,15 @@ export default function LedgerDetailForm({
 
         <div>
           <div>
+            <label
+              htmlFor="transactionCategoryId"
+              className="block mb-1 text-sm font-medium text-gray-900"
+            >
+              거래 분류
+            </label>
             <select
-              className="w-full h-10"
+              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+              id="transactionCategoryId"
               name="transactionCategoryId"
               required
               defaultValue={
@@ -116,40 +167,60 @@ export default function LedgerDetailForm({
           </div>
         </div>
 
-        <Input
-          name="title"
-          type="text"
-          placeholder="title"
-          required={true}
-          minLength={1}
-          errors={state?.fieldErrors.title}
-          defaultValue={ledgerDetail ? ledgerDetail.title : ""}
-        />
-        <Input
-          name="detail"
-          type="text"
-          placeholder="detail"
-          required={true}
-          minLength={1}
-          errors={state?.fieldErrors.detail}
-          defaultValue={ledgerDetail ? ledgerDetail.detail || "" : ""}
-        />
-        <Input
-          name="price"
-          type="number"
-          placeholder="price"
-          required={true}
-          minLength={1}
-          errors={state?.fieldErrors.price}
-          defaultValue={ledgerDetail ? ledgerDetail.price.toString() : ""}
-        />
-        <Input
-          name="eventedAt"
-          type="datetime-local"
-          placeholder="evented_at"
-          errors={state?.fieldErrors.eventedAt}
-          defaultValue={eventedAt}
-        />
+        <div className="mb-5">
+          <label
+            htmlFor="title"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            제목
+          </label>
+          <Input
+            name="title"
+            type="text"
+            placeholder="title"
+            required={true}
+            minLength={1}
+            errors={state?.fieldErrors.title}
+            defaultValue={ledgerDetail ? ledgerDetail.title : ""}
+          />
+        </div>
+
+        <div className="mb-5">
+          <label
+            htmlFor="price"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            금액
+          </label>
+          <Input
+            name="price"
+            type="number"
+            placeholder="price"
+            required={true}
+            minLength={1}
+            errors={state?.fieldErrors.price}
+            defaultValue={ledgerDetail ? ledgerDetail.price.toString() : ""}
+          />
+        </div>
+
+        <div className="mb-5">
+          <label
+            htmlFor="detail"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            상세 내역
+          </label>
+          <Input
+            name="detail"
+            type="text"
+            placeholder="detail"
+            required={true}
+            minLength={1}
+            errors={state?.fieldErrors.detail}
+            defaultValue={ledgerDetail ? ledgerDetail.detail || "" : ""}
+          />
+        </div>
+
         <input
           name="categoryCode"
           value={selectedCategoryClass || ""}
