@@ -12,23 +12,26 @@ export default function LedgerList({
       <div className="border border-black p-2 mt-2">
         <div className="grid grid-cols-12 items-center text-center">
           <span className="col-span-3 px-1 text-left">{ledger_name}</span>
-          <span className="col-span-2 mx-2 rounded-md border p-1 text-black hover:bg-gray-100">
-            <Link className="text-black" href={`/ledger/${ledger_id}`}>
-              보기
-            </Link>
-          </span>
-          <span className="col-span-2 mx-2 rounded-md border p-1 text-black hover:bg-gray-100">
-            <Link className="text-black" href={`/ledger/${ledger_id}/edit`}>
-              편집
-            </Link>
-          </span>
+          <Link
+            className="text-black col-span-2 mx-2 md:mx-3 rounded-md border p-1 hover:bg-gray-100"
+            href={`/ledger/${ledger_id}`}
+          >
+            <span className="">보기</span>
+          </Link>
+          <Link
+            className="text-black col-span-2 mx-2 md:mx-3 rounded-md border p-1 hover:bg-gray-100"
+            href={`/ledger/${ledger_id}/edit`}
+          >
+            <span className="">편집</span>
+          </Link>
 
           {is_owner === true ? (
-            <span className="col-span-2 mx-2 rounded-md border p-1 text-black hover:bg-gray-100">
-              <Link className="text-black" href={`/ledger/${ledger_id}/invite`}>
-                초대
-              </Link>
-            </span>
+            <Link
+              className="text-black col-span-2 mx-2 md:mx-3 rounded-md border p-1 hover:bg-gray-100"
+              href={`/ledger/${ledger_id}/invite`}
+            >
+              <span>초대</span>
+            </Link>
           ) : (
             <span className="col-span-2" />
           )}
