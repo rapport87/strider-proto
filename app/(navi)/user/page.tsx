@@ -36,9 +36,11 @@ export default async function Page() {
       </ul>
       <div className="my-5 border-t border-solid border-gray-200 w-full mx-auto" />
       <div className="text-right">
-        <button className="rounded-md border p-2 text-black hover:bg-gray-100">
-          로그아웃
-        </button>
+        <form action={logOut}>
+          <button className="rounded-md border p-2 text-black hover:bg-gray-100">
+            로그아웃
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ export default function Page() {
         />
         <Button text="로그인" />
       </form>
-      <SocialLogin />
+      {/* <SocialLogin /> */}
     </div>
   );
 }

@@ -61,7 +61,7 @@ export default function LedgerDetailForm({
   return (
     <div>
       <form action={dispatch}>
-        <ul className="w-full flex mb-5">
+        <ul className="w-full flex">
           <li className="mr-2">
             <input
               type="radio"
@@ -102,7 +102,7 @@ export default function LedgerDetailForm({
             </label>
           </li>
         </ul>
-        <div className="mb-5">
+        <div className="mt-5">
           <label
             htmlFor="price"
             className="block mb-1 text-sm font-medium text-gray-900"
@@ -117,57 +117,53 @@ export default function LedgerDetailForm({
             defaultValue={eventedAt}
           />
         </div>
-        <div className="mt-3">
-          <div>
-            <label
-              htmlFor="assetCategoryId"
-              className="block mb-1 text-sm font-medium text-gray-900"
-            >
-              자산 분류
-            </label>
-            <select
-              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500"
-              id="assetCategoryId"
-              name="assetCategoryId"
-              required
-              defaultValue={ledgerDetail ? ledgerDetail.asset_category_id : ""}
-            >
-              {assetCategory.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.category_name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="mt-5">
+          <label
+            htmlFor="assetCategoryId"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            자산 분류
+          </label>
+          <select
+            className="w-block w-full h-10 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500"
+            id="assetCategoryId"
+            name="assetCategoryId"
+            required
+            defaultValue={ledgerDetail ? ledgerDetail.asset_category_id : ""}
+          >
+            {assetCategory.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.category_name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div>
-          <div>
-            <label
-              htmlFor="transactionCategoryId"
-              className="block mb-1 text-sm font-medium text-gray-900"
-            >
-              거래 분류
-            </label>
-            <select
-              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-              id="transactionCategoryId"
-              name="transactionCategoryId"
-              required
-              defaultValue={
-                ledgerDetail ? ledgerDetail.transaction_category_id : ""
-              }
-            >
-              {transactionCategory.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.category_name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="mt-5">
+          <label
+            htmlFor="transactionCategoryId"
+            className="block mb-1 text-sm font-medium text-gray-900"
+          >
+            거래 분류
+          </label>
+          <select
+            className="w-block w-full h-10 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+            id="transactionCategoryId"
+            name="transactionCategoryId"
+            required
+            defaultValue={
+              ledgerDetail ? ledgerDetail.transaction_category_id : ""
+            }
+          >
+            {transactionCategory.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.category_name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="mb-5">
+        <div className="mt-5">
           <label
             htmlFor="title"
             className="block mb-1 text-sm font-medium text-gray-900"
@@ -185,7 +181,7 @@ export default function LedgerDetailForm({
           />
         </div>
 
-        <div className="mb-5">
+        <div className="mt-5">
           <label
             htmlFor="price"
             className="block mb-1 text-sm font-medium text-gray-900"
@@ -203,7 +199,7 @@ export default function LedgerDetailForm({
           />
         </div>
 
-        <div className="mb-5">
+        <div className="mt-5">
           <label
             htmlFor="detail"
             className="block mb-1 text-sm font-medium text-gray-900"
@@ -238,7 +234,9 @@ export default function LedgerDetailForm({
         ) : (
           <input name="ledgerId" value={params.ledgerId} type="hidden" />
         )}
-        <Button text="확인" />
+        <div className="mt-3">
+          <Button text="확인" />
+        </div>
       </form>
       {isEdit && ledgerDetail && (
         <div className="text-right mt-1">
