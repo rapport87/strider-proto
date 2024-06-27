@@ -242,8 +242,8 @@ export async function getLedgerById(ledgerId: string) {
         },
         orderBy: {
           evented_at: 'desc',
-        },        
-        include: {
+        },
+        include: {          
           asset_category: {
             select: {
               category_name: true,
@@ -256,7 +256,7 @@ export async function getLedgerById(ledgerId: string) {
           },
         },        
       });
-    
+      
       return ledgerDetails.map((detail) => ({
         id: detail.id,
         asset_category_id: detail.asset_category_id,

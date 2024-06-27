@@ -126,7 +126,7 @@ export default function LedgerDetailForm({
               자산 분류
             </label>
             <select
-              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+              className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500"
               id="assetCategoryId"
               name="assetCategoryId"
               required

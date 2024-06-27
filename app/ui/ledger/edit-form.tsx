@@ -35,7 +35,7 @@ export default function EditLedgerForm({
         />
         <div>
           <select
-            className="w-full h-10"
+            className="w-block w-full h-10 p-2 mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500"
             name="userCategoryGroupId"
             required
             defaultValue={ledger.user_category_group_id}
