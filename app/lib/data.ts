@@ -256,7 +256,7 @@ export async function getLedgerById(ledgerId: string) {
           },
         },        
       });
-      
+
       return ledgerDetails.map((detail) => ({
         id: detail.id,
         asset_category_id: detail.asset_category_id,
