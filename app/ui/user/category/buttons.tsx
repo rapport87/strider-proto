@@ -8,7 +8,7 @@ export default function DeleteUserCategory({
   const deleteCategoryWithId = deleteCategory.bind(null, user_category_id);
   return (
     <form action={deleteCategoryWithId}>
-      <button className="rounded-md border p-2 bg-red-500 text-white hover:bg-red-700">
+      <button className="rounded-md border p-1 bg-red-500 text-white hover:bg-red-700">
         삭제
       </button>
     </form>
