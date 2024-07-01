@@ -27,24 +27,26 @@ export default function CategoryList({ category }: UserCategoryProps) {
     if (selectedCategoryCode !== 0) {
       return (
         <div className="border-y-2 border-black mt-1">
-          {categoryList.map((category) => (
-            <div
-              className="flex justify-between  py-1 border-b-2 border-gray-300"
-              key={category.id}
-            >
-              <div className="leading-9">
-                <Link
-                  className="text-black"
-                  href={`/user/category/${category.id}/edit-category/`}
-                >
-                  {category.category_name}
-                </Link>
-              </div>
-              <div>
-                <DeleteUserCategory user_category_id={category.id} />
-              </div>
-            </div>
-          ))}
+          <ul className="border-b-2 border-black pb-1">
+            {categoryList.map((category) => (
+              <li
+                className="flex justify-between h-12 border-b border-gray-300"
+                key={category.id}
+              >
+                <div className="mx-0 my-auto">
+                  <Link
+                    className="text-black"
+                    href={`/user/category/${category.id}/edit-category/`}
+                  >
+                    {category.category_name}
+                  </Link>
+                </div>
+                <div className="mx-0 my-auto">
+                  <DeleteUserCategory user_category_id={category.id} />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       );
     }
@@ -58,16 +60,14 @@ export default function CategoryList({ category }: UserCategoryProps) {
         <ul className="border-b-2 border-black pb-1">
           {mainCategories.map((mainCategory) => (
             <li className="mt-3 border-black border-t-2" key={mainCategory.id}>
-              <div className="flex justify-between py-1 border-b-2 border-gray-300">
-                <div className="leading-9">
-                  <Link
-                    href={`/user/category/${mainCategory.id}/edit-category/`}
-                    className="text-black"
-                  >
-                    {mainCategory.category_name}
-                  </Link>
-                </div>
-                <div>
+              <div className="flex justify-between h-12 border-b-2 border-gray-300">
+                <Link
+                  href={`/user/category/${mainCategory.id}/edit-category/`}
+                  className="text-black mx-0 my-auto font-bold"
+                >
+                  {mainCategory.category_name}
+                </Link>
+                <div className="mx-0 my-auto">
                   <DeleteUserCategory user_category_id={mainCategory.id} />
                 </div>
               </div>
@@ -78,20 +78,16 @@ export default function CategoryList({ category }: UserCategoryProps) {
                   )
                   .map((subCategory) => (
                     <li
-                      className="flex justify-between pt-1 border-b border-gray-300 last:border-b-0"
+                      className="flex justify-between h-12 border-b border-gray-300 last:border-b-0"
                       key={subCategory.id}
                     >
-                      <div className="leading-9">
-                        <Link
-                          href={`/user/category/${subCategory.id}/edit-category/`}
-                          className="text-black"
-                        >
-                          <div className="pl-5">
-                            {subCategory.category_name}
-                          </div>
-                        </Link>
-                      </div>
-                      <div>
+                      <Link
+                        href={`/user/category/${subCategory.id}/edit-category/`}
+                        className="text-black mx-0 my-auto"
+                      >
+                        <div className="pl-5">{subCategory.category_name}</div>
+                      </Link>
+                      <div className="mx-0 my-auto">
                         <DeleteUserCategory user_category_id={subCategory.id} />
                       </div>
                     </li>
