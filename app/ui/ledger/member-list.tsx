@@ -13,34 +13,39 @@ export default async function MemberList({
     (user) => user.user_id === user_id && user.is_owner
   );
   return (
-    <div>
-      <div className="mt-5">
-        <h2>가계부 사용자</h2>
+    <div className="mt-5">
+      <div>
+        <h2 className="ml-1 font-extrabold text-lg">가계부 이용자</h2>
       </div>
-      {user_ledger.map((user) => (
-        <div className="flex" key={user.user_id}>
-          <span>{user.user_name}</span>
+      <ul className="mt-3 border-y border-black border-b-2">
+        {user_ledger.map((user) => (
+          <li
+            className="flex justify-between h-12 py-1 border-b border-gray-300 last:border-b-0"
+            key={user.user_id}
+          >
+            <div className="mx-0 my-auto">{user.user_name}</div>
 
-          {isOwner && user_id !== user.user_id ? (
-            <>
-              <span>
-                <ExpelUserFromLedger
-                  ledger_id={ledger_id}
-                  user_id={user.user_id}
-                />
-              </span>
-              <span>
-                <TransferLedgerOwner
-                  ledger_id={ledger_id}
-                  user_id={user.user_id}
-                />
-              </span>
-            </>
-          ) : (
-            ""
-          )}
-        </div>
-      ))}
+            {isOwner && user_id !== user.user_id ? (
+              <div className="flex">
+                <span className="px-1">
+                  <ExpelUserFromLedger
+                    ledger_id={ledger_id}
+                    user_id={user.user_id}
+                  />
+                </span>
+                <span className="px-1">
+                  <TransferLedgerOwner
+                    ledger_id={ledger_id}
+                    user_id={user.user_id}
+                  />
+                </span>
+              </div>
+            ) : (
+              ""
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

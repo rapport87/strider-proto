@@ -13,13 +13,13 @@ export default function LedgerList({
         <div className="grid grid-cols-12 items-center text-center">
           <span className="col-span-3 px-1 text-left">{ledger_name}</span>
           <Link
-            className="text-black col-span-2 mx-2 md:mx-4 rounded-md border p-1 hover:bg-gray-100"
+            className="text-black col-span-2 mx-2 md:mx-4 rounded-md border px-1 py-2 hover:bg-gray-100"
             href={`/ledger/${ledger_id}`}
           >
             <span className="">보기</span>
           </Link>
           <Link
-            className="text-black col-span-2 mx-2 md:mx-4 rounded-md border p-1 hover:bg-gray-100"
+            className="text-black col-span-2 mx-2 md:mx-4 rounded-md border px-1 py-2 hover:bg-gray-100"
             href={`/ledger/${ledger_id}/edit`}
           >
             <span className="">편집</span>
@@ -27,7 +27,7 @@ export default function LedgerList({
 
           {is_owner === true ? (
             <Link
-              className="text-black col-span-2 mx-2 md:mx-4 rounded-md border p-1 hover:bg-gray-100"
+              className="text-black col-span-2 mx-2 md:mx-4 rounded-md border px-1 py-2 hover:bg-gray-100"
               href={`/ledger/${ledger_id}/invite`}
             >
               <span>초대</span>

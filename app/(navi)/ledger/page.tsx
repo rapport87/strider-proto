@@ -17,18 +17,24 @@ export default async function Page() {
         <LedgerList key={userLedgerList.ledger_id} {...userLedgerList} />
       ))}
       <div className="text-right mt-5">
-        <span className="rounded-md border p-2 text-black hover:bg-gray-100">
+        <span className="rounded-md border px-3 py-2 text-black hover:bg-gray-100">
           <Link className="text-black " href={`/ledger/create-ledger`}>
             가계부 생성
           </Link>
         </span>
       </div>
-      {inviteList.length > 0 ? <div className="mt-5">초대받은 가계부</div> : ""}
-      {inviteList.length > 0
-        ? inviteList.map((inviteList) => (
-            <InvitedLedgerList key={inviteList.id} {...inviteList} />
-          ))
-        : ""}
+      {inviteList.length > 0 && (
+        <>
+          <div className="mt-5 ml-1 font-extrabold text-lg">
+            초대받은 가계부
+          </div>
+          <ul className="mt-3 border-y border-black border-b-2">
+            {inviteList.map((inviteList) => (
+              <InvitedLedgerList key={inviteList.id} {...inviteList} />
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
