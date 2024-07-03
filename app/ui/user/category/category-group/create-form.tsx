@@ -20,7 +20,7 @@ export default function CreateCategoryGroup() {
         <form action={dispatch} className="flex flex-col gap-3">
           <div>
             <label
-              htmlFor="title"
+              htmlFor="categoryGroupName"
               className="block mb-1 text-sm font-medium text-gray-900"
             >
               카테고리 그룹 이름

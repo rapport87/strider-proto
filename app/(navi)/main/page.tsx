@@ -1,6 +1,7 @@
 import { getUserLedgers, getLedgerDetailsByLedgerId } from "@/app/lib/data";
 import getSession from "@/app/lib/session";
 import LedgerDetailList from "@/app/ui/ledger/ledger-detail/ledger-detail-list";
+import { HomeIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 async function getIsOwner(userId: string) {
@@ -20,8 +21,15 @@ export default async function Page() {
   );
 
   return (
-    <div>
-      <div>
+    <div className="px-3 mt-3">
+      <div className="flex">
+        <HomeIcon className="w-7 h-7" />
+        <h1 className="ml-1 font-extrabold text-2xl mb-3">
+          {defaultLedger[0].ledger_name}
+          <span className="text-gray-500 text-sm font-normal">(기본)</span>
+        </h1>
+      </div>
+      <div className="mt-5">
         {ledgerDetails.map((ledgerDetail) => (
           <Link
             key={ledgerDetail.id}
