@@ -14,12 +14,12 @@ export default async function Page() {
 
       <CategoryList category={userCategory} />
       <div className="flex justify-between mt-5">
-        <span className="rounded-md border p-2 text-black hover:bg-gray-100">
+        <span className="rounded-md border px-3 py-2 hover:bg-gray-100 text-black">
           <Link className="text-black " href={`/user/category/category-group`}>
             카테고리 그룹 관리
           </Link>
         </span>
-        <span className="rounded-md border p-2 text-black hover:bg-gray-100">
+        <span className="rounded-md border px-3 py-2 hover:bg-gray-100 text-black">
           <Link className="text-black " href={`/user/category/create-category`}>
             카테고리 생성
           </Link>

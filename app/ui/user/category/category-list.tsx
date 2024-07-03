@@ -26,7 +26,7 @@ export default function CategoryList({ category }: UserCategoryProps) {
   const renderCategories = () => {
     if (selectedCategoryCode !== 0) {
       return (
-        <div className="border-y-2 border-black mt-1">
+        <div className="border-y-2 border-black mt-5">
           <ul className="border-b-2 border-black pb-1">
             {categoryList.map((category) => (
               <li
@@ -55,8 +55,7 @@ export default function CategoryList({ category }: UserCategoryProps) {
     const subCategories = categoryList.filter((cat) => cat.parent_id !== null);
 
     return (
-      <div>
-        <div className="mt-1" />
+      <div className="mt-5">
         <ul className="border-b-2 border-black pb-1">
           {mainCategories.map((mainCategory) => (
             <li className="mt-3 border-black border-t-2" key={mainCategory.id}>

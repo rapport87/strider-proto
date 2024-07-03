@@ -9,7 +9,7 @@ export default async function NaviLayout({
   const ledger = await getDefaultLedger();
   return (
     <div>
-      {children}
+      <div className="pb-28">{children}</div>
       <Navigation ledger_id={ledger[0].ledger_id} />
     </div>
   );

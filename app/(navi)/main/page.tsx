@@ -33,7 +33,7 @@ export default async function Page() {
       </div>
       <div className="text-right mt-5">
         <Link href={`/ledger/${defaultLedger[0].ledger_id}/ledgerDetail/write`}>
-          <span className="rounded-md border p-2 text-black hover:bg-gray-100 text-right">
+          <span className="rounded-md border px-3 py-2 hover:bg-gray-100 text-black">
             가계부 작성
           </span>
         </Link>

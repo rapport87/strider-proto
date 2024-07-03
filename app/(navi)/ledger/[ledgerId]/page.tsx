@@ -30,7 +30,7 @@ export default async function Page({
         ))}
       </div>
       <div className="text-right mt-5">
-        <span className="rounded-md border p-2 text-black hover:bg-gray-100">
+        <span className="rounded-md border px-3 py-2 hover:bg-gray-100 text-black">
           <Link
             className="text-black "
             href={`/ledger/${params.ledgerId}/ledgerDetail/write/`}

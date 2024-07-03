@@ -52,9 +52,7 @@ export default function CreateLedgerForm({
             ))}
           </select>
         </div>
-        <div>
-          <Button text="가계부 만들기" />
-        </div>
+        <Button text="가계부 만들기" />
       </form>
     </div>
   );

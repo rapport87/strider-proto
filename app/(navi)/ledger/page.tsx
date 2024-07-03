@@ -17,7 +17,7 @@ export default async function Page() {
         <LedgerList key={userLedgerList.ledger_id} {...userLedgerList} />
       ))}
       <div className="text-right mt-5">
-        <span className="rounded-md border px-3 py-2 text-black hover:bg-gray-100">
+        <span className="rounded-md border px-3 py-2 hover:bg-gray-100 text-black">
           <Link className="text-black " href={`/ledger/create-ledger`}>
             가계부 생성
           </Link>
