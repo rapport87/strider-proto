@@ -925,13 +925,15 @@ export async function deleteCategory(userCategoryId : string){
 
 export async function createUserCategoryGroupRel(
   userCategoryGroupId: string,
-  userCategoryId: string)  {
+  userCategoryId: string
+){
   await db.user_category_group_rel.create({
     data: {
-      user_category_id: userCategoryGroupId,
-      user_category_group_id: userCategoryId,
+      user_category_id: userCategoryId,
+      user_category_group_id: userCategoryGroupId,
     },
   });
+
   revalidatePath("/user/category/category-group")
 };
 
@@ -947,6 +949,7 @@ export async function deleteUserCategoryGroupRel(
       },
     },
   });
+ 
   revalidatePath("/user/category/category-group")
 };
 
