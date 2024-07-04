@@ -112,7 +112,7 @@ export default function LedgerDetailForm({
           <Input
             name="eventedAt"
             type="datetime-local"
-            placeholder="evented_at"
+            placeholder="날짜"
             errors={state?.fieldErrors.eventedAt}
             defaultValue={eventedAt}
           />
@@ -173,7 +173,7 @@ export default function LedgerDetailForm({
           <Input
             name="title"
             type="text"
-            placeholder="title"
+            placeholder="제목"
             required={true}
             minLength={1}
             errors={state?.fieldErrors.title}
@@ -191,7 +191,7 @@ export default function LedgerDetailForm({
           <Input
             name="price"
             type="number"
-            placeholder="price"
+            placeholder="가격"
             required={true}
             minLength={1}
             errors={state?.fieldErrors.price}
@@ -209,7 +209,7 @@ export default function LedgerDetailForm({
           <Input
             name="detail"
             type="text"
-            placeholder="detail"
+            placeholder="내역"
             required={true}
             minLength={1}
             errors={state?.fieldErrors.detail}

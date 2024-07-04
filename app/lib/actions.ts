@@ -131,8 +131,8 @@ export async function signIn(prevState: any, formData : FormData){
     if (ok){
       const session = await getSession();
       session.id = user!.id;
-      session.save();
-      redirect("/user");
+      await session.save();
+      redirect("/main");
     } else {
       ctx.addIssue({
         code: "custom",
@@ -229,7 +229,7 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
       ctx.addIssue({
         code: "custom",
         message: "존재하지 않는 사용자 입니다",
-        path: ["user_name"],
+        path: ["userName"],
         fatal: true,        
       });
     }
@@ -250,6 +250,8 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
     } 
 
     const invitingUser = await checkInvitingUser(invitedUserId as string, ledgerId)
+    console.log("invitedUserId : " + invitedUserId);
+    console.log("ledgerId : " + ledgerId);
     if(invitingUser === 0 || invitingUser === 3){
       ctx.addIssue({
         code: "custom",
@@ -289,7 +291,7 @@ export async function inviteUserToLedger(prevState: any, formData : FormData){
       data: inviteData
     });
   
-    redirect("/main");
+    redirect("/ledger");
   }
 }
 
@@ -349,7 +351,7 @@ export async function createCategoryGroup(prevState: any, formData : FormData){
         category_group_name : result.data.categoryGroupName,
       }
     });
-    redirect("/ledger");
+    redirect("/user/category/category-group");
     
   }
 }
@@ -586,6 +588,7 @@ export async function createInviteResponse(ledgerId : string, prgCode : number){
       });
     }
   }
+  revalidatePath("/ledger");
 }
 
 export async function editLedger(prevState: any, formData : FormData){
@@ -867,7 +870,7 @@ export async function createCategory(prevState: any, formData : FormData){
     }catch(error){
       throw new Error("카테고리 생성에 실패했습니다");
     }
-    revalidatePath("/user/category/create-category");    
+    redirect(`/user/category/`);
   }
 }
 
@@ -902,7 +905,7 @@ export async function editCategory(prevState: any, formData : FormData){
     }catch(error){
       throw new Error("카테고리 수정에 실패했습니다");
     }
-    redirect(`/user/category/`);    
+    redirect(`/user/category/`);
   }
 }
 
