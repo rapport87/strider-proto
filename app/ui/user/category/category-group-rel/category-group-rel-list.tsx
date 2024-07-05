@@ -98,10 +98,10 @@ export default function CategoryGroupRelList({
     if (selectedCategoryCode !== 0) {
       return (
         <div className="border-y-2 border-black mt-1">
-          <ul className="border-b-2 border-black pb-1">
+          <ul className="border-black pb-1">
             {categoryList.map((category) => (
               <li
-                className="flex justify-between h-12 border-b border-gray-300"
+                className="flex justify-between h-12 border-b border-gray-300 last:border-b-0"
                 key={category.id}
               >
                 <div className="mx-0 my-auto">
