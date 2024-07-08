@@ -702,8 +702,8 @@ export async function expelUserFromLedger(ledgerId : string, userId : string){
       await db.user_ledger.delete({
         where : {
           user_id_ledger_id : {
-            user_id : ledgerId,
-            ledger_id : userId,
+            user_id : userId,
+            ledger_id : ledgerId,
           },
         }
       });
@@ -716,13 +716,14 @@ export async function expelUserFromLedger(ledgerId : string, userId : string){
         data: {
           user_id : userId,
           ledger_id : ledgerId,
+          invite_prg_code : 2
         }
       })
     }catch(error){
       return { message : '사용자 추방에 실패했습니다'}
     }
     
-    redirect("/ledger"); 
+    revalidatePath("/ledger/[ledgerId]/edit"); 
 }
 
 export async function transferLedgerOwner(ledgerId : string, userId : string){
