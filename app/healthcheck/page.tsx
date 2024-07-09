@@ -1,5 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { healthCheck } from "@/app/lib/actions";
 
-export default async function Page(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({ message: "Server is running" });
+export default async function Page() {
+  const status = await healthCheck;
+  return status;
 }

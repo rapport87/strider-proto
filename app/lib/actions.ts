@@ -9,6 +9,7 @@ import db from "@/app/lib/db";
 import getSession from "@/app/lib/session";
 import { revalidatePath } from "next/cache";
 import { getUser } from "@/app/lib/data";
+import { NextApiRequest, NextApiResponse } from "next";
 
 
 export async function signUp(prevState: any, formData : FormData){
@@ -957,3 +958,6 @@ export async function deleteUserCategoryGroupRel(
   revalidatePath("/user/category/category-group")
 };
 
+export async function healthCheck(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200).json({ message: "Server is running" });
+}
