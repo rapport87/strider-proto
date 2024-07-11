@@ -243,7 +243,7 @@ export async function getLedgerById(ledgerId: string) {
         orderBy: {
           evented_at: 'desc',
         },
-        include: {          
+        include: {       
           asset_category: {
             select: {
               category_name: true,
