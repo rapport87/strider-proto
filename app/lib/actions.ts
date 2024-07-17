@@ -457,6 +457,8 @@ export async function createDefaultCategoryGroup(id : string){
 }
 
 export async function createLedgerDetail(prevState: any, formData : FormData){
+  const user = await getSession();
+
   const formSchema = z.object({
     ledgerId : z.string(),
     assetCategoryId : z.string(),
@@ -484,6 +486,7 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
     detail : formData.get("detail"),
     price : formData.get("price"),
     eventedAt : new Date(Date.now()),
+    user_id : user.id
   }
 
   const result = await formSchema.safeParseAsync(data);
@@ -499,7 +502,8 @@ export async function createLedgerDetail(prevState: any, formData : FormData){
       title : result.data.title,
       detail : result.data.detail,
       price : result.data.price,
-      evented_at: new Date(Date.now())
+      evented_at: new Date(Date.now()),
+      user_id : user.id
     }
 
     await db.ledger_detail.create({

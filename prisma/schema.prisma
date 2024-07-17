@@ -19,6 +19,7 @@ model user {
   user_category       user_category[]
   user_ledger         user_ledger[]
   user_category_group user_category_group[]
+  ledger_detail       ledger_detail[]
 }
 
 model user_ledger {
@@ -62,6 +63,7 @@ model ledger {
 model ledger_detail {
   id                      String        @id @default(uuid())
   ledger_id               String
+  user_id                 String
   asset_category_id       String
   transaction_category_id String
   category_code           Int
@@ -73,6 +75,7 @@ model ledger_detail {
   created_at              DateTime      @default(now())
   updated_at              DateTime      @updatedAt
   ledger                  ledger        @relation(fields: [ledger_id], references: [id])
+  user                    user          @relation(fields: [user_id], references: [id])
   asset_category          user_category @relation("AssetCategoryRelation", fields: [asset_category_id], references: [id])
   transaction_category    user_category @relation("TransactionCategoryRelation", fields: [transaction_category_id], references: [id])
 }
