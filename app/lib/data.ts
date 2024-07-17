@@ -243,7 +243,12 @@ export async function getLedgerById(ledgerId: string) {
         orderBy: {
           evented_at: 'desc',
         },
-        include: {       
+        include: {     
+          user : { 
+            select: {
+              user_name : true
+            }
+          },
           asset_category: {
             select: {
               category_name: true,
@@ -267,6 +272,7 @@ export async function getLedgerById(ledgerId: string) {
         evented_at: detail.evented_at,
         asset_category_name: detail.asset_category.category_name,
         transaction_category_name: detail.transaction_category.category_name,
+        user_name : detail.user.user_name
       }));
     }
 

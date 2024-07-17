@@ -32,6 +32,7 @@ export default function LedgerDetailList({
   asset_category_name,
   transaction_category_name,
   category_code,
+  user_name,
 }: LedgerDetailListProps) {
   return (
     <div className="text-right">
@@ -68,7 +69,7 @@ export default function LedgerDetailList({
       </div>
       <div className="text-sm text-gray-400">
         <span>by. </span>
-        <span className="font-bold">이크비</span>
+        <span className="font-bold">{user_name}</span>
       </div>
     </div>
   );

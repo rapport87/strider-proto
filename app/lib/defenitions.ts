@@ -43,6 +43,7 @@ export interface LedgerDetail{
 
 export interface LedgerDetailListProps{
     id : string | undefined;
+    user_name : string;
     category_code : number;
     asset_category_id : string | undefined;
     transaction_category_id : string;
